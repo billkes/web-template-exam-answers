@@ -1,0 +1,7 @@
+{
+  "name": "getQuestionBank",
+  "dependencies": {},
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "getTestQuestions",
+  "dependencies": {},
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}
