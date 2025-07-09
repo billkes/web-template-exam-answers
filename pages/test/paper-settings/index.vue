@@ -51,8 +51,10 @@
 						<uni-forms-item label="试卷名称" name="name" required>
 							<uni-easyinput v-model="formData.name" placeholder="请输入试卷名称" />
 						</uni-forms-item>
-						<uni-forms-item label="考试封面URL">
-							<uni-easyinput v-model="formData.url" placeholder="请输入考试封面URL" />
+						<uni-forms-item label="考试封面">
+							<uni-file-picker :modelValue="urlArrToFileArr(formData.url)" fileMediatype="image" mode="grid"
+								:limit="1" :del-icon="true" :auto-upload="true" @success="uploadSuccess"
+								@fail="uploadFail" @delete="deleteFile" />
 						</uni-forms-item>
 						<uni-forms-item label="考试人员" required>
 							<SelectTestUser :modelValue="formData.inspection_personnel" @change="handleUserChange" />
@@ -129,7 +131,7 @@
 	const formData = ref({
 		code: '',
 		name: '',
-		url: '',
+		url: [],
 		inspection_personnel: [],
 		inspection_personnel_name: [],
 		exam_time1: null,
@@ -271,6 +273,53 @@
 		fetchData()
 	})
 
+	const urlArrToFileArr = (urlList) => {
+		if (!Array.isArray(urlList)) {
+			return []
+		}
+		return urlList.map(u => {
+			const uList = u.split('.')
+			if (!uList.length) {
+				return {
+					name: "none.png",
+					extname: "",
+					url: '',
+				}
+			}
+			const extname = uList[uList.length - 1]
+			return {
+				name: u,
+				extname,
+				url: u,
+			}
+		})
+	}
+
+	// 上传成功回调
+	const uploadSuccess = (e) => {
+		console.log('上传成功', e);
+		uni.showToast({
+			title: '上传成功',
+			icon: 'success'
+		});
+		formData.value.url = e.tempFilePaths; // 更新为上传后的文件路径
+	}
+
+	// 上传失败回调
+	const uploadFail = (e) => {
+		console.error('上传失败', e);
+		uni.showToast({
+			title: '上传失败',
+			icon: 'none'
+		});
+	}
+
+	// 删除文件回调
+	const deleteFile = (e) => {
+		console.log('删除文件', e);
+		formData.value.url = []; // 清空文件路径
+	}
+
 	// 获取数据
 	const fetchData = async () => {
 		const params = {
@@ -317,7 +366,7 @@
 		formData.value = {
 			code: '',
 			name: '',
-			url: '',
+			url: [],
 			inspection_personnel: [],
 			inspection_personnel_name: [],
 			exam_time1: null,

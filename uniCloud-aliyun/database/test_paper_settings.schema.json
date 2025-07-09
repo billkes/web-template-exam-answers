@@ -17,8 +17,8 @@
 			"maxLength": 255
 		},
 		"url": {
-			"bsonType": "string",
-			"description": "考试封面URL"
+			"bsonType": "array",
+			"description": "考试封面"
 		},
 		"inspection_personnel": {
 			"bsonType": "array",
