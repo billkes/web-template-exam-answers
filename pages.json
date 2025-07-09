@@ -161,6 +161,12 @@
 			"style": {
 				"navigationBarTitleText": "考试人员"
 			}
+		},
+		{
+			"path": "pages/test/paper-settings/index",
+			"style": {
+				"navigationBarTitleText": "试卷设置"
+			}
 		}
 	],
 	"subPackages": [{

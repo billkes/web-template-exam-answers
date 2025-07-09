@@ -131,12 +131,24 @@ async function deleteUser(params) {
 // 获取用户列表
 async function getUserList(params) {
 	const {
-		pageNum = 1, pageSize = 10
+		pageNum = 1,
+			pageSize = 10,
+			name = ''
 	} = params;
 	const skip = (pageNum - 1) * pageSize;
 
-	const countResult = await collection.count();
+	// 构建查询条件
+	const query = {};
+	if (name) {
+		query.name = new RegExp(name, 'i'); // 使用正则表达式实现模糊查询，不区分大小写
+	}
+
+	// 获取总数
+	const countResult = await collection.where(query).count();
+
+	// 获取分页数据
 	const dataResult = await collection
+		.where(query)
 		.orderBy('create_time', 'desc')
 		.skip(skip)
 		.limit(pageSize)
