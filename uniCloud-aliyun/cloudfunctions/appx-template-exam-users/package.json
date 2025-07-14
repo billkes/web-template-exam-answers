@@ -1,0 +1,7 @@
+{
+  "name": "appx-template-exam-users",
+  "dependencies": {},
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}

@@ -3,8 +3,16 @@
 		<!-- 搜索栏 -->
 		<view class="search-bar">
 			<view class="filter-item">
-				<uni-easyinput class="item-content inp" suffixIcon="search" clearable v-model="searchName"
+				<uni-easyinput class="item-content inp" suffixIcon="search" clearable v-model="searchContent"
 					placeholder="请输入题目内容" @iconClick="handleSearch"></uni-easyinput>
+			</view>
+			<view class="filter-item">
+				<uni-data-select class="item-content" v-model="searchType" :localdata="questionTypes"
+					placeholder="题目类型" />
+			</view>
+			<view class="filter-item">
+				<uni-data-select class="item-content" v-model="searchDifficulty" :localdata="difficultyLevels"
+					placeholder="难度" />
 			</view>
 			<button class="filter-add-btn" type="primary" @click="handleAdd">新增</button>
 		</view>
@@ -13,17 +21,19 @@
 		<uni-table border stripe emptyText="暂无数据">
 			<uni-tr>
 				<uni-th width="80" align="center">序号</uni-th>
-				<uni-th width="120" align="center">姓名</uni-th>
-				<uni-th width="180" align="center">身份证号</uni-th>
-				<uni-th width="120" align="center">手机号</uni-th>
+				<uni-th width="150" align="center">题目内容</uni-th>
+				<uni-th width="100" align="center">题目类型</uni-th>
+				<uni-th width="80" align="center">分值</uni-th>
+				<uni-th width="80" align="center">难度</uni-th>
 				<uni-th width="180" align="center">创建时间</uni-th>
 				<uni-th width="120" align="center">操作</uni-th>
 			</uni-tr>
 			<uni-tr v-for="(item, index) in tableData" :key="item._id">
 				<uni-td align="center">{{ (pageNum - 1) * pageSize + index + 1 }}</uni-td>
-				<uni-td align="center">{{ item.name }}</uni-td>
-				<uni-td align="center">{{ item.id_card }}</uni-td>
-				<uni-td align="center">{{ item.phone }}</uni-td>
+				<uni-td align="center">{{ item.content }}</uni-td>
+				<uni-td align="center">{{ getQuestionTypeText(item.type) }}</uni-td>
+				<uni-td align="center">{{ item.score }}</uni-td>
+				<uni-td align="center">{{ item.difficulty }}</uni-td>
 				<uni-td align="center">{{ myFormatTime(item.create_time) }}</uni-td>
 				<uni-td align="center">
 					<view class="action-buttons">
@@ -42,17 +52,29 @@
 			<uni-popup-dialog :title="formTitle" mode="base" :before-close="true" @close="closeDialog"
 				@confirm="submitForm">
 				<uni-forms ref="form" :modelValue="formData" :rules="rules">
-					<uni-forms-item label="姓名" name="name">
-						<uni-easyinput v-model="formData.name" placeholder="请输入姓名" />
+					<uni-forms-item label="题目类型" name="type" required>
+						<uni-data-select v-model="formData.type" :localdata="questionTypes" />
 					</uni-forms-item>
-					<uni-forms-item label="身份证号" name="id_card">
-						<uni-easyinput v-model="formData.id_card" placeholder="请输入身份证号" />
+					<uni-forms-item label="题目内容" name="content" required>
+						<uni-easyinput type="textarea" v-model="formData.content" placeholder="请输入题目内容" />
 					</uni-forms-item>
-					<uni-forms-item label="手机号" name="phone">
-						<uni-easyinput v-model="formData.phone" placeholder="请输入手机号" />
+					<uni-forms-item label="选项" v-if="formData.type !== 'fill_blank'" required>
+						<view class="option-item" v-for="(option, idx) in formData.options" :key="idx">
+							<uni-easyinput v-model="formData.options[idx]" :placeholder="'请输入选项' + (idx + 1)" />
+							<button size="mini" type="warn" @click="removeOption(idx)"
+								v-if="formData.options.length > 1">删除</button>
+						</view>
+						<button type="default" size="mini" @click="addOption">添加选项</button>
 					</uni-forms-item>
-					<uni-forms-item label="密码" name="pwd">
-						<uni-easyinput type="password" v-model="formData.pwd" placeholder="请输入密码" />
+					<uni-forms-item label="正确答案" name="answer" required>
+						<uni-easyinput v-model="formData.answer"
+							:placeholder="formData.type === 'single_choice' ? '请输入正确答案(如A)' : '请输入正确答案(多个答案用逗号分隔,如A,B)'" />
+					</uni-forms-item>
+					<uni-forms-item label="分值" name="score" required>
+						<uni-number-box v-model="formData.score" :min="0" :step="0.5" />
+					</uni-forms-item>
+					<uni-forms-item label="难度" name="difficulty" required>
+						<uni-number-box v-model="formData.difficulty" :min="1" :max="5" />
 					</uni-forms-item>
 				</uni-forms>
 			</uni-popup-dialog>
@@ -66,11 +88,11 @@
 		onMounted
 	} from 'vue'
 	import {
-		getUserList,
-		addUser,
-		updateUser,
-		deleteUser
-	} from '@/api/testUser.js'
+		getQuestionList,
+		addQuestion,
+		updateQuestion,
+		deleteQuestion
+	} from '@/api/testQuestions.js'
 	import {
 		formatTime
 	} from '@/utils/tableUtil.js'
@@ -80,64 +102,98 @@
 	const total = ref(0)
 	const pageNum = ref(1)
 	const pageSize = ref(10)
-	const searchName = ref('')
+	const searchContent = ref('')
+	const searchType = ref('')
+	const searchDifficulty = ref('')
+
+	// 题目类型选项
+	const questionTypes = [{
+			value: 'single_choice',
+			text: '单选题'
+		},
+		{
+			value: 'multiple_choice',
+			text: '多选题'
+		}
+	]
+
+	// 难度级别
+	const difficultyLevels = [{
+			value: 1,
+			text: '1星'
+		},
+		{
+			value: 2,
+			text: '2星'
+		},
+		{
+			value: 3,
+			text: '3星'
+		},
+		{
+			value: 4,
+			text: '4星'
+		},
+		{
+			value: 5,
+			text: '5星'
+		}
+	]
 
 	// 表单相关
 	const formPopup = ref(null)
 	const form = ref(null)
-	const formTitle = ref('新增用户')
+	const formTitle = ref('新增题目')
 	const formData = ref({
-		name: '',
-		id_card: '',
-		phone: '',
-		pwd: ''
+		type: 'single_choice',
+		content: '',
+		options: ['', ''],
+		answer: '',
+		score: 1,
+		difficulty: 3
 	})
 	const isEdit = ref(false)
 
 	// 表单验证规则
 	const rules = {
-		name: {
+		type: {
+			rules: [{
+				required: true,
+				errorMessage: '请选择题目类型'
+			}]
+		},
+		content: {
+			rules: [{
+				required: true,
+				errorMessage: '请输入题目内容'
+			}]
+		},
+		answer: {
+			rules: [{
+				required: true,
+				errorMessage: '请输入正确答案'
+			}]
+		},
+		score: {
 			rules: [{
 					required: true,
-					errorMessage: '请输入姓名'
+					errorMessage: '请输入分值'
 				},
 				{
-					minLength: 2,
-					maxLength: 20,
-					errorMessage: '姓名长度在2-20个字符之间'
+					minimum: 0,
+					errorMessage: '分值不能为负数'
 				}
 			]
 		},
-		id_card: {
+		difficulty: {
 			rules: [{
 					required: true,
-					errorMessage: '请输入身份证号'
+					errorMessage: '请选择难度'
 				},
 				{
-					pattern: '^\\d{17}[\\dXx]$',
-					errorMessage: '身份证号格式不正确'
-				}
-			]
-		},
-		phone: {
-			rules: [{
-					required: true,
-					errorMessage: '请输入手机号'
-				},
-				{
-					pattern: '^1[3-9]\\d{9}$',
-					errorMessage: '手机号格式不正确'
-				}
-			]
-		},
-		pwd: {
-			rules: [{
-					required: true,
-					errorMessage: '请输入密码'
-				},
-				{
-					minLength: 6,
-					errorMessage: '密码长度不能少于6位'
+					minimum: 1,
+					maximum: 5,
+					errorMessage: '难度等级为1-5'
 				}
 			]
 		}
@@ -153,11 +209,13 @@
 		const params = {
 			pageNum: pageNum.value,
 			pageSize: pageSize.value,
-			name: searchName.value
+			content: searchContent.value,
+			type: searchType.value,
+			difficulty: searchDifficulty.value
 		}
 
 		try {
-			const res = await getUserList(params)
+			const res = await getQuestionList(params)
 			if (res.code === 200) {
 				tableData.value = res.data.rows
 				total.value = res.data.total
@@ -177,7 +235,6 @@
 
 	// 搜索
 	const handleSearch = () => {
-		console.log('搜索');
 		pageNum.value = 1
 		fetchData()
 	}
@@ -188,25 +245,38 @@
 		fetchData()
 	}
 
+	// 添加选项
+	const addOption = () => {
+		formData.value.options.push('')
+	}
+
+	// 删除选项
+	const removeOption = (index) => {
+		formData.value.options.splice(index, 1)
+	}
+
 	// 新增
 	const handleAdd = () => {
-		formTitle.value = '新增用户'
+		formTitle.value = '新增题目'
 		isEdit.value = false
 		formData.value = {
-			name: '',
-			id_card: '',
-			phone: '',
-			pwd: ''
+			type: 'single_choice',
+			content: '',
+			options: ['', ''],
+			answer: '',
+			score: 1,
+			difficulty: 3
 		}
 		formPopup.value.open()
 	}
 
 	// 编辑
 	const handleEdit = (row) => {
-		formTitle.value = '编辑用户'
+		formTitle.value = '编辑题目'
 		isEdit.value = true
 		formData.value = {
-			...row
+			...row,
+			options: [...row.options] || ['', '']
 		}
 		formPopup.value.open()
 	}
@@ -215,11 +285,11 @@
 	const handleDelete = async (id) => {
 		uni.showModal({
 			title: '提示',
-			content: '确定要删除该用户吗？',
+			content: '确定要删除该题目吗？',
 			success: async (res) => {
 				if (res.confirm) {
 					try {
-						const result = await deleteUser({
+						const result = await deleteQuestion({
 							id
 						})
 						if (result.code === 200) {
@@ -257,9 +327,9 @@
 
 			let result
 			if (isEdit.value) {
-				result = await updateUser(formData.value)
+				result = await updateQuestion(formData.value)
 			} else {
-				result = await addUser(formData.value)
+				result = await addQuestion(formData.value)
 			}
 
 			if (result.code === 200) {
@@ -282,7 +352,13 @@
 
 	// 格式化时间
 	const myFormatTime = (timestamp) => {
-		return formatTime(timestamp, 'YYYY-MM-DD hh:mm:ss')
+		return formatTime(timestamp, 'YYYY-MM-DD hh:mm')
+	}
+
+	// 获取题目类型文本
+	const getQuestionTypeText = (type) => {
+		const option = questionTypes.find(item => item.value === type)
+		return option ? option.text : type
 	}
 </script>
 

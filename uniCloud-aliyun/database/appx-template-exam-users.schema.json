@@ -1,0 +1,32 @@
+{
+	"bsonType": "object",
+	"description": "考生表",
+	"required": [],
+	"properties": {
+		"_id": {
+			"description": "考生ID",
+			"bsonType": "string"
+		},
+		"username": {
+			"description": "用户名",
+			"bsonType": "string",
+			"trim": true,
+			"minLength": 2,
+			"maxLength": 20
+		},
+		"password": {
+			"description": "密码",
+			"bsonType": "string",
+			"trim": true,
+			"minLength": 6,
+			"maxLength": 20
+		},
+		"create_time": {
+			"description": "注册时间",
+			"bsonType": "timestamp",
+			"defaultValue": {
+				"$env": "now"
+			}
+		}
+	}
+}

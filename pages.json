@@ -167,6 +167,30 @@
 			"style": {
 				"navigationBarTitleText": "试卷设置"
 			}
+		},
+		{
+			"path": "pages/test/question-manage/index",
+			"style": {
+				"navigationBarTitleText": "题目管理"
+			}
+		},
+		{
+			"path": "pages/test/paper-questions/index",
+			"style": {
+				"navigationBarTitleText": "试卷题目"
+			}
+		},
+		{
+			"path": "pages/test/exam-records/index",
+			"style": {
+				"navigationBarTitleText": "考试记录"
+			}
+		},
+		{
+			"path": "pages/test/exam-records/detail",
+			"style": {
+				"navigationBarTitleText": "考试记录详情"
+			}
 		}
 	],
 	"subPackages": [{

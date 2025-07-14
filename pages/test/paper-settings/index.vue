@@ -2,9 +2,11 @@
 	<view class="container">
 		<!-- 搜索栏 -->
 		<view class="search-bar">
-			<uni-easyinput class="inp" suffixIcon="search" clearable v-model="searchName" placeholder="请输入姓名"
-				@iconClick="handleSearch"></uni-easyinput>
-			<button type="primary" @click="handleAdd">新增</button>
+			<view class="filter-item">
+				<uni-easyinput class="item-content inp" suffixIcon="search" clearable v-model="searchName"
+					placeholder="请输入姓名" @iconClick="handleSearch"></uni-easyinput>
+			</view>
+			<button class="filter-add-btn" type="primary" @click="handleAdd">新增</button>
 		</view>
 
 		<!-- 表格 -->
@@ -52,8 +54,8 @@
 							<uni-easyinput v-model="formData.name" placeholder="请输入试卷名称" />
 						</uni-forms-item>
 						<uni-forms-item label="考试封面">
-							<uni-file-picker :modelValue="urlArrToFileArr(formData.url)" fileMediatype="image" mode="grid"
-								:limit="1" :del-icon="true" :auto-upload="true" @success="uploadSuccess"
+							<uni-file-picker :modelValue="urlArrToFileArr(formData.url)" fileMediatype="image"
+								mode="grid" :limit="1" :del-icon="true" :auto-upload="true" @success="uploadSuccess"
 								@fail="uploadFail" @delete="deleteFile" />
 						</uni-forms-item>
 						<uni-forms-item label="考试人员" required>
@@ -490,7 +492,7 @@
 	}
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 	.container {
 		padding: 20rpx;
 	}
@@ -499,36 +501,49 @@
 		display: flex;
 		align-items: center;
 		margin-bottom: 20rpx;
-	}
 
-	.search-bar button {
-		margin-left: 20rpx;
-	}
+		.filter-item {
+			display: flex;
+			margin-right: 20rpx;
 
-	::v-deep .search-bar .inp .uni-easyinput__content {
-		width: 400rpx;
-	}
+			.item-content {
+				width: 300rpx;
 
-	.action-buttons button {
-		margin: 0 5rpx;
+				&.inp {
+					flex: unset;
+					height: 35px;
+
+					::v-deep .uni-easyinput__content-input {
+						height: 33px;
+					}
+				}
+			}
+
+		}
+
+		.filter-add-btn {
+			height: 35px;
+			margin: 0;
+			font-size: 14px;
+			line-height: 35px;
+		}
 	}
 
 	.uni-table {
 		margin-bottom: 20rpx;
+
+		.action-buttons button {
+			margin: 0 5rpx;
+		}
 	}
 
-	.time-picker {
+	.option-item {
 		display: flex;
 		align-items: center;
-	}
+		margin-bottom: 10rpx;
 
-	.time-picker text {
-		margin: 0 10rpx;
-	}
-
-	.selected-users {
-		margin-top: 10rpx;
-		font-size: 12px;
-		color: #666;
+		button {
+			margin-left: 10rpx;
+		}
 	}
 </style>
