@@ -157,41 +157,35 @@
 			}
 		},
 		{
-			"path": "pages/test/test-user/index",
+			"path": "pages/test/answer-records/index",
 			"style": {
-				"navigationBarTitleText": "考试人员"
+				"navigationBarTitleText": "考试答题记录"
 			}
 		},
 		{
-			"path": "pages/test/paper-settings/index",
+			"path": "pages/test/answer-records/detail",
 			"style": {
-				"navigationBarTitleText": "试卷设置"
+				"navigationBarTitleText": "考试答题记录详情"
 			}
 		},
 		{
-			"path": "pages/test/question-manage/index",
+			"path": "pages/test/exams/index",
 			"style": {
-				"navigationBarTitleText": "题目管理"
+				"navigationBarTitleText": "考试管理"
 			}
 		},
 		{
-			"path": "pages/test/paper-questions/index",
+			"path": "pages/test/questions/index",
 			"style": {
-				"navigationBarTitleText": "试卷题目"
+				"navigationBarTitleText": "考试题目管理"
 			}
 		},
 		{
-			"path": "pages/test/exam-records/index",
+			"path": "pages/test/users/index",
 			"style": {
-				"navigationBarTitleText": "考试记录"
+				"navigationBarTitleText": "用户管理"
 			}
 		},
-		{
-			"path": "pages/test/exam-records/detail",
-			"style": {
-				"navigationBarTitleText": "考试记录详情"
-			}
-		}
 	],
 	"subPackages": [{
 			"root": "pages/system",

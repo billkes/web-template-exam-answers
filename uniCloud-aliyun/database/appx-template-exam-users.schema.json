@@ -21,6 +21,18 @@
 			"minLength": 6,
 			"maxLength": 20
 		},
+		"mobile": {
+			"description": "手机号",
+			"bsonType": "string",
+			"trim": true,
+			"pattern": "^1[3-9]\\d{9}$"
+		},
+		"status": {
+			"description": "状态(1-正常,0-禁用)",
+			"bsonType": "int",
+			"enum": [0, 1],
+			"defaultValue": 1
+		},
 		"create_time": {
 			"description": "注册时间",
 			"bsonType": "timestamp",

@@ -23,8 +23,6 @@ exports.main = async (event, context) => {
 				return await getExamList(params);
 			case 'changeStatus':
 				return await changeExamStatus(params.id, params.status);
-			case 'getActiveExams':
-				return await getActiveExams(params);
 			default:
 				return {
 					code: 400,
@@ -32,7 +30,7 @@ exports.main = async (event, context) => {
 				};
 		}
 	} catch (error) {
-		console.error('考试云函数错误:', error);
+		console.error('考试管理云函数错误:', error);
 		return {
 			code: 500,
 			message: '服务器内部错误',
@@ -43,7 +41,7 @@ exports.main = async (event, context) => {
 
 // 创建考试
 async function createExam(data) {
-	const requiredFields = ['title', 'start_time', 'end_time', 'duration'];
+	const requiredFields = ['name', 'start_time', 'end_time', 'duration', 'total_score'];
 	const missingFields = requiredFields.filter(field => !data[field]);
 
 	if (missingFields.length > 0) {
@@ -53,14 +51,26 @@ async function createExam(data) {
 		};
 	}
 
-	// 自动计算状态
-	const now = Date.now();
-	data.status = now > data.end_time ? 2 : (now >= data.start_time ? 1 : 0);
+	// 检查时间有效性
+	if (new Date(data.end_time) <= new Date(data.start_time)) {
+		return {
+			code: 400,
+			message: '结束时间必须晚于开始时间'
+		};
+	}
 
-	const res = await collection.add({
-		...data,
+	const examData = {
+		name: data.name,
+		description: data.description || '',
+		start_time: data.start_time,
+		end_time: data.end_time,
+		duration: parseInt(data.duration),
+		total_score: parseFloat(data.total_score),
+		status: data.status || 1,
 		create_time: Date.now()
-	});
+	};
+
+	const res = await collection.add(examData);
 
 	return {
 		code: 200,
@@ -83,11 +93,24 @@ async function updateExam(data) {
 	const id = data._id;
 	delete data._id;
 
-	// 禁止修改的字段
-	delete data.create_time;
-	delete data.status; // 状态由系统自动计算
+	// 检查时间有效性
+	if (data.end_time && data.start_time && new Date(data.end_time) <= new Date(data.start_time)) {
+		return {
+			code: 400,
+			message: '结束时间必须晚于开始时间'
+		};
+	}
 
-	const res = await collection.doc(id).update(data);
+	// 准备更新数据
+	const updateData = {};
+	if (data.name) updateData.name = data.name;
+	if (data.description !== undefined) updateData.description = data.description;
+	if (data.start_time) updateData.start_time = data.start_time;
+	if (data.end_time) updateData.end_time = data.end_time;
+	if (data.duration) updateData.duration = parseInt(data.duration);
+	if (data.total_score) updateData.total_score = parseFloat(data.total_score);
+
+	const res = await collection.doc(id).update(updateData);
 
 	if (res.updated === 0) {
 		return {
@@ -96,28 +119,10 @@ async function updateExam(data) {
 		};
 	}
 
-	// 自动更新状态
-	await updateAutoStatus(id);
-
 	return {
 		code: 200,
 		message: '更新成功'
 	};
-}
-
-// 自动更新考试状态
-async function updateAutoStatus(id) {
-	const exam = (await collection.doc(id).get()).data[0];
-	if (!exam) return;
-
-	const now = Date.now();
-	let newStatus = now > exam.end_time ? 2 : (now >= exam.start_time ? 1 : 0);
-
-	if (exam.status !== newStatus) {
-		await collection.doc(id).update({
-			status: newStatus
-		});
-	}
 }
 
 // 删除考试
@@ -129,7 +134,20 @@ async function deleteExam(id) {
 		};
 	}
 
-	// 实际生产环境建议软删除
+	// 检查是否有考试记录
+	const examRecordCount = await db.collection('appx-template-exam-answer-records')
+		.where({
+			exam_id: id
+		})
+		.count();
+
+	if (examRecordCount.total > 0) {
+		return {
+			code: 403,
+			message: '该考试已有答题记录，不可删除'
+		};
+	}
+
 	const res = await collection.doc(id).remove();
 
 	if (res.deleted === 0) {
@@ -172,9 +190,8 @@ async function getExam(id) {
 // 获取考试列表（分页+筛选）
 async function getExamList(params = {}) {
 	const {
-		title,
+		keyword,
 		status,
-		start_time_range,
 		page = 1,
 		pageSize = 10,
 		sortField = 'create_time',
@@ -182,16 +199,16 @@ async function getExamList(params = {}) {
 	} = params;
 
 	const where = {};
-	if (title) where.title = new RegExp(title, 'i');
-	if (status !== undefined) where.status = status;
-
-	// 时间范围查询
-	if (start_time_range && start_time_range.length === 2) {
-		where.start_time = dbCmd.and([
-			dbCmd.gte(start_time_range[0]),
-			dbCmd.lte(start_time_range[1])
-		]);
+	if (keyword) {
+		where.$or = [{
+				name: new RegExp(keyword, 'i')
+			},
+			{
+				description: new RegExp(keyword, 'i')
+			}
+		];
 	}
+	if (status !== undefined) where.status = status;
 
 	const res = await collection
 		.where(where)
@@ -205,7 +222,7 @@ async function getExamList(params = {}) {
 	return {
 		code: 200,
 		data: {
-			list: res.data,
+			rows: res.data,
 			total: countRes.total,
 			page,
 			pageSize
@@ -213,32 +230,9 @@ async function getExamList(params = {}) {
 	};
 }
 
-// 获取进行中的考试
-async function getActiveExams(params = {}) {
-	const {
-		limit = 5
-	} = params;
-	const now = Date.now();
-
-	const res = await collection
-		.where({
-			start_time: dbCmd.lte(now),
-			end_time: dbCmd.gte(now),
-			status: 1
-		})
-		.orderBy('end_time', 'asc') // 即将结束的排前面
-		.limit(limit)
-		.get();
-
-	return {
-		code: 200,
-		data: res.data
-	};
-}
-
-// 手动修改考试状态
+// 修改考试状态
 async function changeExamStatus(id, status) {
-	if (![0, 1, 2].includes(status)) {
+	if (![0, 1].includes(status)) {
 		return {
 			code: 400,
 			message: '状态值无效'

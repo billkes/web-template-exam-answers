@@ -3,16 +3,8 @@
 		<!-- 搜索栏 -->
 		<view class="search-bar">
 			<view class="filter-item">
-				<uni-easyinput class="item-content inp" suffixIcon="search" clearable v-model="searchContent"
-					placeholder="请输入题目内容" @iconClick="handleSearch"></uni-easyinput>
-			</view>
-			<view class="filter-item">
-				<uni-data-select class="item-content" v-model="searchType" :localdata="questionTypes"
-					placeholder="题目类型" />
-			</view>
-			<view class="filter-item">
-				<uni-data-select class="item-content" v-model="searchDifficulty" :localdata="difficultyLevels"
-					placeholder="难度" />
+				<uni-easyinput class="item-content inp" suffixIcon="search" clearable v-model="searchKeyword"
+					placeholder="请输入题目内容或类型" @iconClick="handleSearch"></uni-easyinput>
 			</view>
 			<button class="filter-add-btn" type="primary" @click="handleAdd">新增</button>
 		</view>
@@ -23,21 +15,21 @@
 				<uni-th width="80" align="center">序号</uni-th>
 				<uni-th width="150" align="center">题目内容</uni-th>
 				<uni-th width="100" align="center">题目类型</uni-th>
-				<uni-th width="80" align="center">分值</uni-th>
-				<uni-th width="80" align="center">难度</uni-th>
+				<uni-th width="120" align="center">所属考试</uni-th>
+				<uni-th width="100" align="center">分值</uni-th>
 				<uni-th width="180" align="center">创建时间</uni-th>
 				<uni-th width="120" align="center">操作</uni-th>
 			</uni-tr>
 			<uni-tr v-for="(item, index) in tableData" :key="item._id">
 				<uni-td align="center">{{ (pageNum - 1) * pageSize + index + 1 }}</uni-td>
 				<uni-td align="center">{{ item.content }}</uni-td>
-				<uni-td align="center">{{ getQuestionTypeText(item.type) }}</uni-td>
+				<uni-td align="center">{{ formatQuestionType(item.type) }}</uni-td>
+				<uni-td align="center">{{ item.exam_name }}</uni-td>
 				<uni-td align="center">{{ item.score }}</uni-td>
-				<uni-td align="center">{{ item.difficulty }}</uni-td>
 				<uni-td align="center">{{ myFormatTime(item.create_time) }}</uni-td>
 				<uni-td align="center">
 					<view class="action-buttons">
-						<button type="primary" size="mini" @click="handleEdit(item)">编辑</button>
+						<button type="primary" size="mini" @click="handleEdit(item._id)">编辑</button>
 						<button type="warn" size="mini" @click="handleDelete(item._id)">删除</button>
 					</view>
 				</uni-td>
@@ -52,29 +44,28 @@
 			<uni-popup-dialog :title="formTitle" mode="base" :before-close="true" @close="closeDialog"
 				@confirm="submitForm">
 				<uni-forms ref="form" :modelValue="formData" :rules="rules">
-					<uni-forms-item label="题目类型" name="type" required>
-						<uni-data-select v-model="formData.type" :localdata="questionTypes" />
-					</uni-forms-item>
-					<uni-forms-item label="题目内容" name="content" required>
+					<uni-forms-item label="题目内容" name="content">
 						<uni-easyinput type="textarea" v-model="formData.content" placeholder="请输入题目内容" />
 					</uni-forms-item>
-					<uni-forms-item label="选项" v-if="formData.type !== 'fill_blank'" required>
-						<view class="option-item" v-for="(option, idx) in formData.options" :key="idx">
-							<uni-easyinput v-model="formData.options[idx]" :placeholder="'请输入选项' + (idx + 1)" />
-							<button size="mini" type="warn" @click="removeOption(idx)"
-								v-if="formData.options.length > 1">删除</button>
-						</view>
-						<button type="default" size="mini" @click="addOption">添加选项</button>
+					<uni-forms-item label="题目类型" name="type">
+						<uni-data-select v-model="formData.type" :localdata="questionTypes"
+							placeholder="请选择题目类型"></uni-data-select>
 					</uni-forms-item>
-					<uni-forms-item label="正确答案" name="answer" required>
-						<uni-easyinput v-model="formData.answer"
-							:placeholder="formData.type === 'single_choice' ? '请输入正确答案(如A)' : '请输入正确答案(多个答案用逗号分隔,如A,B)'" />
+					<uni-forms-item label="所属考试ID" name="exam_id">
+						<uni-easyinput v-model="formData.exam_id" placeholder="请输入所属考试ID" />
 					</uni-forms-item>
-					<uni-forms-item label="分值" name="score" required>
-						<uni-number-box v-model="formData.score" :min="0" :step="0.5" />
+					<uni-forms-item label="分值" name="score">
+						<uni-easyinput type="number" v-model="formData.score" placeholder="请输入分值" />
 					</uni-forms-item>
-					<uni-forms-item label="难度" name="difficulty" required>
-						<uni-number-box v-model="formData.difficulty" :min="1" :max="5" />
+					<uni-forms-item label="选项(JSON)" name="options"
+						v-if="formData.type === 'single' || formData.type === 'multiple'">
+						<uni-easyinput type="textarea" v-model="formData.options" placeholder="请输入选项(JSON格式)" />
+					</uni-forms-item>
+					<uni-forms-item label="正确答案" name="answer">
+						<uni-easyinput v-model="formData.answer" placeholder="请输入正确答案" />
+					</uni-forms-item>
+					<uni-forms-item label="答案解析" name="analysis">
+						<uni-easyinput type="textarea" v-model="formData.analysis" placeholder="请输入答案解析" />
 					</uni-forms-item>
 				</uni-forms>
 			</uni-popup-dialog>
@@ -88,11 +79,12 @@
 		onMounted
 	} from 'vue'
 	import {
-		getQuestionList,
-		addQuestion,
+		createQuestion,
 		updateQuestion,
-		deleteQuestion
-	} from '@/api/testQuestions.js'
+		deleteQuestion,
+		getQuestionList,
+		getQuestion
+	} from '@/api/appx-template-exam-questions.js'
 	import {
 		formatTime
 	} from '@/utils/tableUtil.js'
@@ -102,70 +94,90 @@
 	const total = ref(0)
 	const pageNum = ref(1)
 	const pageSize = ref(10)
-	const searchContent = ref('')
-	const searchType = ref('')
-	const searchDifficulty = ref('')
+	const searchKeyword = ref('')
 
-	// 题目类型选项
-	const questionTypes = [{
-			value: 'single_choice',
+	// 题目类型
+	const questionTypes = ref([{
+			value: 'single',
 			text: '单选题'
 		},
 		{
-			value: 'multiple_choice',
+			value: 'multiple',
 			text: '多选题'
+		},
+		{
+			value: 'judge',
+			text: '判断题'
+		},
+		{
+			value: 'fill',
+			text: '填空题'
+		},
+		{
+			value: 'answer',
+			text: '问答题'
 		}
-	]
-
-	// 难度级别
-	const difficultyLevels = [{
-			value: 1,
-			text: '1星'
-		},
-		{
-			value: 2,
-			text: '2星'
-		},
-		{
-			value: 3,
-			text: '3星'
-		},
-		{
-			value: 4,
-			text: '4星'
-		},
-		{
-			value: 5,
-			text: '5星'
-		}
-	]
+	])
 
 	// 表单相关
 	const formPopup = ref(null)
 	const form = ref(null)
 	const formTitle = ref('新增题目')
 	const formData = ref({
-		type: 'single_choice',
 		content: '',
-		options: ['', ''],
+		type: 'single',
+		exam_id: '',
+		score: 5,
+		options: '[]',
 		answer: '',
-		score: 1,
-		difficulty: 3
+		analysis: ''
 	})
 	const isEdit = ref(false)
 
 	// 表单验证规则
 	const rules = {
+		content: {
+			rules: [{
+				required: true,
+				errorMessage: '请输入题目内容'
+			}]
+		},
 		type: {
 			rules: [{
 				required: true,
 				errorMessage: '请选择题目类型'
 			}]
 		},
-		content: {
+		exam_id: {
 			rules: [{
 				required: true,
-				errorMessage: '请输入题目内容'
+				errorMessage: '请输入所属考试ID'
+			}]
+		},
+		score: {
+			rules: [{
+				required: true,
+				errorMessage: '请输入分值'
+			}, {
+				pattern: '^[0-9]+(\\.[0-9]{1,2})?$',
+				errorMessage: '请输入正确的分数格式'
+			}]
+		},
+		options: {
+			rules: [{
+				validateFunction: (rule, value, data, callback) => {
+					if ((formData.value.type === 'single' || formData.value.type === 'multiple') && !
+						value) {
+						callback('请输入选项')
+					} else {
+						try {
+							JSON.parse(value)
+							callback()
+						} catch (e) {
+							callback('选项必须是有效的JSON格式')
+						}
+					}
+				}
 			}]
 		},
 		answer: {
@@ -173,29 +185,6 @@
 				required: true,
 				errorMessage: '请输入正确答案'
 			}]
-		},
-		score: {
-			rules: [{
-					required: true,
-					errorMessage: '请输入分值'
-				},
-				{
-					minimum: 0,
-					errorMessage: '分值不能为负数'
-				}
-			]
-		},
-		difficulty: {
-			rules: [{
-					required: true,
-					errorMessage: '请选择难度'
-				},
-				{
-					minimum: 1,
-					maximum: 5,
-					errorMessage: '难度等级为1-5'
-				}
-			]
 		}
 	}
 
@@ -209,9 +198,7 @@
 		const params = {
 			pageNum: pageNum.value,
 			pageSize: pageSize.value,
-			content: searchContent.value,
-			type: searchType.value,
-			difficulty: searchDifficulty.value
+			keyword: searchKeyword.value
 		}
 
 		try {
@@ -245,40 +232,48 @@
 		fetchData()
 	}
 
-	// 添加选项
-	const addOption = () => {
-		formData.value.options.push('')
-	}
-
-	// 删除选项
-	const removeOption = (index) => {
-		formData.value.options.splice(index, 1)
-	}
-
 	// 新增
 	const handleAdd = () => {
 		formTitle.value = '新增题目'
 		isEdit.value = false
 		formData.value = {
-			type: 'single_choice',
 			content: '',
-			options: ['', ''],
+			type: 'single',
+			exam_id: '',
+			score: 5,
+			options: '[]',
 			answer: '',
-			score: 1,
-			difficulty: 3
+			analysis: ''
 		}
 		formPopup.value.open()
 	}
 
 	// 编辑
-	const handleEdit = (row) => {
-		formTitle.value = '编辑题目'
-		isEdit.value = true
-		formData.value = {
-			...row,
-			options: [...row.options] || ['', '']
+	const handleEdit = async (id) => {
+		try {
+			const res = await getQuestion({
+				id
+			})
+			if (res.code === 200) {
+				formTitle.value = '编辑题目'
+				isEdit.value = true
+				formData.value = {
+					...res.data,
+					options: JSON.stringify(res.data.options || [])
+				}
+				formPopup.value.open()
+			} else {
+				uni.showToast({
+					title: res.message,
+					icon: 'none'
+				})
+			}
+		} catch (error) {
+			uni.showToast({
+				title: '获取题目详情失败',
+				icon: 'none'
+			})
 		}
-		formPopup.value.open()
 	}
 
 	// 删除
@@ -325,11 +320,26 @@
 		try {
 			await form.value.validate()
 
+			// 处理options字段，尝试转换为JSON
+			if (formData.value.type === 'single' || formData.value.type === 'multiple') {
+				try {
+					formData.value.options = JSON.parse(formData.value.options)
+				} catch (e) {
+					uni.showToast({
+						title: '选项必须是有效的JSON格式',
+						icon: 'none'
+					})
+					return
+				}
+			} else {
+				formData.value.options = []
+			}
+
 			let result
 			if (isEdit.value) {
 				result = await updateQuestion(formData.value)
 			} else {
-				result = await addQuestion(formData.value)
+				result = await createQuestion(formData.value)
 			}
 
 			if (result.code === 200) {
@@ -352,13 +362,19 @@
 
 	// 格式化时间
 	const myFormatTime = (timestamp) => {
-		return formatTime(timestamp, 'YYYY-MM-DD hh:mm')
+		return formatTime(timestamp, 'YYYY-MM-DD hh:mm:ss')
 	}
 
-	// 获取题目类型文本
-	const getQuestionTypeText = (type) => {
-		const option = questionTypes.find(item => item.value === type)
-		return option ? option.text : type
+	// 格式化题目类型
+	const formatQuestionType = (type) => {
+		const typeMap = {
+			'single': '单选题',
+			'multiple': '多选题',
+			'judge': '判断题',
+			'fill': '填空题',
+			'answer': '问答题'
+		}
+		return typeMap[type] || type
 	}
 </script>
 
@@ -388,7 +404,6 @@
 					}
 				}
 			}
-
 		}
 
 		.filter-add-btn {
@@ -404,16 +419,6 @@
 
 		.action-buttons button {
 			margin: 0 5rpx;
-		}
-	}
-
-	.option-item {
-		display: flex;
-		align-items: center;
-		margin-bottom: 10rpx;
-
-		button {
-			margin-left: 10rpx;
 		}
 	}
 </style>

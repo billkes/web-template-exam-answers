@@ -21,7 +21,7 @@ exports.main = async (event, context) => {
 			case 'updateUser':
 				return await updateUser(params);
 			case 'resetPassword':
-				return await resetPassword(params.id, params.newPassword);
+				return await resetPassword(params.id);
 			case 'list':
 				return await getUserList(params);
 			case 'delete':
@@ -42,7 +42,7 @@ exports.main = async (event, context) => {
 	}
 };
 
-// 用户注册
+// 用户注册 - 补充mobile和status字段处理
 async function registerUser(data) {
 	const requiredFields = ['username', 'password'];
 	const missingFields = requiredFields.filter(field => !data[field]);
@@ -66,14 +66,36 @@ async function registerUser(data) {
 		};
 	}
 
+	// 手机号唯一性检查（如果提供了手机号）
+	if (data.mobile) {
+		const existMobile = await collection.where({
+			mobile: data.mobile
+		}).count();
+
+		if (existMobile.total > 0) {
+			return {
+				code: 400,
+				message: '手机号已被注册'
+			};
+		}
+	}
+
 	// 密码加密处理
 	const encryptedPassword = encryptPassword(data.password);
 
-	const res = await collection.add({
+	const userData = {
 		username: data.username,
 		password: encryptedPassword,
+		status: data.status || 1, // 默认状态为1(正常)
 		create_time: Date.now()
-	});
+	};
+
+	// 如果有手机号则添加
+	if (data.mobile) {
+		userData.mobile = data.mobile;
+	}
+
+	const res = await collection.add(userData);
 
 	return {
 		code: 200,
@@ -150,6 +172,7 @@ async function getUserInfo(id) {
 }
 
 // 更新用户信息
+// 更新用户信息 - 补充mobile和status字段处理
 async function updateUser(data) {
 	if (!data._id) {
 		return {
@@ -180,6 +203,21 @@ async function updateUser(data) {
 		}
 	}
 
+	// 如果修改手机号需要检查唯一性
+	if (data.mobile) {
+		const existMobile = await collection.where({
+			mobile: data.mobile,
+			_id: dbCmd.neq(id)
+		}).count();
+
+		if (existMobile.total > 0) {
+			return {
+				code: 400,
+				message: '手机号已被使用'
+			};
+		}
+	}
+
 	const res = await collection.doc(id).update(data);
 
 	if (res.updated === 0) {
@@ -196,23 +234,16 @@ async function updateUser(data) {
 }
 
 // 重置密码
-async function resetPassword(id, newPassword) {
-	if (!id || !newPassword) {
+async function resetPassword(id) {
+	if (!id) {
 		return {
 			code: 400,
 			message: '参数不完整'
 		};
 	}
 
-	if (newPassword.length < 6) {
-		return {
-			code: 400,
-			message: '密码长度不能少于6位'
-		};
-	}
-
 	const res = await collection.doc(id).update({
-		password: encryptPassword(newPassword)
+		password: encryptPassword('123456')
 	});
 
 	if (res.updated === 0) {
@@ -228,7 +259,7 @@ async function resetPassword(id, newPassword) {
 	};
 }
 
-// 获取用户列表
+// 获取用户列表 - 补充mobile字段搜索
 async function getUserList(params = {}) {
 	const {
 		keyword,
@@ -239,7 +270,15 @@ async function getUserList(params = {}) {
 	} = params;
 
 	const where = {};
-	if (keyword) where.username = new RegExp(keyword, 'i');
+	if (keyword) {
+		where.$or = [{
+				username: new RegExp(keyword, 'i')
+			},
+			{
+				mobile: new RegExp(keyword, 'i')
+			}
+		];
+	}
 
 	const res = await collection
 		.where(where)
