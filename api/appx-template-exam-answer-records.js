@@ -5,7 +5,7 @@
 // 获取考试记录列表
 export function getRecordList(params) {
 	return uniCloud.callFunction({
-		name: 'appx-template-exam-answer-records',
+		name: 'appx-template-exam-records',
 		data: {
 			action: 'list',
 			params
@@ -16,7 +16,7 @@ export function getRecordList(params) {
 // 获取考试记录详情
 export function getRecordDetail(params) {
 	return uniCloud.callFunction({
-		name: 'appx-template-exam-answer-records',
+		name: 'appx-template-exam-records',
 		data: {
 			action: 'detail',
 			params
@@ -27,7 +27,7 @@ export function getRecordDetail(params) {
 // 添加考试记录
 export function addRecord(data) {
 	return uniCloud.callFunction({
-		name: 'appx-template-exam-answer-records',
+		name: 'appx-template-exam-records',
 		data: {
 			action: 'add',
 			params: data
@@ -38,7 +38,7 @@ export function addRecord(data) {
 // 更新考试记录
 export function updateRecord(data) {
 	return uniCloud.callFunction({
-		name: 'appx-template-exam-answer-records',
+		name: 'appx-template-exam-records',
 		data: {
 			action: 'update',
 			params: data
@@ -49,7 +49,7 @@ export function updateRecord(data) {
 // 删除考试记录
 export function deleteRecord(params) {
 	return uniCloud.callFunction({
-		name: 'appx-template-exam-answer-records',
+		name: 'appx-template-exam-records',
 		data: {
 			action: 'delete',
 			params
@@ -60,7 +60,7 @@ export function deleteRecord(params) {
 // 获取用户某试卷的考试记录
 export function getUserPaperRecords(params) {
 	return uniCloud.callFunction({
-		name: 'appx-template-exam-answer-records',
+		name: 'appx-template-exam-records',
 		data: {
 			action: 'userPaperRecords',
 			params
@@ -71,7 +71,7 @@ export function getUserPaperRecords(params) {
 // 批量添加考试记录
 export function batchAddRecords(data) {
 	return uniCloud.callFunction({
-		name: 'appx-template-exam-answer-records',
+		name: 'appx-template-exam-records',
 		data: {
 			action: 'batchAdd',
 			params: data
