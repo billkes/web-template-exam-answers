@@ -185,7 +185,7 @@
 			"style": {
 				"navigationBarTitleText": "用户管理"
 			}
-		},
+		}
 	],
 	"subPackages": [{
 			"root": "pages/system",

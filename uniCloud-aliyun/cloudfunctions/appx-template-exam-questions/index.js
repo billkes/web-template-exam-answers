@@ -10,6 +10,7 @@ exports.main = async (event, context) => {
 	} = event;
 
 	try {
+		console.log(action);
 		switch (action) {
 			case 'create':
 				return await createQuestion(params);
@@ -336,22 +337,17 @@ async function validateAnswer(question_id, user_answer) {
 
 // 验证选项结构
 function validateOptions(options, questionType) {
-	if (!Array.isArray(options) || options.length < 2) {
+	if (!Array.isArray(options)) {
 		return false;
 	}
 
 	// 检查每个选项的结构
 	const isValid = options.every(opt => {
-		return opt.id && opt.content &&
-			typeof opt.is_correct === 'boolean';
+		return opt.key && opt.value && typeof opt.key === 'string' && typeof opt.value === 'string';
 	});
 
-	// 检查正确答案数量
-	const correctCount = options.filter(opt => opt.is_correct).length;
-	if (questionType === 1 && correctCount !== 1) { // 单选必须且只能有1个正确答案
-		return false;
-	}
-	if (questionType === 2 && correctCount < 1) { // 多选至少1个正确答案
+	// 对于选择题，至少需要2个选项
+	if ((questionType === 'single' || questionType === 'multiple') && options.length < 2) {
 		return false;
 	}
 
