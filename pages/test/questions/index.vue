@@ -4,7 +4,7 @@
 		<view class="search-bar">
 			<view class="filter-item">
 				<uni-easyinput class="item-content inp" suffixIcon="search" clearable v-model="searchKeyword"
-					placeholder="请输入题目内容或类型" @iconClick="handleSearch"></uni-easyinput>
+					placeholder="请输入题目内容" @iconClick="handleSearch"></uni-easyinput>
 			</view>
 			<button class="filter-add-btn" type="primary" @click="handleAdd">新增</button>
 		</view>

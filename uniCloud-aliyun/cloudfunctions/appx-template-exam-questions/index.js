@@ -238,13 +238,31 @@ async function getQuestionList(params = {}) {
 	if (type) where.type = type;
 	if (keyword) where.content = new RegExp(keyword, 'i');
 
-	const res = await collection
-		.where(where)
-		.orderBy(sortField, sortOrder)
+	// 使用聚合查询关联考试表获取考试名称
+	const aggregate = db.collection('appx-template-exam-questions')
+		.aggregate()
+		.match(where)
+		.lookup({
+			from: 'appx-template-exam-exams',
+			localField: 'exam_id',
+			foreignField: '_id',
+			as: 'exam_info'
+		})
+		.addFields({
+			exam_name: {
+				$arrayElemAt: ['$exam_info.name', 0]
+			}
+		})
+		.project({
+			exam_info: 0 // 移除临时字段，只保留exam_name
+		})
+		.sort({
+			[sortField]: sortOrder === 'desc' ? -1 : 1
+		})
 		.skip((page - 1) * pageSize)
-		.limit(pageSize)
-		.get();
+		.limit(pageSize);
 
+	const res = await aggregate.end();
 	const countRes = await collection.where(where).count();
 
 	return {
@@ -272,17 +290,33 @@ async function getExamQuestions(exam_id, type) {
 	};
 	if (type) where.type = type;
 
-	const res = await collection
-		.where(where)
-		.orderBy('create_time', 'asc')
-		.get();
+	// 使用聚合查询关联考试表获取考试名称
+	const aggregate = db.collection('appx-template-exam-questions')
+		.aggregate()
+		.match(where)
+		.lookup({
+			from: 'appx-template-exam-exams',
+			localField: 'exam_id',
+			foreignField: '_id',
+			as: 'exam_info'
+		})
+		.addFields({
+			exam_name: {
+				$arrayElemAt: ['$exam_info.name', 0]
+			}
+		})
+		.project({
+			exam_info: 0
+		})
+		.sort({
+			create_time: 1
+		});
 
-	// 管理后台场景需要显示正确答案
-	const questions = res.data;
+	const res = await aggregate.end();
 
 	return {
 		code: 200,
-		data: questions
+		data: res.data
 	};
 }
 
