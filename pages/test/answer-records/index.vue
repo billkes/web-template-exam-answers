@@ -35,6 +35,7 @@
 				<uni-td align="center">{{ myFormatTime(item.answer_time || item.create_time) }}</uni-td>
 				<uni-td align="center">
 					<view class="action-buttons">
+						<button type="primary" size="mini" @click="handleEdit(item._id)">编辑</button>
 						<button type="warn" size="mini" @click="handleDelete(item._id)">删除</button>
 					</view>
 				</uni-td>
@@ -290,6 +291,44 @@
 				}
 			}
 		})
+	}
+
+	// 编辑
+	const handleEdit = async (id) => {
+		try {
+			const res = await getRecordDetail({
+				id
+			})
+			if (res.code === 200) {
+				formTitle.value = '编辑考试记录'
+				isEdit.value = true
+
+				// 处理数据映射
+				const record = res.data
+				formData.value = {
+					_id: record._id,
+					user_id: record.user_id,
+					paper_id: record.exam_id, // 将exam_id映射为paper_id
+					question_id: record.question_id,
+					score: record.score || 0,
+					is_correct: record.is_correct ? 1 : 0
+				}
+
+				// 确保选择数据已加载
+				await loadSelectData()
+				formPopup.value.open()
+			} else {
+				uni.showToast({
+					title: res.message,
+					icon: 'none'
+				})
+			}
+		} catch (error) {
+			uni.showToast({
+				title: '获取记录详情失败',
+				icon: 'none'
+			})
+		}
 	}
 
 	// 关闭弹窗
