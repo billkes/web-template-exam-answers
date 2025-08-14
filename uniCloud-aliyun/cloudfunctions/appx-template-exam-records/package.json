@@ -1,0 +1,7 @@
+{
+  "name": "appxTemplateExamAnswerRecords",
+  "dependencies": {},
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}
