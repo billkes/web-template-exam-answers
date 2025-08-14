@@ -212,12 +212,9 @@ async function getQuestion(id) {
 		};
 	}
 
-	// 隐藏正确答案（根据业务需求决定）
+	// 获取题目详情时不隐藏正确答案，因为管理后台需要查看
 	const question = res.data[0];
-	if (!context.isAdmin) {
-		question.options.forEach(opt => delete opt.is_correct);
-	}
-
+	
 	return {
 		code: 200,
 		data: question
@@ -280,11 +277,8 @@ async function getExamQuestions(exam_id, type) {
 		.orderBy('create_time', 'asc')
 		.get();
 
-	// 考试场景通常不需要显示正确答案
-	const questions = res.data.map(q => {
-		q.options.forEach(opt => delete opt.is_correct);
-		return q;
-	});
+	// 管理后台场景需要显示正确答案
+	const questions = res.data;
 
 	return {
 		code: 200,
