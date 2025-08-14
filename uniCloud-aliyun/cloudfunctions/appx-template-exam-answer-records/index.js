@@ -48,6 +48,7 @@ async function getRecordList(params = {}) {
 		exam_id,
 		question_id,
 		is_correct,
+		keyword,
 		page = 1,
 		pageSize = 10,
 		sortField = 'answer_time',
@@ -60,19 +61,68 @@ async function getRecordList(params = {}) {
 	if (question_id) where.question_id = question_id;
 	if (is_correct !== undefined) where.is_correct = is_correct;
 
-	const res = await collection
-		.where(where)
-		.orderBy(sortField, sortOrder)
+	// 使用聚合查询关联用户、考试、题目表获取名称
+	const aggregate = db.collection('appx-template-exam-answer-records')
+		.aggregate()
+		.match(where)
+		.lookup({
+			from: 'appx-template-exam-users',
+			localField: 'user_id',
+			foreignField: '_id',
+			as: 'user_info'
+		})
+		.lookup({
+			from: 'appx-template-exam-exams',
+			localField: 'exam_id',
+			foreignField: '_id',
+			as: 'exam_info'
+		})
+		.lookup({
+			from: 'appx-template-exam-questions',
+			localField: 'question_id',
+			foreignField: '_id',
+			as: 'question_info'
+		})
+		.addFields({
+			user_name: {
+				$arrayElemAt: ['$user_info.username', 0]
+			},
+			exam_name: {
+				$arrayElemAt: ['$exam_info.name', 0]
+			},
+			question_content: {
+				$arrayElemAt: ['$question_info.content', 0]
+			}
+		})
+		.project({
+			user_info: 0,
+			exam_info: 0,
+			question_info: 0
+		})
+		.sort({
+			[sortField]: sortOrder === 'desc' ? -1 : 1
+		})
 		.skip((page - 1) * pageSize)
-		.limit(pageSize)
-		.get();
+		.limit(pageSize);
 
+	// 如果有关键词搜索，添加搜索条件
+	if (keyword) {
+		aggregate.match({
+			$or: [
+				{ user_name: new RegExp(keyword, 'i') },
+				{ exam_name: new RegExp(keyword, 'i') },
+				{ question_content: new RegExp(keyword, 'i') }
+			]
+		});
+	}
+
+	const res = await aggregate.end();
 	const countRes = await collection.where(where).count();
 
 	return {
 		code: 200,
 		data: {
-			list: res.data,
+			rows: res.data,
 			total: countRes.total,
 			page,
 			pageSize
@@ -106,10 +156,13 @@ async function getRecordDetail(id) {
 
 // 添加考试记录
 async function addRecord(data) {
-	if (!data.user_id || !data.exam_id || !data.question_id) {
+	const requiredFields = ['user_id', 'exam_id', 'question_id'];
+	const missingFields = requiredFields.filter(field => !data[field]);
+
+	if (missingFields.length > 0) {
 		return {
 			code: 400,
-			message: '缺少必填字段'
+			message: `缺少必填字段: ${missingFields.join(', ')}`
 		};
 	}
 
@@ -120,6 +173,8 @@ async function addRecord(data) {
 
 	// 设置默认值
 	data.answer_time = Date.now();
+	data.is_correct = data.is_correct !== undefined ? data.is_correct : false;
+	data.score = data.score || 0;
 
 	const res = await collection.add(data);
 

@@ -15,23 +15,26 @@
 				<uni-th width="80" align="center">序号</uni-th>
 				<uni-th width="120" align="center">考生姓名</uni-th>
 				<uni-th width="150" align="center">试卷名称</uni-th>
-				<uni-th width="100" align="center">得分</uni-th>
-				<uni-th width="100" align="center">总分</uni-th>
-				<uni-th width="120" align="center">考试用时</uni-th>
-				<uni-th width="180" align="center">考试时间</uni-th>
+				<uni-th width="200" align="center">题目内容</uni-th>
+				<uni-th width="80" align="center">得分</uni-th>
+				<uni-th width="100" align="center">是否正确</uni-th>
+				<uni-th width="180" align="center">答题时间</uni-th>
 				<uni-th width="120" align="center">操作</uni-th>
 			</uni-tr>
 			<uni-tr v-for="(item, index) in tableData" :key="item._id">
 				<uni-td align="center">{{ (pageNum - 1) * pageSize + index + 1 }}</uni-td>
-				<uni-td align="center">{{ item.user_name }}</uni-td>
-				<uni-td align="center">{{ item.paper_name }}</uni-td>
+				<uni-td align="center">{{ item.user_name || item.user_id }}</uni-td>
+				<uni-td align="center">{{ item.exam_name || item.paper_id }}</uni-td>
+				<uni-td align="center">{{ item.question_content || item.question_id }}</uni-td>
 				<uni-td align="center">{{ item.score }}</uni-td>
-				<uni-td align="center">{{ item.total_score }}</uni-td>
-				<uni-td align="center">{{ formatDuration(item.duration) }}</uni-td>
-				<uni-td align="center">{{ myFormatTime(item.create_time) }}</uni-td>
+				<uni-td align="center">
+					<text :style="{ color: Number(item.is_correct) === 1 ? '#52c41a' : '#ff4d4f' }">
+						{{ Number(item.is_correct) === 1 ? '正确' : '错误' }}
+					</text>
+				</uni-td>
+				<uni-td align="center">{{ myFormatTime(item.answer_time || item.create_time) }}</uni-td>
 				<uni-td align="center">
 					<view class="action-buttons">
-						<button type="primary" size="mini" @click="handleDetail(item._id)">详情</button>
 						<button type="warn" size="mini" @click="handleDelete(item._id)">删除</button>
 					</view>
 				</uni-td>
@@ -46,23 +49,24 @@
 			<uni-popup-dialog :title="formTitle" mode="base" :before-close="true" @close="closeDialog"
 				@confirm="submitForm">
 				<uni-forms ref="form" :modelValue="formData" :rules="rules">
-					<uni-forms-item label="用户ID" name="user_id">
-						<uni-easyinput v-model="formData.user_id" placeholder="请输入用户ID" />
+					<uni-forms-item label="考生" name="user_id">
+						<uni-data-select v-model="formData.user_id" :localdata="userList"
+							placeholder="请选择考生"></uni-data-select>
 					</uni-forms-item>
-					<uni-forms-item label="试卷ID" name="paper_id">
-						<uni-easyinput v-model="formData.paper_id" placeholder="请输入试卷ID" />
+					<uni-forms-item label="试卷" name="paper_id">
+						<uni-data-select v-model="formData.paper_id" :localdata="examList"
+							placeholder="请选择试卷"></uni-data-select>
+					</uni-forms-item>
+					<uni-forms-item label="题目" name="question_id">
+						<uni-data-select v-model="formData.question_id" :localdata="questionList"
+							placeholder="请选择题目"></uni-data-select>
 					</uni-forms-item>
 					<uni-forms-item label="得分" name="score">
 						<uni-easyinput type="number" v-model="formData.score" placeholder="请输入得分" />
 					</uni-forms-item>
-					<uni-forms-item label="总分" name="total_score">
-						<uni-easyinput type="number" v-model="formData.total_score" placeholder="请输入总分" />
-					</uni-forms-item>
-					<uni-forms-item label="考试用时(秒)" name="duration">
-						<uni-easyinput type="number" v-model="formData.duration" placeholder="请输入考试用时(秒)" />
-					</uni-forms-item>
-					<uni-forms-item label="答题详情" name="answers">
-						<uni-easyinput type="textarea" v-model="formData.answers" placeholder="请输入答题详情(JSON格式)" />
+					<uni-forms-item label="是否正确" name="is_correct">
+						<uni-data-checkbox v-model="formData.is_correct"
+							:localdata="correctOptions"></uni-data-checkbox>
 					</uni-forms-item>
 				</uni-forms>
 			</uni-popup-dialog>
@@ -83,6 +87,15 @@
 		deleteRecord
 	} from '@/api/appx-template-exam-answer-records.js'
 	import {
+		getUserList
+	} from '@/api/appx-template-exam-users.js'
+	import {
+		getQuestionList
+	} from '@/api/appx-template-exam-questions.js'
+	import {
+		getExamList
+	} from '@/api/appx-template-exam-exams.js'
+	import {
 		formatTime
 	} from '@/utils/tableUtil.js'
 
@@ -100,25 +113,44 @@
 	const formData = ref({
 		user_id: '',
 		paper_id: '',
+		question_id: '',
 		score: 0,
-		total_score: 100,
-		duration: 0,
-		answers: '[]'
+		is_correct: 0,
 	})
 	const isEdit = ref(false)
+
+	// 选择列表
+	const userList = ref([])
+	const examList = ref([])
+	const questionList = ref([])
+	const correctOptions = ref([{
+			value: 1,
+			text: '正确'
+		},
+		{
+			value: 0,
+			text: '错误'
+		}
+	])
 
 	// 表单验证规则
 	const rules = {
 		user_id: {
 			rules: [{
 				required: true,
-				errorMessage: '请输入用户ID'
+				errorMessage: '请选择考生'
 			}]
 		},
 		paper_id: {
 			rules: [{
 				required: true,
-				errorMessage: '请输入试卷ID'
+				errorMessage: '请选择试卷'
+			}]
+		},
+		question_id: {
+			rules: [{
+				required: true,
+				errorMessage: '请选择题目'
 			}]
 		},
 		score: {
@@ -130,35 +162,12 @@
 				errorMessage: '请输入正确的分数格式'
 			}]
 		},
-		total_score: {
-			rules: [{
-				required: true,
-				errorMessage: '请输入总分'
-			}, {
-				pattern: '^[0-9]+(\\.[0-9]{1,2})?$',
-				errorMessage: '请输入正确的分数格式'
-			}]
-		},
-		duration: {
-			rules: [{
-				required: true,
-				errorMessage: '请输入考试用时'
-			}, {
-				pattern: '^[0-9]+$',
-				errorMessage: '请输入整数秒数'
-			}]
-		},
-		answers: {
-			rules: [{
-				required: true,
-				errorMessage: '请输入答题详情'
-			}]
-		}
 	}
 
 	// 初始化加载数据
 	onMounted(() => {
 		fetchData()
+		loadSelectData()
 	})
 
 	// 获取数据
@@ -188,6 +197,41 @@
 		}
 	}
 
+	// 加载选择数据
+	const loadSelectData = async () => {
+		try {
+			// 加载用户列表
+			const userRes = await getUserList()
+			if (userRes.code === 200) {
+				userList.value = userRes.data.list.map(user => ({
+					value: user._id,
+					text: user.username || user.nickname || user._id
+				}))
+			}
+
+			// 加载考试列表
+			const examRes = await getExamList()
+			if (examRes.code === 200) {
+				examList.value = examRes.data.rows.map(exam => ({
+					value: exam._id,
+					text: exam.name
+				}))
+			}
+
+			// 加载题目列表
+			const questionRes = await getQuestionList()
+			if (questionRes.code === 200) {
+				questionList.value = questionRes.data.list.map(question => ({
+					value: question._id,
+					text: question.content.substring(0, 30) + (question.content.length > 30 ? '...' :
+						'')
+				}))
+			}
+		} catch (error) {
+			console.error('加载选择数据失败:', error)
+		}
+	}
+
 	// 搜索
 	const handleSearch = () => {
 		pageNum.value = 1
@@ -207,19 +251,11 @@
 		formData.value = {
 			user_id: '',
 			paper_id: '',
+			question_id: '',
 			score: 0,
-			total_score: 100,
-			duration: 0,
-			answers: '[]'
+			is_correct: 0,
 		}
 		formPopup.value.open()
-	}
-
-	// 详情
-	const handleDetail = (id) => {
-		uni.navigateTo({
-			url: `/pages/test/answer-records/detail?id=${id}`
-		})
 	}
 
 	// 删除
@@ -266,22 +302,18 @@
 		try {
 			await form.value.validate()
 
-			// 处理answers字段，尝试转换为JSON
-			try {
-				formData.value.answers = JSON.parse(formData.value.answers)
-			} catch (e) {
-				uni.showToast({
-					title: '答题详情必须是有效的JSON格式',
-					icon: 'none'
-				})
-				return
+			// 构建提交数据
+			const submitData = {
+				...formData.value,
+				exam_id: formData.value.paper_id, // 将paper_id映射为exam_id
+				is_correct: Number(formData.value.is_correct) === 1
 			}
 
 			let result
 			if (isEdit.value) {
-				result = await updateRecord(formData.value)
+				result = await updateRecord(submitData)
 			} else {
-				result = await addRecord(formData.value)
+				result = await addRecord(submitData)
 			}
 
 			if (result.code === 200) {
@@ -305,14 +337,6 @@
 	// 格式化时间
 	const myFormatTime = (timestamp) => {
 		return formatTime(timestamp, 'YYYY-MM-DD hh:mm:ss')
-	}
-
-	// 格式化考试用时
-	const formatDuration = (seconds) => {
-		if (!seconds) return '0秒'
-		const mins = Math.floor(seconds / 60)
-		const secs = seconds % 60
-		return mins > 0 ? `${mins}分${secs}秒` : `${secs}秒`
 	}
 </script>
 

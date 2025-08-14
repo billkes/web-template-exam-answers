@@ -19,11 +19,6 @@
 			"description": "题目ID",
 			"bsonType": "string"
 		},
-		"answer": {
-			"description": "用户答案(单选存选项ID，多选存选项ID数组的JSON字符串)",
-			"bsonType": "string",
-			"trim": true
-		},
 		"is_correct": {
 			"description": "是否正确",
 			"bsonType": "bool"
