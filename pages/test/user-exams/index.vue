@@ -121,371 +121,400 @@
 	</view>
 </template>
 
-<script>
-	export default {
-		data() {
-			return {
-				tableData: [],
-				loading: false,
-				searchKeyword: '',
-				statusFilter: '',
-				examFilter: '',
-				page: {
-					current: 1,
-					size: 10,
-					total: 0
-				},
-				statistics: {
-					total: 0,
-					pending: 0,
-					approved: 0,
-					rejected: 0
-				},
-				statusOptions: [{
-						value: '',
-						text: '全部状态'
-					},
-					{
-						value: 0,
-						text: '待审核'
-					},
-					{
-						value: 1,
-						text: '已通过'
-					},
-					{
-						value: 2,
-						text: '已拒绝'
-					}
-				],
-				examOptions: [{
-					value: '',
-					text: '全部考试'
-				}],
-				currentDetail: {}
-			};
+<script setup>
+	import {
+		ref,
+		onMounted
+	} from 'vue'
+
+	// 表格数据
+	const tableData = ref([])
+	const loading = ref(false)
+	const searchKeyword = ref('')
+	const statusFilter = ref('')
+	const examFilter = ref('')
+	const page = ref({
+		current: 1,
+		size: 10,
+		total: 0
+	})
+	const statistics = ref({
+		total: 0,
+		pending: 0,
+		approved: 0,
+		rejected: 0
+	})
+	const statusOptions = ref([{
+			value: '',
+			text: '全部状态'
 		},
-
-		onLoad() {
-			this.loadData();
-			this.loadStatistics();
-			this.loadExamOptions();
+		{
+			value: 0,
+			text: '待审核'
 		},
+		{
+			value: 1,
+			text: '已通过'
+		},
+		{
+			value: 2,
+			text: '已拒绝'
+		}
+	])
+	const examOptions = ref([{
+		value: '',
+		text: '全部考试'
+	}])
+	const currentDetail = ref({})
 
-		methods: {
-			async loadData() {
-				this.loading = true;
-				try {
-					const params = {
-						page: this.page.current,
-						pageSize: this.page.size,
-						keyword: this.searchKeyword,
-						status: this.statusFilter === '' ? undefined : parseInt(this.statusFilter),
-						exam_id: this.examFilter === '' ? undefined : this.examFilter
-					};
+	// 模板引用
+	const detailPopup = ref(null)
 
-					const res = await uniCloud.callFunction({
-						name: 'appx-template-exam-user-exams',
-						data: {
-							action: 'getEnrollmentList',
-							params
-						}
-					});
+	// 初始化加载数据
+	onMounted(() => {
+		loadData()
+		loadStatistics()
+		loadExamOptions()
+	})
 
-					if (res.result.code === 200) {
-						this.tableData = res.result.data.rows;
-						this.page.total = res.result.data.total;
-					} else {
-						uni.showToast({
-							title: res.result.message || '加载失败',
-							icon: 'none'
-						});
-					}
-				} catch (error) {
-					console.error('加载数据失败:', error);
-					uni.showToast({
-						title: '加载失败',
-						icon: 'none'
-					});
-				} finally {
-					this.loading = false;
+	// 获取数据
+	const loadData = async () => {
+		loading.value = true
+		try {
+			const params = {
+				page: page.value.current,
+				pageSize: page.value.size,
+				keyword: searchKeyword.value,
+				status: statusFilter.value === '' ? undefined : parseInt(statusFilter.value),
+				exam_id: examFilter.value === '' ? undefined : examFilter.value
+			}
+
+			const res = await uniCloud.callFunction({
+				name: 'appx-template-exam-user-exams',
+				data: {
+					action: 'getEnrollmentList',
+					params
 				}
-			},
+			})
 
-			async loadStatistics() {
-				try {
-					// 获取统计数据
-					const totalRes = await uniCloud.callFunction({
-						name: 'appx-template-exam-user-exams',
-						data: {
-							action: 'getEnrollmentList',
-							params: {
-								page: 1,
-								pageSize: 1
-							}
-						}
-					});
+			if (res.result.code === 200) {
+				tableData.value = res.result.data?.rows || []
+				page.value.total = res.result.data?.total || 0
+			} else {
+				uni.showToast({
+					title: res.result.message || '加载失败',
+					icon: 'none'
+				})
+				tableData.value = []
+				page.value.total = 0
+			}
+		} catch (error) {
+			console.error('加载数据失败:', error)
+			uni.showToast({
+				title: '加载失败',
+				icon: 'none'
+			})
+		} finally {
+			loading.value = false
+		}
+	}
 
-					const pendingRes = await uniCloud.callFunction({
-						name: 'appx-template-exam-user-exams',
-						data: {
-							action: 'getEnrollmentList',
-							params: {
-								page: 1,
-								pageSize: 1,
-								status: 0
-							}
-						}
-					});
-
-					const approvedRes = await uniCloud.callFunction({
-						name: 'appx-template-exam-user-exams',
-						data: {
-							action: 'getEnrollmentList',
-							params: {
-								page: 1,
-								pageSize: 1,
-								status: 1
-							}
-						}
-					});
-
-					const rejectedRes = await uniCloud.callFunction({
-						name: 'appx-template-exam-user-exams',
-						data: {
-							action: 'getEnrollmentList',
-							params: {
-								page: 1,
-								pageSize: 1,
-								status: 2
-							}
-						}
-					});
-
-					this.statistics = {
-						total: totalRes.result.data.total || 0,
-						pending: pendingRes.result.data.total || 0,
-						approved: approvedRes.result.data.total || 0,
-						rejected: rejectedRes.result.data.total || 0
-					};
-				} catch (error) {
-					console.error('加载统计数据失败:', error);
+	// 获取统计数据
+	const loadStatistics = async () => {
+		try {
+			// 获取统计数据
+			const totalRes = await uniCloud.callFunction({
+				name: 'appx-template-exam-user-exams',
+				data: {
+					action: 'getEnrollmentList',
+					params: {
+						page: 1,
+						pageSize: 1
+					}
 				}
-			},
+			})
 
-			async loadExamOptions() {
-				try {
-					const res = await uniCloud.callFunction({
-						name: 'appx-template-exam-exams',
-						data: {
-							action: 'list',
-							params: {
-								page: 1,
-								pageSize: 100
-							}
-						}
-					});
-
-					if (res.result.code === 200) {
-						const exams = res.result.data.rows.map(exam => ({
-							value: exam._id,
-							text: exam.title
-						}));
-						this.examOptions = [{
-							value: '',
-							text: '全部考试'
-						}, ...exams];
+			const pendingRes = await uniCloud.callFunction({
+				name: 'appx-template-exam-user-exams',
+				data: {
+					action: 'getEnrollmentList',
+					params: {
+						page: 1,
+						pageSize: 1,
+						status: 0
 					}
-				} catch (error) {
-					console.error('加载考试选项失败:', error);
 				}
-			},
+			})
 
-			handleSearch() {
-				this.page.current = 1;
-				this.loadData();
-			},
-
-			handleClear() {
-				this.searchKeyword = '';
-				this.handleSearch();
-			},
-
-			handleStatusChange() {
-				this.page.current = 1;
-				this.loadData();
-			},
-
-			handleExamChange() {
-				this.page.current = 1;
-				this.loadData();
-			},
-
-			handlePageChange(e) {
-				this.page.current = e.current;
-				this.loadData();
-			},
-
-			handleView(item) {
-				this.currentDetail = item;
-				this.$refs.detailPopup.open();
-			},
-
-			closeDetail() {
-				this.$refs.detailPopup.close();
-			},
-
-			async handleApprove(item) {
-				uni.showModal({
-					title: '确认通过',
-					content: '确定要通过该用户的报名申请吗？',
-					success: async (res) => {
-						if (res.confirm) {
-							try {
-								const result = await uniCloud.callFunction({
-									name: 'appx-template-exam-user-exams',
-									data: {
-										action: 'updateStatus',
-										params: {
-											id: item._id,
-											status: 1
-										}
-									}
-								});
-
-								if (result.result.code === 200) {
-									uni.showToast({
-										title: '已通过',
-										icon: 'success'
-									});
-									this.loadData();
-									this.loadStatistics();
-								} else {
-									uni.showToast({
-										title: result.result.message || '操作失败',
-										icon: 'none'
-									});
-								}
-							} catch (error) {
-								uni.showToast({
-									title: '操作失败',
-									icon: 'none'
-								});
-							}
-						}
+			const approvedRes = await uniCloud.callFunction({
+				name: 'appx-template-exam-user-exams',
+				data: {
+					action: 'getEnrollmentList',
+					params: {
+						page: 1,
+						pageSize: 1,
+						status: 1
 					}
-				});
-			},
+				}
+			})
 
-			async handleReject(item) {
-				uni.showModal({
-					title: '确认拒绝',
-					content: '确定要拒绝该用户的报名申请吗？',
-					success: async (res) => {
-						if (res.confirm) {
-							try {
-								const result = await uniCloud.callFunction({
-									name: 'appx-template-exam-user-exams',
-									data: {
-										action: 'updateStatus',
-										params: {
-											id: item._id,
-											status: 2
-										}
-									}
-								});
-
-								if (result.result.code === 200) {
-									uni.showToast({
-										title: '已拒绝',
-										icon: 'success'
-									});
-									this.loadData();
-									this.loadStatistics();
-								} else {
-									uni.showToast({
-										title: result.result.message || '操作失败',
-										icon: 'none'
-									});
-								}
-							} catch (error) {
-								uni.showToast({
-									title: '操作失败',
-									icon: 'none'
-								});
-							}
-						}
+			const rejectedRes = await uniCloud.callFunction({
+				name: 'appx-template-exam-user-exams',
+				data: {
+					action: 'getEnrollmentList',
+					params: {
+						page: 1,
+						pageSize: 1,
+						status: 2
 					}
-				});
-			},
+				}
+			})
 
-			async handleCancel(item) {
-				uni.showModal({
-					title: '确认取消',
-					content: '确定要取消该用户的报名吗？',
-					success: async (res) => {
-						if (res.confirm) {
-							try {
-								const result = await uniCloud.callFunction({
-									name: 'appx-template-exam-user-exams',
-									data: {
-										action: 'cancelEnrollment',
-										params: {
-											user_id: item.user_id,
-											exam_id: item.exam_id
-										}
-									}
-								});
-
-								if (result.result.code === 200) {
-									uni.showToast({
-										title: '已取消',
-										icon: 'success'
-									});
-									this.loadData();
-									this.loadStatistics();
-								} else {
-									uni.showToast({
-										title: result.result.message || '操作失败',
-										icon: 'none'
-									});
-								}
-							} catch (error) {
-								uni.showToast({
-									title: '操作失败',
-									icon: 'none'
-								});
-							}
-						}
-					}
-				});
-			},
-
-			formatDate(timestamp) {
-				if (!timestamp) return '-';
-				const date = new Date(timestamp);
-				return date.toLocaleString('zh-CN');
-			},
-
-			getStatusText(status) {
-				const statusMap = {
-					0: '待审核',
-					1: '已通过',
-					2: '已拒绝'
-				};
-				return statusMap[status] || '未知';
-			},
-
-			getStatusClass(status) {
-				const classMap = {
-					0: 'status-pending',
-					1: 'status-approved',
-					2: 'status-rejected'
-				};
-				return classMap[status] || '';
+			statistics.value = {
+				total: totalRes.result?.data?.total || 0,
+				pending: pendingRes.result?.data?.total || 0,
+				approved: approvedRes.result?.data?.total || 0,
+				rejected: rejectedRes.result?.data?.total || 0
+			}
+		} catch (error) {
+			console.error('加载统计数据失败:', error)
+			// 设置默认值避免页面报错
+			statistics.value = {
+				total: 0,
+				pending: 0,
+				approved: 0,
+				rejected: 0
 			}
 		}
-	};
+	}
+
+	// 加载考试选项
+	const loadExamOptions = async () => {
+		try {
+			const res = await uniCloud.callFunction({
+				name: 'appx-template-exam-exams',
+				data: {
+					action: 'list',
+					params: {
+						page: 1,
+						pageSize: 100
+					}
+				}
+			})
+
+			if (res.result.code === 200) {
+				const exams = (res.result.data?.rows || []).map(exam => ({
+					value: exam._id,
+					text: exam.title
+				}))
+				examOptions.value = [{
+						value: '',
+						text: '全部考试'
+					},
+					...exams
+				]
+			}
+		} catch (error) {
+			console.error('加载考试选项失败:', error)
+		}
+	}
+
+	// 搜索
+	const handleSearch = () => {
+		page.value.current = 1
+		loadData()
+	}
+
+	// 清除搜索
+	const handleClear = () => {
+		searchKeyword.value = ''
+		handleSearch()
+	}
+
+	// 状态筛选变化
+	const handleStatusChange = () => {
+		page.value.current = 1
+		loadData()
+	}
+
+	// 考试筛选变化
+	const handleExamChange = () => {
+		page.value.current = 1
+		loadData()
+	}
+
+	// 分页变化
+	const handlePageChange = (e) => {
+		page.value.current = e.current
+		loadData()
+	}
+
+	// 查看详情
+	const handleView = (item) => {
+		currentDetail.value = item
+		detailPopup.value.open()
+	}
+
+	// 关闭详情弹窗
+	const closeDetail = () => {
+		detailPopup.value.close()
+	}
+
+	// 通过审核
+	const handleApprove = (item) => {
+		uni.showModal({
+			title: '确认通过',
+			content: '确定要通过该用户的报名申请吗？',
+			success: async (res) => {
+				if (res.confirm) {
+					try {
+						const result = await uniCloud.callFunction({
+							name: 'appx-template-exam-user-exams',
+							data: {
+								action: 'updateStatus',
+								params: {
+									id: item._id,
+									status: 1
+								}
+							}
+						})
+
+						if (result.result.code === 200) {
+							uni.showToast({
+								title: '已通过',
+								icon: 'success'
+							})
+							loadData()
+							loadStatistics()
+						} else {
+							uni.showToast({
+								title: result.result.message || '操作失败',
+								icon: 'none'
+							})
+						}
+					} catch (error) {
+						uni.showToast({
+							title: '操作失败',
+							icon: 'none'
+						})
+					}
+				}
+			}
+		})
+	}
+
+	// 拒绝审核
+	const handleReject = (item) => {
+		uni.showModal({
+			title: '确认拒绝',
+			content: '确定要拒绝该用户的报名申请吗？',
+			success: async (res) => {
+				if (res.confirm) {
+					try {
+						const result = await uniCloud.callFunction({
+							name: 'appx-template-exam-user-exams',
+							data: {
+								action: 'updateStatus',
+								params: {
+									id: item._id,
+									status: 2
+								}
+							}
+						})
+
+						if (result.result.code === 200) {
+							uni.showToast({
+								title: '已拒绝',
+								icon: 'success'
+							})
+							loadData()
+							loadStatistics()
+						} else {
+							uni.showToast({
+								title: result.result.message || '操作失败',
+								icon: 'none'
+							})
+						}
+					} catch (error) {
+						uni.showToast({
+							title: '操作失败',
+							icon: 'none'
+						})
+					}
+				}
+			}
+		})
+	}
+
+	// 取消报名
+	const handleCancel = (item) => {
+		uni.showModal({
+			title: '确认取消',
+			content: '确定要取消该用户的报名吗？',
+			success: async (res) => {
+				if (res.confirm) {
+					try {
+						const result = await uniCloud.callFunction({
+							name: 'appx-template-exam-user-exams',
+							data: {
+								action: 'cancelEnrollment',
+								params: {
+									user_id: item.user_id,
+									exam_id: item.exam_id
+								}
+							}
+						})
+
+						if (result.result.code === 200) {
+							uni.showToast({
+								title: '已取消',
+								icon: 'success'
+							})
+							loadData()
+							loadStatistics()
+						} else {
+							uni.showToast({
+								title: result.result.message || '操作失败',
+								icon: 'none'
+							})
+						}
+					} catch (error) {
+						uni.showToast({
+							title: '操作失败',
+							icon: 'none'
+						})
+					}
+				}
+			}
+		})
+	}
+
+	// 格式化日期
+	const formatDate = (timestamp) => {
+		if (!timestamp) return '-'
+		const date = new Date(timestamp)
+		return date.toLocaleString('zh-CN')
+	}
+
+	// 获取状态文本
+	const getStatusText = (status) => {
+		const statusMap = {
+			0: '待审核',
+			1: '已通过',
+			2: '已拒绝'
+		}
+		return statusMap[status] || '未知'
+	}
+
+	// 获取状态样式类
+	const getStatusClass = (status) => {
+		const classMap = {
+			0: 'status-pending',
+			1: 'status-approved',
+			2: 'status-rejected'
+		}
+		return classMap[status] || ''
+	}
 </script>
 
 <style lang="scss" scoped>
