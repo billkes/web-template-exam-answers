@@ -28,8 +28,7 @@ exports.main = async (event, context) => {
 				return await deleteUser(params.id);
 			default:
 				return {
-					code: 400,
-						message: '无效的操作类型'
+					code: 400, message: '无效的操作类型'
 				};
 		}
 	} catch (error) {
@@ -44,7 +43,7 @@ exports.main = async (event, context) => {
 
 // 用户注册 - 补充mobile和status字段处理
 async function registerUser(data) {
-	const requiredFields = ['username', 'password'];
+	const requiredFields = ['username', 'password', 'mobile'];
 	const missingFields = requiredFields.filter(field => !data[field]);
 
 	if (missingFields.length > 0) {
@@ -67,17 +66,15 @@ async function registerUser(data) {
 	}
 
 	// 手机号唯一性检查（如果提供了手机号）
-	if (data.mobile) {
-		const existMobile = await collection.where({
-			mobile: data.mobile
-		}).count();
+	const existMobile = await collection.where({
+		mobile: data.mobile
+	}).count();
 
-		if (existMobile.total > 0) {
-			return {
-				code: 400,
-				message: '手机号已被注册'
-			};
-		}
+	if (existMobile.total > 0) {
+		return {
+			code: 400,
+			message: '手机号已被注册'
+		};
 	}
 
 	// 密码加密处理
@@ -87,13 +84,9 @@ async function registerUser(data) {
 		username: data.username,
 		password: encryptedPassword,
 		status: data.status || 1, // 默认状态为1(正常)
-		create_time: Date.now()
+		create_time: Date.now(),
+		mobile: data.mobile
 	};
-
-	// 如果有手机号则添加
-	if (data.mobile) {
-		userData.mobile = data.mobile;
-	}
 
 	const res = await collection.add(userData);
 
@@ -131,15 +124,11 @@ async function loginUser(data) {
 
 	const user = res.data[0];
 
-	// 生成访问令牌(实际项目应使用更安全的方案如JWT)
-	const token = generateToken(user._id);
-
 	return {
 		code: 200,
 		data: {
 			id: user._id,
 			username: user.username,
-			token: token
 		},
 		message: '登录成功'
 	};
@@ -295,7 +284,7 @@ async function getUserList(params = {}) {
 	return {
 		code: 200,
 		data: {
-			list: res.data,
+			rows: res.data,
 			total: countRes.total,
 			page,
 			pageSize
@@ -345,12 +334,5 @@ async function deleteUser(id) {
 function encryptPassword(password) {
 	return crypto.createHash('sha256')
 		.update(password + 'exam_system_salt') // 加盐处理
-		.digest('hex');
-}
-
-// 生成简易令牌(生产环境建议使用JWT)
-function generateToken(userId) {
-	return crypto.createHash('md5')
-		.update(userId + Date.now() + 'token_secret')
 		.digest('hex');
 }

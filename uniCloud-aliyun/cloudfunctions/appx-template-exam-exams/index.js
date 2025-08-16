@@ -23,6 +23,12 @@ exports.main = async (event, context) => {
 				return await getExamList(params);
 			case 'changeStatus':
 				return await changeExamStatus(params.id, params.status);
+			case 'getMyExamStatistics':
+				return await getMyExamStatistics(params);
+			case 'getMyExamList':
+				return await getMyExamList(params);
+			case 'getRandomExams':
+				return await getRandomExams(params);
 			default:
 				return {
 					code: 400,
@@ -254,4 +260,287 @@ async function changeExamStatus(id, status) {
 		code: 200,
 		message: '状态更新成功'
 	};
+}
+
+// 获取我的考试统计数据
+async function getMyExamStatistics(params = {}) {
+	const {
+		user_id
+	} = params;
+
+	// 验证user_id为必传参数
+	if (!user_id) {
+		return {
+			code: 400,
+			message: '用户ID不能为空'
+		};
+	}
+
+	try {
+		// 基础统计
+		const totalExams = await collection.count();
+
+		// 状态统计
+		const activeExams = await collection.where({
+			status: 1,
+			start_time: {
+				$lte: new Date().toISOString()
+			},
+			end_time: {
+				$gte: new Date().toISOString()
+			}
+		}).count();
+
+		const upcomingExams = await collection.where({
+			status: 0,
+			start_time: {
+				$gt: new Date().toISOString()
+			}
+		}).count();
+
+		const endedExams = await collection.where({
+			$or: [{
+					status: 2
+				},
+				{
+					end_time: {
+						$lt: new Date().toISOString()
+					}
+				}
+			]
+		}).count();
+
+		// 题目和总分统计
+		const questionsCollection = db.collection('appx-template-exam-questions');
+		const questionsAgg = await questionsCollection.aggregate()
+			.group({
+				_id: null,
+				totalQuestions: {
+					$sum: 1
+				},
+				totalScore: {
+					$sum: '$score'
+				}
+			})
+			.end();
+
+		const result = {
+			totalExams: totalExams.total || 0,
+			activeExams: activeExams.total || 0,
+			upcomingExams: upcomingExams.total || 0,
+			endedExams: endedExams.total || 0,
+			totalQuestions: questionsAgg.data[0]?.totalQuestions || 0,
+			totalScore: questionsAgg.data[0]?.totalScore || 0
+		};
+
+		return {
+			code: 200,
+			data: result
+		};
+	} catch (error) {
+		console.error('获取考试统计数据失败:', error);
+		return {
+			code: 500,
+			message: '获取统计数据失败',
+			error: error.message
+		};
+	}
+}
+
+// 获取我的考试列表（用户已报名/关联的考试）
+async function getMyExamList(params = {}) {
+	const {
+		user_id,
+		keyword,
+		status,
+		page = 1,
+		pageSize = 10,
+		sortField = 'create_time',
+		sortOrder = 'desc'
+	} = params;
+
+	// 验证user_id为必传参数
+	if (!user_id) {
+		return {
+			code: 400,
+			message: '用户ID不能为空'
+		};
+	}
+
+	try {
+		// 查询用户关联的考试ID列表（通过用户考试关联表）
+		const userExamCollection = db.collection('appx-template-exam-user-exams');
+		const userExams = await userExamCollection
+			.where({
+				user_id
+			})
+			.field({
+				exam_id: true,
+				enrolled_time: true
+			})
+			.get();
+
+		if (!userExams.data || userExams.data.length === 0) {
+			return {
+				code: 200,
+				data: [],
+				total: 0,
+				page,
+				pageSize
+			};
+		}
+
+		// 提取考试ID列表
+		const examIds = userExams.data.map(item => item.exam_id);
+
+		// 构建查询条件
+		const where = {
+			_id: dbCmd.in(examIds)
+		};
+
+		if (keyword) {
+			where.$or = [{
+					name: new RegExp(keyword, 'i')
+				},
+				{
+					description: new RegExp(keyword, 'i')
+				}
+			];
+		}
+
+		if (status !== undefined) where.status = status;
+
+		// 获取考试列表并关联题目数量
+		const aggregate = collection.aggregate()
+			.match(where)
+			.lookup({
+				from: 'appx-template-exam-questions',
+				localField: '_id',
+				foreignField: 'exam_id',
+				as: 'questions_info'
+			})
+			.lookup({
+				from: 'appx-template-exam-user-exams',
+				localField: '_id',
+				foreignField: 'exam_id',
+				as: 'user_enrollment'
+			})
+			.addFields({
+				questions: {
+					$size: '$questions_info'
+				},
+				totalScore: {
+					$sum: '$questions_info.score'
+				},
+				enrolled_time: {
+					$arrayElemAt: ['$user_enrollment.enrolled_time', 0]
+				}
+			})
+			.project({
+				questions_info: 0,
+				user_enrollment: 0
+			})
+			.sort({
+				[sortField]: sortOrder === 'desc' ? -1 : 1
+			})
+			.skip((page - 1) * pageSize)
+			.limit(pageSize);
+
+		const res = await aggregate.end();
+		const countRes = await collection.where(where).count();
+
+		// 格式化数据以匹配前端期望的结构
+		const formattedData = res.data.map(item => ({
+			_id: item._id,
+			title: item.name,
+			description: item.description,
+			start_time: item.start_time,
+			end_time: item.end_time,
+			duration: item.duration,
+			status: item.status,
+			create_time: new Date(item.create_time).toISOString(),
+			questions: item.questions || 0,
+			totalScore: item.totalScore || 0,
+			enrolled_time: item.enrolled_time ? new Date(item.enrolled_time).toISOString() : null
+		}));
+
+		return {
+			code: 200,
+			data: formattedData,
+			total: countRes.total,
+			page,
+			pageSize
+		};
+	} catch (error) {
+		console.error('获取我的考试列表失败:', error);
+		return {
+			code: 500,
+			message: '获取考试列表失败',
+			error: error.message
+		};
+	}
+}
+
+// 获取随机考试列表（游客模式）
+async function getRandomExams(params = {}) {
+	const {
+		num = 3, status
+	} = params;
+
+	try {
+		const where = {};
+		if (status !== undefined) where.status = status;
+
+		// 获取随机考试
+		const aggregate = collection.aggregate()
+			.match(where)
+			.lookup({
+				from: 'appx-template-exam-questions',
+				localField: '_id',
+				foreignField: 'exam_id',
+				as: 'questions_info'
+			})
+			.addFields({
+				questions: {
+					$size: '$questions_info'
+				},
+				totalScore: {
+					$sum: '$questions_info.score'
+				}
+			})
+			.project({
+				questions_info: 0
+			})
+			.sample({
+				size: parseInt(num)
+			});
+
+		const res = await aggregate.end();
+
+		// 格式化数据
+		const formattedData = res.data.map(item => ({
+			_id: item._id,
+			title: item.name,
+			description: item.description,
+			start_time: item.start_time,
+			end_time: item.end_time,
+			duration: item.duration,
+			status: item.status,
+			create_time: new Date(item.create_time).toISOString(),
+			questions: item.questions || 0,
+			totalScore: item.totalScore || 0
+		}));
+
+		return {
+			code: 200,
+			data: formattedData
+		};
+	} catch (error) {
+		console.error('获取随机考试失败:', error);
+		return {
+			code: 500,
+			message: '获取随机考试失败',
+			error: error.message
+		};
+	}
 }

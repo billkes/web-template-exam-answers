@@ -128,6 +128,9 @@
 		},
 		mobile: {
 			rules: [{
+				required: true,
+				errorMessage: '请输入手机号'
+			}, {
 				pattern: '^1[3-9]\\d{9}$',
 				errorMessage: '请输入正确的手机号格式'
 			}]
@@ -166,7 +169,7 @@
 		try {
 			const res = await getUserList(params)
 			if (res.code === 200) {
-				tableData.value = res.data.list
+				tableData.value = res.data.rows
 				total.value = res.data.total
 			} else {
 				uni.showToast({

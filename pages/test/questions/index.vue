@@ -303,7 +303,7 @@
 		try {
 			const res = await getQuestionList(params)
 			if (res.code === 200) {
-				tableData.value = res.data.list
+				tableData.value = res.data.rows
 				total.value = res.data.total
 			} else {
 				uni.showToast({

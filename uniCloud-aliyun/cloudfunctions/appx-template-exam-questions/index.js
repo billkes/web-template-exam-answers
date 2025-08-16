@@ -268,7 +268,7 @@ async function getQuestionList(params = {}) {
 	return {
 		code: 200,
 		data: {
-			list: res.data,
+			rows: res.data,
 			total: countRes.total,
 			page,
 			pageSize
