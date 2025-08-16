@@ -8,64 +8,104 @@ This is a uni-admin project, a management system template based on uni-app and u
 
 ## Architecture
 
-1. **Framework**: Built with uni-app (Vue.js-based cross-platform framework) and uniCloud (serverless cloud services)
-2. **State Management**: Uses Vuex for state management with modular structure
-3. **Routing**: Uses uni-app's pages.json for routing configuration
-4. **UI Components**: Custom components for admin interface, including menus, tables, and forms
-5. **Authentication**: Integrated with uni-id for user authentication, roles, and permissions
-6. **API Layer**: Communicates with backend through uniCloud functions and objects
-7. **Internationalization**: Supports multiple languages using vue-i18n
+### Core Framework Stack
+- **Frontend**: uni-app (Vue.js-based cross-platform framework) with Vue 3
+- **Backend**: uniCloud serverless cloud services
+- **Authentication**: uni-id integrated user system with roles and permissions
+- **State Management**: Vuex with modular structure
+- **Routing**: uni-app pages.json configuration with uniIdRouter for auth
+- **UI Framework**: Custom admin components with uni-ui library integration
 
-## Directory Structure
+### Key Architectural Patterns
+- **Multi-platform**: Single codebase targets H5, App (iOS/Android), and Mini-programs
+- **Serverless**: All backend logic runs as uniCloud functions
+- **Modular**: Feature-based code organization with clear separation of concerns
+- **Plugin-based**: Uses uni_modules for extensibility
 
-- `api/` - API service functions for communicating with backend
-- `components/` - Reusable UI components for the admin interface
-- `i18n/` - Internationalization files
-- `js_sdk/` - Core utilities and plugins (request handling, error handling, etc.)
-- `pages/` - Application pages organized by feature modules
-- `static/` - Static assets like images and fonts
-- `store/` - Vuex store modules for state management
-- `uni_modules/` - Uni-app plugin modules
-- `windows/` - Layout components for the admin interface (top and left windows)
+### Directory Structure & Purpose
+- `api/` - RESTful API service layer communicating with uniCloud functions
+- `components/` - Reusable admin UI components (tables, forms, navigation)
+- `js_sdk/` - Core utilities: request handling, error management, permissions
+- `pages/` - Feature modules organized by domain (system, uni-stat, test)
+- `store/` - Vuex modules for global state management
+- `uni_modules/` - Third-party uni-app plugins (uni-id, uni-stat, etc.)
+- `uniCloud-aliyun/` - Serverless cloud functions and database schemas
+- `windows/` - Layout components for admin interface (top/left navigation)
 
-## Common Development Commands
+## Development Commands
 
-Since this is a uni-app project, development is primarily done through HBuilderX IDE. However, you can also use command-line tools:
+### Primary Development
+This project requires **HBuilderX IDE** (minimum v3.6.0) for development:
+- **Run**: Open in HBuilderX → Click "Run" button → Select target platform
+- **Build**: Right-click project → Build → Build App → Select platform
+- **Debug**: Use built-in browser dev tools or HBuilderX debugger
 
+### Platform-Specific Commands
 ```bash
-# Run development server (requires HBuilderX)
-# Open project in HBuilderX and click "Run" button
+# H5 Development (when using CLI)
+npm run dev:h5
 
-# Build for production (requires HBuilderX)
-# In HBuilderX, right-click project -> Build -> Build App
+# App Development (when using CLI)
+npm run dev:app
 
-# There are no standard npm scripts defined in package.json for this project
+# Mini-program Development (when using CLI)
+npm run dev:mp-weixin
 ```
+
+### Testing & Quality
+- **Manual Testing**: Primary testing method via browser/IDE
+- **Linting**: No configured linting - follow existing code patterns
+- **Type Checking**: No TypeScript configured - use JSDoc for documentation
+
+### Build Targets
+- **H5**: Builds to `/unpackage/dist/build/h5/` with base path `/admin/`
+- **App**: Builds native iOS/Android apps
+- **Mini-programs**: WeChat, Alipay, Baidu, Toutiao support
+
+## Configuration Files
+
+### Critical Configuration
+- `pages.json` - Central routing and navigation configuration
+- `manifest.json` - App metadata and platform-specific settings
+- `admin.config.js` - Admin-specific configuration
+- `vue.config.js` - Vue CLI configuration (if using CLI)
+
+### Environment Setup
+- **uniCloud**: Requires uniCloud service space setup in HBuilderX
+- **Database**: Uses uniCloud database with predefined schemas
+- **Authentication**: uni-id configuration in `uni_modules/uni-id/`
 
 ## Development Workflow
 
-1. **Adding New Pages**: 
-   - Create a new Vue component in the appropriate directory under `pages/`
-   - Register the page in `pages.json`
+### Adding New Features
+1. **Pages**: Create Vue component in appropriate `pages/` subdirectory
+2. **API**: Add service functions in `api/` following existing patterns
+3. **State**: Create Vuex module in `store/modules/` if needed
+4. **Navigation**: Register route in `pages.json` and menu system
 
-2. **Creating API Services**:
-   - Add new files in the `api/` directory following the existing pattern
-   - Use `uniCloud.callFunction` or `uniCloud.importObject` to communicate with backend
+### Database Schema
+- Located in `uniCloud-aliyun/database/` 
+- Uses uniCloud database with JSON schema validation
+- Predefined collections: users, roles, permissions, menus, apps
 
-3. **State Management**:
-   - Add new modules in `store/modules/` following the existing pattern
-   - Connect components to store using `mapState`, `mapActions`, etc.
+### Authentication Flow
+- Uses uni-id for complete user management
+- Login pages auto-handled by uni-id-pages module
+- Route protection via `uniIdRouter` in `pages.json`
 
-4. **UI Components**:
-   - Create reusable components in `components/`
-   - Follow the existing component structure and naming conventions
+## Key Integration Points
 
-## Testing
+### uni-id Integration
+- User management: registration, login, password reset, profile
+- Role-based access control (RBAC)
+- Permission system integrated with menu items
 
-There are no defined test scripts in package.json. Testing is typically done through manual verification in the browser or development tools within HBuilderX.
+### uni-stat Integration
+- Built-in analytics and statistics
+- User behavior tracking
+- Performance monitoring
 
-## Deployment
-
-Deployment is done through HBuilderX:
-1. Build the project for the target platform (H5, App, Mini-program)
-2. Upload the built files to the appropriate hosting service or app store
+### uni-upgrade-center
+- App version management
+- Update distribution system
+- Release management interface

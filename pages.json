@@ -185,6 +185,12 @@
 			"style": {
 				"navigationBarTitleText": "用户管理"
 			}
+		},
+		{
+			"path": "pages/test/user-exams/index",
+			"style": {
+				"navigationBarTitleText": "用户考试管理"
+			}
 		}
 	],
 	"subPackages": [{

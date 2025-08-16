@@ -467,9 +467,6 @@ async function getMyExamList(params = {}) {
 		return {
 			code: 200,
 			data: formattedData,
-			total: countRes.total,
-			page,
-			pageSize
 		};
 	} catch (error) {
 		console.error('获取我的考试列表失败:', error);
