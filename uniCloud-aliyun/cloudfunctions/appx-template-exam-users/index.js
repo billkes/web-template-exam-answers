@@ -102,23 +102,23 @@ async function registerUser(data) {
 
 // 用户登录
 async function loginUser(data) {
-	if (!data.username || !data.password) {
+	if (!data.mobile || !data.password) {
 		return {
 			code: 400,
-			message: '用户名和密码不能为空'
+			message: '手机号和密码不能为空'
 		};
 	}
 
 	// 查找用户
 	const res = await collection.where({
-		username: data.username,
+		mobile: data.mobile,
 		password: encryptPassword(data.password)
 	}).get();
 
 	if (res.data.length === 0) {
 		return {
 			code: 401,
-			message: '用户名或密码错误'
+			message: '手机号或密码错误'
 		};
 	}
 
@@ -231,6 +231,15 @@ async function resetPassword(id) {
 		};
 	}
 
+	// 先检查用户是否存在
+	const userExists = await collection.doc(id).get();
+	if (!userExists.data || userExists.data.length === 0) {
+		return {
+			code: 404,
+			message: '用户不存在'
+		};
+	}
+
 	const res = await collection.doc(id).update({
 		password: encryptPassword('123456')
 	});
@@ -238,7 +247,7 @@ async function resetPassword(id) {
 	if (res.updated === 0) {
 		return {
 			code: 404,
-			message: '用户不存在'
+			message: '数据更新前后没变化'
 		};
 	}
 
