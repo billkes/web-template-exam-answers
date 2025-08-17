@@ -192,31 +192,7 @@
 				"navigationBarTitleText": "用户考试管理"
 			}
 		}
-	,{
-    "path": "pages/appx-template-exam-user-exams/add",
-    "style": {
-        "navigationBarTitleText": "新增"
-    }
-}
-,{
-    "path": "pages/appx-template-exam-user-exams/edit",
-    "style": {
-        "navigationBarTitleText": "编辑"
-    }
-}
-,{
-    "path": "pages/appx-template-exam-user-exams/list",
-    "style": {
-        "navigationBarTitleText": "列表"
-    }
-}
-,{
-    "path": "pages/appx-template-exam-user-exams/detail",
-    "style": {
-        "navigationBarTitleText": "详情"
-    }
-}
-],
+	],
 	"subPackages": [{
 			"root": "pages/system",
 			"pages": [{
