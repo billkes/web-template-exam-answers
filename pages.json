@@ -163,12 +163,6 @@
 			}
 		},
 		{
-			"path": "pages/test/answer-records/detail",
-			"style": {
-				"navigationBarTitleText": "考试答题记录详情"
-			}
-		},
-		{
 			"path": "pages/test/exams/index",
 			"style": {
 				"navigationBarTitleText": "考试管理"
