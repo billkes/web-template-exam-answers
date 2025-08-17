@@ -2,29 +2,18 @@
 	"bsonType": "object",
 	"description": "用户考试关联表",
 	"required": ["user_id", "exam_id", "enrolled_time"],
-	"permission": {
-		"read": true,
-		"create": false,
-		"update": false,
-		"delete": false
-	},
 	"properties": {
 		"_id": {
-			"description": "ID"
+			"description": "记录ID",
+			"bsonType": "string"
 		},
 		"user_id": {
 			"bsonType": "string",
-			"description": "用户ID",
-			"foreignKey": "appx-template-exam-users._id",
-			"parentKey": "_id",
-			"parentKeyName": "user"
+			"description": "用户ID"
 		},
 		"exam_id": {
 			"bsonType": "string",
-			"description": "考试ID",
-			"foreignKey": "appx-template-exam-exams._id",
-			"parentKey": "_id",
-			"parentKeyName": "exam"
+			"description": "考试ID"
 		},
 		"enrolled_time": {
 			"bsonType": "timestamp",

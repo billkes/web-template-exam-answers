@@ -204,7 +204,7 @@
 			// 加载用户列表
 			const userRes = await getUserList()
 			if (userRes.code === 200) {
-				userList.value = userRes.data.list.map(user => ({
+				userList.value = userRes.data.rows.map(user => ({
 					value: user._id,
 					text: user.username || user.nickname || user._id
 				}))

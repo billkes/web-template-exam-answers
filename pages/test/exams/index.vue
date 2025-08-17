@@ -23,7 +23,7 @@
 			</uni-tr>
 			<uni-tr v-for="(item, index) in tableData" :key="item._id">
 				<uni-td align="center">{{ (pageNum - 1) * pageSize + index + 1 }}</uni-td>
-				<uni-td align="center">{{ item.name }}</uni-td>
+				<uni-td align="center">{{ item.title }}</uni-td>
 				<uni-td align="center">
 					<uni-tag :text="formatStatus(item.status)" :type="getStatusType(item.status)" />
 				</uni-td>
@@ -51,8 +51,8 @@
 			<uni-popup-dialog :title="formTitle" mode="base" :before-close="true" @close="closeDialog"
 				@confirm="submitForm">
 				<uni-forms ref="form" :modelValue="formData" :rules="rules">
-					<uni-forms-item label="考试名称" name="name">
-						<uni-easyinput v-model="formData.name" placeholder="请输入考试名称" />
+					<uni-forms-item label="考试名称" name="title">
+						<uni-easyinput v-model="formData.title" placeholder="请输入考试名称" />
 					</uni-forms-item>
 					<uni-forms-item label="开始时间" name="start_time">
 						<uni-datetime-picker type="datetime" v-model="formData.start_time" />
@@ -104,7 +104,7 @@
 	const form = ref(null)
 	const formTitle = ref('新增考试')
 	const formData = ref({
-		name: '',
+		title: '',
 		start_time: '',
 		end_time: '',
 		duration: 60,
@@ -116,7 +116,7 @@
 
 	// 表单验证规则
 	const rules = {
-		name: {
+		title: {
 			rules: [{
 				required: true,
 				errorMessage: '请输入考试名称'
@@ -211,7 +211,7 @@
 		formTitle.value = '新增考试'
 		isEdit.value = false
 		formData.value = {
-			name: '',
+			title: '',
 			start_time: '',
 			end_time: '',
 			duration: 60,

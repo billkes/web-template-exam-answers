@@ -1,5 +1,5 @@
 {
-  "name": "appx-template-exam-user-exams",
+  "name": "appxTemplateExamUserExams",
   "dependencies": {},
   "extensions": {
     "uni-cloud-jql": {}

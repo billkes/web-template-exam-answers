@@ -2,79 +2,61 @@
  * 用户考试关联API - uniCloud版本
  */
 
+// 获取用户考试关联列表
+export function getUserExamList(params) {
+	return uniCloud.callFunction({
+		name: 'appx-template-exam-user-exams',
+		data: {
+			action: 'list',
+			params
+		}
+	}).then(res => res.result);
+}
+
+// 获取单个用户考试关联详情
+export function getUserExamDetail(id) {
+	return uniCloud.callFunction({
+		name: 'appx-template-exam-user-exams',
+		data: {
+			action: 'detail',
+			params: {
+				id
+			}
+		}
+	}).then(res => res.result);
+}
+
 // 用户报名考试
-export function enrollUser(params) {
+export function enrollExam(data) {
 	return uniCloud.callFunction({
 		name: 'appx-template-exam-user-exams',
 		data: {
-			action: 'enroll',
-			params
+			action: 'add',
+			params: data
 		}
 	}).then(res => res.result);
 }
 
-// 取消报名
-export function cancelEnrollment(params) {
+// 更新用户考试
+export function updateUserExam(data) {
 	return uniCloud.callFunction({
 		name: 'appx-template-exam-user-exams',
 		data: {
-			action: 'cancelEnrollment',
-			params
+			action: 'update',
+			params: data
 		}
 	}).then(res => res.result);
 }
 
-// 更新报名状态
-export function updateStatus(params) {
+// 删除用户考试关联（取消报名）
+export function deleteUserExam(id) {
 	return uniCloud.callFunction({
 		name: 'appx-template-exam-user-exams',
 		data: {
-			action: 'updateStatus',
-			params
-		}
-	}).then(res => res.result);
-}
-
-// 获取用户的所有考试
-export function getUserExams(params) {
-	return uniCloud.callFunction({
-		name: 'appx-template-exam-user-exams',
-		data: {
-			action: 'getUserExams',
-			params
-		}
-	}).then(res => res.result);
-}
-
-// 获取考试的所有用户
-export function getExamUsers(params) {
-	return uniCloud.callFunction({
-		name: 'appx-template-exam-user-exams',
-		data: {
-			action: 'getExamUsers',
-			params
-		}
-	}).then(res => res.result);
-}
-
-// 获取报名列表(带分页和搜索)
-export function getEnrollmentList(params) {
-	return uniCloud.callFunction({
-		name: 'appx-template-exam-user-exams',
-		data: {
-			action: 'getEnrollmentList',
-			params
-		}
-	}).then(res => res.result);
-}
-
-// 检查用户是否已报名考试
-export function checkEnrollment(params) {
-	return uniCloud.callFunction({
-		name: 'appx-template-exam-user-exams',
-		data: {
-			action: 'checkEnrollment',
-			params
+			action: 'delete',
+			params: {
+				id
+			}
 		}
 	}).then(res => res.result);
 }

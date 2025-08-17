@@ -108,10 +108,15 @@ async function getRecordList(params = {}) {
 	// 如果有关键词搜索，添加搜索条件
 	if (keyword) {
 		aggregate.match({
-			$or: [
-				{ user_name: new RegExp(keyword, 'i') },
-				{ exam_name: new RegExp(keyword, 'i') },
-				{ question_content: new RegExp(keyword, 'i') }
+			$or: [{
+					user_name: new RegExp(keyword, 'i')
+				},
+				{
+					exam_name: new RegExp(keyword, 'i')
+				},
+				{
+					question_content: new RegExp(keyword, 'i')
+				}
 			]
 		});
 	}
@@ -139,7 +144,46 @@ async function getRecordDetail(id) {
 		};
 	}
 
-	const res = await collection.doc(id).get();
+	const res = await collection
+		.aggregate()
+		.match({
+			_id: id
+		})
+		.lookup({
+			from: 'appx-template-exam-users',
+			localField: 'user_id',
+			foreignField: '_id',
+			as: 'user_info'
+		})
+		.lookup({
+			from: 'appx-template-exam-exams',
+			localField: 'exam_id',
+			foreignField: '_id',
+			as: 'exam_info'
+		})
+		.lookup({
+			from: 'appx-template-exam-questions',
+			localField: 'question_id',
+			foreignField: '_id',
+			as: 'question_info'
+		})
+		.addFields({
+			user_username: {
+				$arrayElemAt: ['$user_info.username', 0]
+			},
+			exam_title: {
+				$arrayElemAt: ['$exam_info.title', 0]
+			},
+			question_content: {
+				$arrayElemAt: ['$question_info.content', 0]
+			}
+		})
+		.project({
+			user_info: 0,
+			exam_info: 0,
+			question_info: 0
+		})
+		.end();
 
 	if (!res.data || res.data.length === 0) {
 		return {

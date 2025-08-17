@@ -47,7 +47,7 @@ exports.main = async (event, context) => {
 
 // 创建考试
 async function createExam(data) {
-	const requiredFields = ['name', 'start_time', 'end_time', 'duration', 'total_score'];
+	const requiredFields = ['title', 'start_time', 'end_time', 'duration', 'total_score'];
 	const missingFields = requiredFields.filter(field => !data[field]);
 
 	if (missingFields.length > 0) {
@@ -66,7 +66,7 @@ async function createExam(data) {
 	}
 
 	const examData = {
-		name: data.name,
+		title: data.title,
 		description: data.description || '',
 		start_time: data.start_time,
 		end_time: data.end_time,
@@ -109,7 +109,7 @@ async function updateExam(data) {
 
 	// 准备更新数据
 	const updateData = {};
-	if (data.name) updateData.name = data.name;
+	if (data.title) updateData.title = data.title;
 	if (data.description !== undefined) updateData.description = data.description;
 	if (data.start_time) updateData.start_time = data.start_time;
 	if (data.end_time) updateData.end_time = data.end_time;
@@ -207,7 +207,7 @@ async function getExamList(params = {}) {
 	const where = {};
 	if (keyword) {
 		where.$or = [{
-				name: new RegExp(keyword, 'i')
+				title: new RegExp(keyword, 'i')
 			},
 			{
 				description: new RegExp(keyword, 'i')
@@ -400,7 +400,7 @@ async function getMyExamList(params = {}) {
 
 		if (keyword) {
 			where.$or = [{
-					name: new RegExp(keyword, 'i')
+					title: new RegExp(keyword, 'i')
 				},
 				{
 					description: new RegExp(keyword, 'i')
@@ -517,7 +517,7 @@ async function getRandomExams(params = {}) {
 		// 格式化数据
 		const formattedData = res.data.map(item => ({
 			_id: item._id,
-			title: item.name,
+			title: item.title,
 			description: item.description,
 			start_time: item.start_time,
 			end_time: item.end_time,
