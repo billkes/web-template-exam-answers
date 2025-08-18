@@ -8,8 +8,10 @@
 			:image-styles="imageStyles" :files-list="filesList" :limit="limitLength" :disablePreview="disablePreview"
 			:delIcon="delIcon" @uploadFiles="uploadFiles" @choose="choose" @delFile="delFile">
 			<slot>
-				<view class="icon-add"></view>
-				<view class="icon-add rotate"></view>
+				<view class="is-add">
+					<view class="icon-add"></view>
+					<view class="icon-add rotate"></view>
+				</view>
 			</slot>
 		</upload-image>
 		<upload-file v-if="fileMediatype !== 'image' || showType !== 'grid'" :readonly="readonly"
@@ -642,6 +644,14 @@
 	.file-count {
 		font-size: 14px;
 		color: #999;
+	}
+
+	.is-add {
+		/* #ifndef APP-NVUE */
+		display: flex;
+		/* #endif */
+		align-items: center;
+		justify-content: center;
 	}
 
 	.icon-add {

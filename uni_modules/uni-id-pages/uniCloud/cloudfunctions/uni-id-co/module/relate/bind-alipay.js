@@ -52,12 +52,12 @@ module.exports = async function (params = {}) {
   await preBind.call(this, {
     uid,
     bindAccount,
-    logType: LOG_TYPE.BIND_ALIPAY
+    logType: LOG_TYPE.BIND_APPLE
   })
   return postBind.call(this, {
     uid,
     bindAccount,
     extraData: {},
-    logType: LOG_TYPE.BIND_ALIPAY
+    logType: LOG_TYPE.BIND_APPLE
   })
 }

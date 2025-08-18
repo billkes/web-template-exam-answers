@@ -1,7 +1,7 @@
 {
 	"id": "uni-id-pages",
 	"displayName": "uni-id-pages",
-	"version": "1.1.24",
+	"version": "1.1.20",
 	"description": "云端一体简单、统一、可扩展的用户中心页面模版",
 	"keywords": [
         "用户管理",
@@ -12,7 +12,7 @@
     ],
 	"repository": "https://gitcode.net/dcloud/hello_uni-id-pages",
 	"engines": {
-		"HBuilderX": "^4.15"
+		"HBuilderX": "^3.4.17"
 	},
     "dcloudext": {
         "sale": {
@@ -64,11 +64,9 @@
 					"vue3": "y"
 				},
 				"App": {
-                    "app-vue": "y",
-                    "app-nvue": "u",
-                    "app-harmony": "u",
-                    "app-uvue": "u"
-                },
+					"app-vue": "y",
+					"app-nvue": "u"
+				},
 				"H5-mobile": {
 					"Safari": "y",
 					"Android Browser": "y",

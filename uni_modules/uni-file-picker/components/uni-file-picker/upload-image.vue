@@ -18,7 +18,10 @@
 		</view>
 		<view v-if="filesList.length < limit && !readonly" class="file-picker__box" :style="boxStyle">
 			<view class="file-picker__box-content is-add" :style="borderStyle" @click="choose">
-				<slot></slot>
+				<slot>
+					<view class="icon-add"></view>
+					<view class="icon-add rotate"></view>
+				</slot>
 			</view>
 		</view>
 	</view>
@@ -249,6 +252,13 @@
 		/* #endif */
 		align-items: center;
 		justify-content: center;
+	}
+
+	.icon-add {
+		width: 50px;
+		height: 5px;
+		background-color: #f1f1f1;
+		border-radius: 2px;
 	}
 
 	.rotate {

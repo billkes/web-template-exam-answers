@@ -1,9 +1,6 @@
 {
 	"bsonType": "object",
-	"required": [
-		"value",
-		"expired"
-	],
+	"required": ["value", "expired"],
 	"permission": {
 		"read": false,
 		"create": false,
@@ -21,6 +18,5 @@
 			"description": "过期时间",
 			"bsonType": "timestamp"
 		}
-	},
-	"version": "0.0.1"
+	}
 }

@@ -2,7 +2,6 @@ const WxAccount = require('./weixin/account/index')
 const QQAccount = require('./qq/account/index')
 const AliAccount = require('./alipay/account/index')
 const AppleAccount = require('./apple/account/index')
-const HuaweiAccount = require('./huawei/account/index')
 
 const createApi = require('./share/create-api')
 
@@ -32,13 +31,6 @@ module.exports = {
     const oauthConfig = this.configUtils.getOauthConfig({ provider: 'apple' })
     return createApi(AppleAccount, {
       bundleId: oauthConfig.bundleId
-    })
-  },
-  initHuawei: function () {
-    const oauthConfig = this.configUtils.getOauthConfig({ provider: 'huawei' })
-    return createApi(HuaweiAccount, {
-      clientId: oauthConfig.clientId,
-      clientSecret: oauthConfig.clientSecret
     })
   }
 }

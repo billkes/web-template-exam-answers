@@ -27,9 +27,6 @@
 					class="input-box" placeholder="再次输入密码" maxlength="20" type="password" v-model="formData.password2"
 					trim="both" />
 			</uni-forms-item>
-<!--			<uni-forms-item>-->
-<!--				<uni-captcha ref="captcha" scene="register" v-model="formData.captcha" />-->
-<!--			</uni-forms-item>-->
 			<uni-id-pages-agreements scope="register" ref="agreements" ></uni-id-pages-agreements>
 			<button class="uni-btn" type="primary" @click="submit">注册</button>
 			<button @click="navigateBack" class="register-back">返回</button>
@@ -72,7 +69,7 @@
 		onShow() {
 			// #ifdef H5
 			document.onkeydown = event => {
-				var e = event || window.event;
+				let e = event || window.event;
 				if (e && e.keyCode == 13) { //回车键的键值为13
 					this.submit()
 				}
@@ -85,14 +82,14 @@
 			 */
 			submit() {
 				this.$refs.form.validate().then((res) => {
-					// if(this.formData.captcha.length != 4){
-					// 	this.$refs.captcha.focusCaptchaInput = true
-					// 	return uni.showToast({
-					// 		title: '请输入验证码',
-					// 		icon: 'none',
-					// 		duration: 3000
-					// 	});
-					// }
+					/* if(this.formData.captcha.length != 4){
+						this.$refs.captcha.focusCaptchaInput = true
+						return uni.showToast({
+							title: '请输入验证码',
+							icon: 'none',
+							duration: 3000
+						});
+					} */
 					if (this.needAgreements && !this.agree) {
 						return this.$refs.agreements.popup(()=>{
 							this.submitForm(res)
@@ -112,7 +109,7 @@
 				})
 				.catch(e => {
 					//更好的体验：登录错误，直接刷新验证码
-					this.$refs.captcha.getImageCaptcha()
+					// this.$refs.captcha.getImageCaptcha()
 					uni.showModal({
 						title: '提示',
 						content: e.errMsg || `创建失败: ${e.errCode}`,

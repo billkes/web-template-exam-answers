@@ -200,14 +200,6 @@ module.exports = async function (params = {}) {
     realData.identities = user.identities
   }
 
-  if (mobile) {
-    realData.mobile_confirmed = 1
-  }
-
-  if (email) {
-    realData.email_confirmed = 1
-  }
-
   await userCollection.where(query).update(realData)
 
   return {

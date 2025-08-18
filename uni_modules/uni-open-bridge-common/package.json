@@ -1,9 +1,10 @@
 {
   "id": "uni-open-bridge-common",
   "displayName": "uni-open-bridge-common",
-  "version": "1.2.1",
+  "version": "1.2.0",
   "description": "统一接管微信等三方平台认证凭据",
   "keywords": [
+    "uni-open-bridge-common",
     "access_token",
     "session_key",
     "ticket"
@@ -38,8 +39,7 @@
     "platforms": {
       "cloud": {
         "tcb": "y",
-        "aliyun": "y",
-        "alipay": "n"
+        "aliyun": "y"
       },
       "client": {
         "Vue": {

@@ -142,7 +142,7 @@
 										}
 									},
 									complete(e) {
-										console.log(e);
+										
 									}
 								});
 							})

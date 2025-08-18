@@ -70,8 +70,7 @@
 			"style": {
 				"navigationBarTitleText": "绑定手机号码"
 			}
-		},
-		{
+		}, {
 			"path": "uni_modules/uni-id-pages/pages/userinfo/cropImage/cropImage",
 			"style": {
 				"navigationBarTitleText": ""
@@ -148,45 +147,15 @@
 				"enablePullDownRefresh": false,
 				"navigationBarTitleText": "设置密码"
 			}
-		},
-		{
-			"path": "uni_modules/uni-id-pages/pages/userinfo/realname-verify/realname-verify",
-			"style": {
-				"enablePullDownRefresh": false,
-				"navigationBarTitleText": "实名认证"
-			}
-		},
-		{
-			"path": "pages/test/answer-records/index",
-			"style": {
-				"navigationBarTitleText": "考试答题记录"
-			}
-		},
-		{
-			"path": "pages/test/exams/index",
-			"style": {
-				"navigationBarTitleText": "考试管理"
-			}
-		},
-		{
-			"path": "pages/test/questions/index",
-			"style": {
-				"navigationBarTitleText": "考试题目管理"
-			}
-		},
-		{
-			"path": "pages/test/users/index",
-			"style": {
-				"navigationBarTitleText": "用户管理"
-			}
-		},
-		{
-			"path": "pages/test/user-exams/index",
-			"style": {
-				"navigationBarTitleText": "用户考试管理"
-			}
 		}
-	],
+	,{
+    "path": "uni_modules/uni-id-pages/pages/userinfo/realname-verify/realname-verify",
+    "style": {
+        "enablePullDownRefresh": false,
+        "navigationBarTitleText": "实名认证"
+    }
+}
+],
 	"subPackages": [{
 			"root": "pages/system",
 			"pages": [{

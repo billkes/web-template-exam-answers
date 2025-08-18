@@ -13,8 +13,8 @@
     "dependencies": {
         "uni-config-center": "file:..\/..\/..\/..\/..\/uni-config-center\/uniCloud\/cloudfunctions\/common\/uni-config-center"
     },
-    "origin-plugin-dev-name": "uni-id-common",
-    "origin-plugin-version": "1.0.18",
-    "plugin-dev-name": "uni-id-common",
-    "plugin-version": "1.0.18"
+    "origin-plugin-dev-name": "uni-template-admin",
+    "origin-plugin-version": "2.5.9",
+    "plugin-dev-name": "uni-template-admin",
+    "plugin-version": "2.5.9"
 }

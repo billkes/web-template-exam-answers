@@ -40,9 +40,8 @@
 </template>
 
 <script>
-import checkIdCard from '@/uni_modules/uni-id-pages/common/check-id-card.js';
+import checkIdCard from '@/uni_modules/uni-id-pages/common/check-id-card.js'
 import mixin from '@/uni_modules/uni-id-pages/common/login-page.mixin.js';
-
 import {
   store,
   mutations

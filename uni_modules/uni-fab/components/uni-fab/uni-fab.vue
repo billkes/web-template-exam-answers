@@ -164,8 +164,8 @@
 			},
 			// 计算 nvue bottom
 			nvueBottom() {
-				// #ifdef APP-NVUE
 				const safeBottom = uni.getSystemInfoSync().windowBottom;
+				// #ifdef APP-NVUE
 				return 30 + safeBottom
 				// #endif
 				// #ifndef APP-NVUE

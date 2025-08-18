@@ -7,20 +7,13 @@
 		<!-- 顶部文字 -->
 		<text class="title">请选择登录方式</text>
 		<!-- 快捷登录框 当url带参数时有效 -->
-		<template v-if="['apple','weixin', 'weixinMobile', 'huawei', 'huaweiMobile'].includes(type)">
+		<template v-if="['apple','weixin', 'weixinMobile'].includes(type)">
 			<text class="tip">将根据第三方账号服务平台的授权范围获取你的信息</text>
 			<view class="quickLogin">
-				<image v-if="type !== 'weixinMobile' && type !== 'huaweiMobile'" @click="quickLogin" :src="imgSrc" mode="widthFix"
+				<image v-if="type !== 'weixinMobile'" @click="quickLogin" :src="imgSrc" mode="widthFix"
 					class="quickLoginBtn"></image>
-				<view v-else style="position: relative">
-					<button v-if="type ==='weixinMobile'" type="primary" open-type="getPhoneNumber" @getphonenumber="quickLogin"
-					        class="uni-btn">微信授权手机号登录</button>
-					<button v-if="type === 'huaweiMobile'" open-type="getPhoneNumber" @getphonenumber="quickLogin"
-					        class="quickLoginBtn" style="padding: 0; display: flex">
-						<image :src="imgSrc" mode="widthFix"></image>
-					</button>
-					<view v-if="this.needAgreements && !this.agree" class="mobile-login-agreement-layer" @click="showAgreementModal"></view>
-				</view>
+				<button v-else type="primary" open-type="getPhoneNumber" @getphonenumber="quickLogin"
+					class="uni-btn">微信授权手机号登录</button>
 				<uni-id-pages-agreements scope="register" ref="agreements"></uni-id-pages-agreements>
 			</view>
 		</template>
@@ -28,7 +21,7 @@
 			<text class="tip">未注册的账号验证通过后将自动注册</text>
 			<view class="phone-box">
 				<view @click="chooseArea" class="area">+86</view>
-				<uni-easyinput trim="both" :focus="focusPhone" @blur="focusPhone = false" class="input-box" type="number"
+				<uni-easyinput :focus="focusPhone" @blur="focusPhone = false" class="input-box" type="number"
 					:inputBorder="false" v-model="phone" maxlength="11" placeholder="请输入手机号" />
 			</view>
 			<uni-id-pages-agreements scope="register" ref="agreements"></uni-id-pages-agreements>
@@ -61,13 +54,8 @@
 				return /^1\d{10}$/.test(this.phone);
 			},
 			imgSrc() { //大快捷登录按钮图
-				const images = {
-					weixin: '/uni_modules/uni-id-pages/static/login/weixin.png',
-					apple: '/uni_modules/uni-id-pages/static/app/apple.png',
-					huawei: '/uni_modules/uni-id-pages/static/login/huawei.png',
-					huaweiMobile: '/uni_modules/uni-id-pages/static/login/huawei-mobile.png',
-				}
-				return images[this.type]
+				return this.type == 'weixin' ? '/uni_modules/uni-id-pages/static/login/weixin.png' :
+					'/uni_modules/uni-id-pages/static/app-plus/apple.png'
 			}
 		},
 		async onLoad(e) {
@@ -81,7 +69,7 @@
 			}
 			this.$nextTick(() => {
 				//关闭重复显示的登录快捷方式
-				if (['weixin', 'apple', 'huawei', 'huaweiMobile'].includes(type)) {
+				if (['weixin', 'apple'].includes(type)) {
 					this.$refs.uniFabLogin.servicesList = this.$refs.uniFabLogin.servicesList.filter(item =>
 						item.id != type)
 				}
@@ -93,7 +81,7 @@
 		onShow() {
 			// #ifdef H5
 			document.onkeydown = event => {
-				var e = event || window.event;
+				let e = event || window.event;
 				if (e && e.keyCode == 13) { //回车键的键值为13
 					this.toSmsPage()
 				}
@@ -106,31 +94,15 @@
 		onReady() {
 			// 是否优先启动一键登录。即：页面一加载就启动一键登录
 			//#ifdef APP-PLUS
-			if (config.loginTypes.includes('univerify') && this.type == "univerify") {
-				uni.preLogin({
-					provider: 'univerify',
-					success: () => {
-						const pages = getCurrentPages();
-						currentWebview = pages[pages.length - 1].$getAppWebview();
-						currentWebview.setStyle({
-							"top": "2000px" // 隐藏当前页面窗体
-						})
-						// this.type == this.loginTypes[1]
-						// console.log('开始一键登录');
-						this.$refs.uniFabLogin.login_before('univerify')
-					},
-					fail: (err) => {
-						console.log(err);
-						if (config.loginTypes.length > 1) {
-							this.$refs.uniFabLogin.login_before(config.loginTypes[1])
-						} else {
-							uni.showModal({
-								content: err.message,
-								showCancel: false
-							});
-						}
-					}
+			if (this.type == "univerify") {
+				const pages = getCurrentPages();
+				currentWebview = pages[pages.length - 1].$getAppWebview();
+				currentWebview.setStyle({
+					"top": "2000px" // 隐藏当前页面窗体
 				})
+				this.type == this.loginTypes[1]
+				// console.log('开始一键登录');
+				this.$refs.uniFabLogin.login_before('univerify')
 			}
 			//#endif
 		},
@@ -141,17 +113,14 @@
 					"top": 0
 				})
 			},
-			showAgreementModal () {
-				this.$refs.agreements.popup()
-			},
 			quickLogin(e) {
 				let options = {}
-				console.log(e)
+
 				if (e.detail?.code) {
 					options.phoneNumberCode = e.detail.code
 				}
 
-				if ((this.type === 'weixinMobile' || this.type === 'huaweiMobile') && !e.detail?.code) return
+				if (this.type === 'weixinMobile' && !e.detail?.code) return
 
 				this.$refs.uniFabLogin.login_before(this.type, true, options)
 			},
@@ -198,13 +167,6 @@
 		}
 	}
 
-	.mobile-login-agreement-layer {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-	}
 	.uni-content,
 	.quickLogin {
 		/* #ifndef APP-NVUE */
@@ -260,9 +222,6 @@
 	.quickLoginBtn {
 		margin: 20px 0;
 		width: 450rpx;
-		background-color: transparent;
-		border: none;
-		box-shadow: none;
 		/* #ifndef APP-NVUE */
 		max-width: 230px;
 		/* #endif */

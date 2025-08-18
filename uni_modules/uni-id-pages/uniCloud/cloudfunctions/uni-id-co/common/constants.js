@@ -26,9 +26,7 @@ const USER_IDENTIFIER = {
   'qq_openid.mp': 'qq-account',
   ali_openid: 'alipay-account',
   apple_openid: 'alipay-account',
-  identities: 'idp',
-  huawei_openid: 'huawei-account',
-  huawei_unionid: 'huawei-account'
+  identities: 'idp'
 }
 
 const USER_STATUS = {
@@ -62,12 +60,10 @@ const LOG_TYPE = {
   BIND_QQ: 'bind-qq',
   BIND_APPLE: 'bind-apple',
   BIND_ALIPAY: 'bind-alipay',
-  BIND_HUAWEI: 'bind-huawei',
   UNBIND_WEIXIN: 'unbind-weixin',
   UNBIND_QQ: 'unbind-qq',
   UNBIND_ALIPAY: 'unbind-alipay',
-  UNBIND_APPLE: 'unbind-apple',
-  UNBIND_HUAWEI: 'unbind-huawei',
+  UNBIND_APPLE: 'unbind-apple'
 }
 
 const SMS_SCENE = {
