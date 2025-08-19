@@ -65,15 +65,6 @@ const validator = {
     "label": "考试时长",
     "title": "考试时长"
   },
-  "subject": {
-    "rules": [
-      {
-        "format": "string"
-      }
-    ],
-    "label": "科目",
-    "title": "科目"
-  },
   "tags": {
     "rules": [
       {

@@ -19,9 +19,6 @@
       <uni-forms-item name="difficulty" label="难度">
         <uni-data-select placeholder="请选择题目难度" v-model="formData.difficulty" :localdata="formOptions.difficulty_localdata"></uni-data-select>
       </uni-forms-item>
-      <uni-forms-item name="subject" label="科目">
-        <uni-easyinput placeholder="所属科目" v-model="formData.subject"></uni-easyinput>
-      </uni-forms-item>
       <uni-forms-item name="tags" label="标签">
         <billkes-form-tags :multiple="true" v-model="formData.tags"></billkes-form-tags>
       </uni-forms-item>
@@ -63,7 +60,6 @@
         "answer": "",
         "analysis": "",
         "difficulty": 1,
-        "subject": "",
         "tags": []
       }
       return {

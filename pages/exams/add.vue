@@ -16,9 +16,6 @@
       <uni-forms-item name="duration" label="考试时长">
         <billkes-form-duration placeholder="考试时长（分钟）" unit="分钟" minDuration="1" maxDuration="480" type="number" v-model="formData.duration"></billkes-form-duration>
       </uni-forms-item>
-      <uni-forms-item name="subject" label="科目">
-        <uni-easyinput placeholder="所属科目" v-model="formData.subject"></uni-easyinput>
-      </uni-forms-item>
       <uni-forms-item name="tags" label="标签">
         <billkes-form-tags placeholder="请选择试卷标签" :multiple="true" v-model="formData.tags"></billkes-form-tags>
       </uni-forms-item>
@@ -62,7 +59,6 @@
         "questions": [],
         "total_score": null,
         "duration": null,
-        "subject": "",
         "tags": [],
         "status": 0
       }

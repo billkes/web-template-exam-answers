@@ -16,7 +16,7 @@
       </view>
     </view>
     <view class="uni-container">
-      <unicloud-db ref="udb" :collection="collectionList" field="title,type,options,answer,analysis,difficulty,subject,tags" :where="where" page-data="replace"
+      <unicloud-db ref="udb" :collection="collectionList" field="title,type,options,answer,analysis,difficulty,tags" :where="where" page-data="replace"
         :orderby="orderby" :getcount="true" :page-size="options.pageSize" :page-current="options.pageCurrent"
         v-slot:default="{data,pagination,loading,error,options}" :options="options" loadtime="manual" @load="onqueryload">
         <uni-table ref="table" :loading="loading" :emptyText="error.message || '没有更多数据'" border stripe type="selection" @selection-change="selectionChange">
@@ -27,7 +27,6 @@
             <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'answer')" sortable @sort-change="sortChange($event, 'answer')">答案</uni-th>
             <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'analysis')" sortable @sort-change="sortChange($event, 'analysis')">解析</uni-th>
             <uni-th align="center" filter-type="select" :filter-data="options.filterData.difficulty_localdata" @filter-change="filterChange($event, 'difficulty')">难度</uni-th>
-            <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'subject')" sortable @sort-change="sortChange($event, 'subject')">科目</uni-th>
             <uni-th align="center" sortable @sort-change="sortChange($event, 'tags')">标签</uni-th>
             <uni-th align="center">操作</uni-th>
           </uni-tr>
@@ -44,7 +43,6 @@
             <uni-td align="center">
               <billkes-table-tag :enum="options.filterData.difficulty_localdata" :value="item.difficulty"></billkes-table-tag>
             </uni-td>
-            <uni-td align="center">{{item.subject}}</uni-td>
             <uni-td align="center">
               <billkes-table-tags separator=", " :value="item.tags"></billkes-table-tags>
             </uni-td>
@@ -134,7 +132,6 @@
             "答案": "answer",
             "解析": "analysis",
             "难度": "difficulty",
-            "科目": "subject",
             "标签": "tags"
           }
         },

@@ -47,7 +47,7 @@ const validator = {
         "format": "array"
       },
       {
-        "arrayType": "object"
+        "arrayType": "string"
       }
     ],
     "label": "选项",
@@ -103,15 +103,6 @@ const validator = {
     "label": "难度",
     "title": "难度",
     "defaultValue": 1
-  },
-  "subject": {
-    "rules": [
-      {
-        "format": "string"
-      }
-    ],
-    "label": "科目",
-    "title": "科目"
   },
   "tags": {
     "rules": [
