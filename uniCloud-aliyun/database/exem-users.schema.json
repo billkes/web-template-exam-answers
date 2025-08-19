@@ -21,6 +21,12 @@
 				"props": {
 					"placeholder": "请输入用户名"
 				}
+			},
+			"componentForShow": {
+				"name": "uni-easyinput",
+				"props": {
+					"disabled": true
+				}
 			}
 		},
 		"email": {
@@ -33,6 +39,12 @@
 				"props": {
 					"placeholder": "请输入邮箱地址"
 				}
+			},
+			"componentForShow": {
+				"name": "uni-easyinput",
+				"props": {
+					"disabled": true
+				}
 			}
 		},
 		"nickname": {
@@ -44,6 +56,12 @@
 				"name": "uni-easyinput",
 				"props": {
 					"placeholder": "请输入昵称"
+				}
+			},
+			"componentForShow": {
+				"name": "uni-easyinput",
+				"props": {
+					"disabled": true
 				}
 			}
 		},

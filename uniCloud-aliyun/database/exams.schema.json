@@ -21,6 +21,12 @@
 				"props": {
 					"placeholder": "请输入试卷标题"
 				}
+			},
+			"componentForShow": {
+				"name": "uni-easyinput",
+				"props": {
+					"disabled": true
+				}
 			}
 		},
 		"description": {
@@ -33,6 +39,13 @@
 				"props": {
 					"type": "textarea",
 					"placeholder": "请输入试卷描述"
+				}
+			},
+			"componentForShow": {
+				"name": "uni-easyinput",
+				"props": {
+					"type": "textarea",
+					"disabled": true
 				}
 			}
 		},
@@ -64,6 +77,13 @@
 					"type": "number",
 					"placeholder": "请输入试卷总分"
 				}
+			},
+			"componentForShow": {
+				"name": "uni-easyinput",
+				"props": {
+					"type": "number",
+					"disabled": true
+				}
 			}
 		},
 		"duration": {
@@ -73,10 +93,19 @@
 			"label": "考试时长",
 			"minimum": 1,
 			"componentForEdit": {
-				"name": "uni-easyinput",
+				"name": "billkes-form-duration",
 				"props": {
-					"type": "number",
-					"placeholder": "请输入考试时长（分钟）"
+					"placeholder": "请输入考试时长",
+					"unit": "分钟",
+					"minDuration": 1,
+					"maxDuration": 480
+				}
+			},
+			"componentForShow": {
+				"name": "billkes-table-duration",
+				"props": {
+					"unit": "分钟",
+					"format": "hh:mm"
 				}
 			}
 		},
@@ -89,6 +118,12 @@
 				"name": "uni-easyinput",
 				"props": {
 					"placeholder": "请输入所属科目"
+				}
+			},
+			"componentForShow": {
+				"name": "uni-easyinput",
+				"props": {
+					"disabled": true
 				}
 			}
 		},

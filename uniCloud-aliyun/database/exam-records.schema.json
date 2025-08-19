@@ -83,6 +83,13 @@
 					"type": "number",
 					"placeholder": "请输入考试总得分"
 				}
+			},
+			"componentForShow": {
+				"name": "uni-easyinput",
+				"props": {
+					"type": "number",
+					"disabled": true
+				}
 			}
 		},
 		"time_spent": {
@@ -92,10 +99,12 @@
 			"label": "用时",
 			"minimum": 0,
 			"componentForEdit": {
-				"name": "uni-easyinput",
+				"name": "billkes-form-duration",
 				"props": {
-					"type": "number",
-					"placeholder": "请输入考试用时（秒）"
+					"placeholder": "请输入考试用时",
+					"unit": "秒",
+					"minDuration": 0,
+					"maxDuration": 7200
 				}
 			},
 			"componentForShow": {
