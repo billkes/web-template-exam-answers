@@ -8,10 +8,8 @@
 			:image-styles="imageStyles" :files-list="filesList" :limit="limitLength" :disablePreview="disablePreview"
 			:delIcon="delIcon" @uploadFiles="uploadFiles" @choose="choose" @delFile="delFile">
 			<slot>
-				<view class="is-add">
-					<view class="icon-add"></view>
-					<view class="icon-add rotate"></view>
-				</view>
+				<view class="icon-add"></view>
+				<view class="icon-add rotate"></view>
 			</slot>
 		</upload-image>
 		<upload-file v-if="fileMediatype !== 'image' || showType !== 'grid'" :readonly="readonly"
@@ -396,11 +394,13 @@
 					let filedata = await get_file_data(files[i], this.fileMediatype)
 					filedata.progress = 0
 					filedata.status = 'ready'
-					this.files.push(filedata)
-					currentData.push({
+					// fix by mehaotian ,统一返回，删除也包含file对象
+					let fileTempData = {
 						...filedata,
 						file: files[i]
-					})
+					}
+					this.files.push(fileTempData)
+					currentData.push(fileTempData)
 				}
 				this.$emit('select', {
 					tempFiles: currentData,
@@ -644,14 +644,6 @@
 	.file-count {
 		font-size: 14px;
 		color: #999;
-	}
-
-	.is-add {
-		/* #ifndef APP-NVUE */
-		display: flex;
-		/* #endif */
-		align-items: center;
-		justify-content: center;
 	}
 
 	.icon-add {

@@ -1,0 +1,188 @@
+{
+	"bsonType": "object",
+	"required": ["title", "type", "options", "answer"],
+	"permission": {
+		"read": true,
+		"create": true,
+		"update": true,
+		"delete": true
+	},
+	"properties": {
+		"_id": {
+			"description": "存储文档 ID，系统自动生成"
+		},
+		"title": {
+			"bsonType": "string",
+			"title": "题目标题",
+			"description": "题目标题",
+			"label": "题目标题",
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"placeholder": "请输入题目标题"
+				}
+			}
+		},
+		"type": {
+			"bsonType": "string",
+			"title": "题目类型",
+			"description": "题目类型：single-单选题，multiple-多选题",
+			"label": "题目类型",
+			"enum": [{
+					"value": "single",
+					"text": "单选题"
+				},
+				{
+					"value": "multiple",
+					"text": "多选题"
+				}
+			],
+			"componentForEdit": {
+				"name": "uni-data-select",
+				"props": {
+					"placeholder": "请选择题目类型"
+				}
+			},
+			"componentForShow": {
+				"name": "uni-data-select",
+				"props": {
+					"disabled": true
+				}
+			}
+		},
+		"options": {
+			"bsonType": "array",
+			"title": "选项",
+			"description": "题目选项（选择题使用）",
+			"label": "选项",
+			"arrayType": "object",
+			"componentForEdit": {
+				"name": "billkes-form-exam-opt"
+			},
+			"componentForShow": {
+				"name": "billkes-table-options",
+				"props": {
+					"showCount": true
+				}
+			}
+		},
+		"answer": {
+			"bsonType": "string",
+			"title": "答案",
+			"description": "题目答案",
+			"label": "答案",
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"placeholder": "请输入题目答案"
+				}
+			}
+		},
+		"analysis": {
+			"bsonType": "string",
+			"title": "解析",
+			"description": "题目解析",
+			"label": "解析",
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"type": "textarea",
+					"placeholder": "请输入题目解析"
+				}
+			}
+		},
+		"difficulty": {
+			"bsonType": "int",
+			"title": "难度",
+			"description": "题目难度：1-简单，2-中等，3-困难",
+			"label": "难度",
+			"defaultValue": 1,
+			"minimum": 1,
+			"maximum": 3,
+			"enum": [{
+					"value": 1,
+					"text": "简单"
+				},
+				{
+					"value": 2,
+					"text": "中等"
+				},
+				{
+					"value": 3,
+					"text": "困难"
+				}
+			],
+			"componentForEdit": {
+				"name": "uni-data-select",
+				"props": {
+					"placeholder": "请选择题目难度"
+				}
+			},
+			"componentForShow": {
+				"name": "uni-badge",
+				"props": {
+					"type": "warning",
+					"text": "中等"
+				}
+			}
+		},
+		"subject": {
+			"bsonType": "string",
+			"title": "科目",
+			"description": "所属科目",
+			"label": "科目",
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"placeholder": "请输入所属科目"
+				}
+			}
+		},
+		"tags": {
+			"bsonType": "array",
+			"title": "标签",
+			"description": "题目标签",
+			"label": "标签",
+			"arrayType": "string",
+			"componentForEdit": {
+				"name": "billkes-form-tags"
+			},
+			"componentForShow": {
+				"name": "billkes-table-tags",
+				"props": {
+					"separator": ", "
+				}
+			}
+		},
+		"created_date": {
+			"bsonType": "timestamp",
+			"title": "创建时间",
+			"description": "创建时间",
+			"label": "创建时间",
+			"forceDefaultValue": {
+				"$env": "now"
+			},
+			"componentForShow": {
+				"name": "uni-dateformat",
+				"props": {
+					"format": "yyyy-MM-dd hh:mm:ss"
+				}
+			}
+		},
+		"updated_date": {
+			"bsonType": "timestamp",
+			"title": "更新时间",
+			"description": "更新时间",
+			"label": "更新时间",
+			"forceDefaultValue": {
+				"$env": "now"
+			},
+			"componentForShow": {
+				"name": "uni-dateformat",
+				"props": {
+					"format": "yyyy-MM-dd hh:mm:ss"
+				}
+			}
+		}
+	}
+}

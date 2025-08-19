@@ -1,0 +1,161 @@
+{
+	"bsonType": "object",
+	"required": ["username", "email"],
+	"permission": {
+		"read": true,
+		"create": true,
+		"update": true,
+		"delete": true
+	},
+	"properties": {
+		"_id": {
+			"description": "存储文档 ID，系统自动生成"
+		},
+		"username": {
+			"bsonType": "string",
+			"title": "用户名",
+			"description": "用户名",
+			"label": "用户名",
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"placeholder": "请输入用户名"
+				}
+			}
+		},
+		"email": {
+			"bsonType": "string",
+			"title": "邮箱",
+			"description": "邮箱",
+			"label": "邮箱",
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"placeholder": "请输入邮箱地址"
+				}
+			}
+		},
+		"nickname": {
+			"bsonType": "string",
+			"title": "昵称",
+			"description": "昵称",
+			"label": "昵称",
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"placeholder": "请输入昵称"
+				}
+			}
+		},
+		"avatar": {
+			"bsonType": "string",
+			"title": "头像",
+			"description": "头像URL",
+			"label": "头像",
+			"componentForEdit": {
+				"name": "billkes-form-avatar",
+				"props": {
+					"placeholder": "请上传头像"
+				}
+			},
+			"componentForShow": {
+				"name": "billkes-table-avatar",
+				"props": {
+					"mode": "aspectFit"
+				}
+			}
+		},
+		"role": {
+			"bsonType": "string",
+			"title": "角色",
+			"description": "用户角色：admin-管理员，teacher-教师，student-学生",
+			"label": "角色",
+			"enum": [{
+					"value": "admin",
+					"text": "管理员"
+				},
+				{
+					"value": "teacher",
+					"text": "教师"
+				},
+				{
+					"value": "student",
+					"text": "学生"
+				}
+			],
+			"componentForEdit": {
+				"name": "uni-data-select",
+				"props": {
+					"placeholder": "请选择用户角色"
+				}
+			},
+			"componentForShow": {
+				"name": "uni-data-select",
+				"props": {
+					"disabled": true
+				}
+			}
+		},
+		"status": {
+			"bsonType": "int",
+			"title": "状态",
+			"description": "用户状态：0-禁用，1-启用",
+			"label": "状态",
+			"defaultValue": 1,
+			"minimum": 0,
+			"maximum": 1,
+			"enum": [{
+					"value": 0,
+					"text": "禁用"
+				},
+				{
+					"value": 1,
+					"text": "启用"
+				}
+			],
+			"componentForEdit": {
+				"name": "uni-data-select",
+				"props": {
+					"placeholder": "请选择用户状态"
+				}
+			},
+			"componentForShow": {
+				"name": "uni-badge",
+				"props": {
+					"type": "success",
+					"text": "启用"
+				}
+			}
+		},
+		"created_date": {
+			"bsonType": "timestamp",
+			"title": "创建时间",
+			"description": "创建时间",
+			"label": "创建时间",
+			"forceDefaultValue": {
+				"$env": "now"
+			},
+			"componentForShow": {
+				"name": "uni-dateformat",
+				"props": {
+					"format": "yyyy-MM-dd hh:mm:ss"
+				}
+			}
+		},
+		"updated_date": {
+			"bsonType": "timestamp",
+			"title": "更新时间",
+			"description": "更新时间",
+			"label": "更新时间",
+			"forceDefaultValue": {
+				"$env": "now"
+			},
+			"componentForShow": {
+				"name": "uni-dateformat",
+				"props": {
+					"format": "yyyy-MM-dd hh:mm:ss"
+				}
+			}
+		}
+	}
+}

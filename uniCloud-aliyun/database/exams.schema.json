@@ -1,0 +1,176 @@
+{
+	"bsonType": "object",
+	"required": ["title", "questions", "total_score"],
+	"permission": {
+		"read": true,
+		"create": true,
+		"update": true,
+		"delete": true
+	},
+	"properties": {
+		"_id": {
+			"description": "存储文档 ID，系统自动生成"
+		},
+		"title": {
+			"bsonType": "string",
+			"title": "试卷标题",
+			"description": "试卷标题",
+			"label": "试卷标题",
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"placeholder": "请输入试卷标题"
+				}
+			}
+		},
+		"description": {
+			"bsonType": "string",
+			"title": "试卷描述",
+			"description": "试卷描述",
+			"label": "试卷描述",
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"type": "textarea",
+					"placeholder": "请输入试卷描述"
+				}
+			}
+		},
+		"questions": {
+			"bsonType": "array",
+			"title": "题目列表",
+			"description": "试卷包含的题目列表",
+			"label": "题目列表",
+			"arrayType": "object",
+			"componentForEdit": {
+				"name": "billkes-form-exam-questions"
+			},
+			"componentForShow": {
+				"name": "billkes-table-questions-count",
+				"props": {
+					"showCount": true
+				}
+			}
+		},
+		"total_score": {
+			"bsonType": "number",
+			"title": "总分",
+			"description": "试卷总分",
+			"label": "总分",
+			"minimum": 0,
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"type": "number",
+					"placeholder": "请输入试卷总分"
+				}
+			}
+		},
+		"duration": {
+			"bsonType": "int",
+			"title": "考试时长",
+			"description": "考试时长（分钟）",
+			"label": "考试时长",
+			"minimum": 1,
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"type": "number",
+					"placeholder": "请输入考试时长（分钟）"
+				}
+			}
+		},
+		"subject": {
+			"bsonType": "string",
+			"title": "科目",
+			"description": "所属科目",
+			"label": "科目",
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"placeholder": "请输入所属科目"
+				}
+			}
+		},
+		"tags": {
+			"bsonType": "array",
+			"title": "标签",
+			"description": "试卷标签",
+			"label": "标签",
+			"arrayType": "string",
+			"componentForEdit": {
+				"name": "billkes-form-tags",
+				"props": {
+					"placeholder": "请选择试卷标签"
+				}
+			},
+			"componentForShow": {
+				"name": "billkes-table-tags",
+				"props": {
+					"separator": ", "
+				}
+			}
+		},
+		"status": {
+			"bsonType": "int",
+			"title": "状态",
+			"description": "试卷状态：0-草稿，1-发布",
+			"label": "状态",
+			"defaultValue": 0,
+			"minimum": 0,
+			"maximum": 1,
+			"enum": [{
+					"value": 0,
+					"text": "草稿"
+				},
+				{
+					"value": 1,
+					"text": "发布"
+				}
+			],
+			"componentForEdit": {
+				"name": "uni-data-select",
+				"props": {
+					"placeholder": "请选择试卷状态"
+				}
+			},
+			"componentForShow": {
+				"name": "uni-badge",
+				"props": {
+					"type": "success",
+					"text": "发布"
+				}
+			}
+		},
+		"created_date": {
+			"bsonType": "timestamp",
+			"title": "创建时间",
+			"description": "创建时间",
+			"label": "创建时间",
+			"forceDefaultValue": {
+				"$env": "now"
+			},
+			"componentForShow": {
+				"name": "uni-dateformat",
+				"props": {
+					"format": "yyyy-MM-dd hh:mm:ss"
+				}
+			}
+		},
+		"updated_date": {
+			"bsonType": "timestamp",
+			"title": "更新时间",
+			"description": "更新时间",
+			"label": "更新时间",
+			"forceDefaultValue": {
+				"$env": "now"
+			},
+			"componentForShow": {
+				"name": "uni-dateformat",
+				"props": {
+					"format": "yyyy-MM-dd hh:mm:ss"
+				}
+			}
+		}
+	}
+}

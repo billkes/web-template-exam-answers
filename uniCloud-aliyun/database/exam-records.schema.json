@@ -1,0 +1,207 @@
+{
+	"bsonType": "object",
+	"required": ["exam_id", "user_id", "answers"],
+	"permission": {
+		"read": true,
+		"create": true,
+		"update": true,
+		"delete": true
+	},
+	"properties": {
+		"_id": {
+			"description": "存储文档 ID，系统自动生成"
+		},
+		"exam_id": {
+			"bsonType": "string",
+			"title": "试卷ID",
+			"description": "试卷ID",
+			"label": "试卷ID",
+			"componentForEdit": {
+				"name": "uni-data-select",
+				"props": {
+					"placeholder": "请选择试卷",
+					"collection": "exams",
+					"field": "title as text, _id as value"
+				}
+			},
+			"componentForShow": {
+				"name": "uni-data-select",
+				"props": {
+					"disabled": true,
+					"collection": "exams",
+					"field": "title as text, _id as value"
+				}
+			}
+		},
+		"user_id": {
+			"bsonType": "string",
+			"title": "用户ID",
+			"description": "用户ID",
+			"label": "用户ID",
+			"componentForEdit": {
+				"name": "uni-data-select",
+				"props": {
+					"placeholder": "请选择用户",
+					"collection": "exam-users",
+					"field": "nickname as text, _id as value"
+				}
+			},
+			"componentForShow": {
+				"name": "uni-data-select",
+				"props": {
+					"disabled": true,
+					"collection": "exam-users",
+					"field": "nickname as text, _id as value"
+				}
+			}
+		},
+		"answers": {
+			"bsonType": "array",
+			"title": "答题记录",
+			"description": "答题记录",
+			"label": "答题记录",
+			"arrayType": "object",
+			"componentForEdit": {
+				"name": "billkes-form-exam-answers"
+			},
+			"componentForShow": {
+				"name": "billkes-table-answers-summary",
+				"props": {
+					"showSummary": true
+				}
+			}
+		},
+		"total_score": {
+			"bsonType": "number",
+			"title": "总得分",
+			"description": "考试总得分",
+			"label": "总得分",
+			"minimum": 0,
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"type": "number",
+					"placeholder": "请输入考试总得分"
+				}
+			}
+		},
+		"time_spent": {
+			"bsonType": "int",
+			"title": "用时",
+			"description": "考试用时（秒）",
+			"label": "用时",
+			"minimum": 0,
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"type": "number",
+					"placeholder": "请输入考试用时（秒）"
+				}
+			},
+			"componentForShow": {
+				"name": "billkes-table-duration",
+				"props": {
+					"unit": "秒",
+					"format": "mm:ss"
+				}
+			}
+		},
+		"status": {
+			"bsonType": "int",
+			"title": "状态",
+			"description": "考试状态：0-未完成，1-已完成",
+			"label": "状态",
+			"defaultValue": 0,
+			"minimum": 0,
+			"maximum": 1,
+			"enum": [{
+					"value": 0,
+					"text": "未完成"
+				},
+				{
+					"value": 1,
+					"text": "已完成"
+				}
+			],
+			"componentForEdit": {
+				"name": "uni-data-select",
+				"props": {
+					"placeholder": "请选择考试状态"
+				}
+			},
+			"componentForShow": {
+				"name": "uni-badge",
+				"props": {
+					"type": "success",
+					"text": "已完成"
+				}
+			}
+		},
+		"started_date": {
+			"bsonType": "timestamp",
+			"title": "开始时间",
+			"description": "开始考试时间",
+			"label": "开始时间",
+			"componentForEdit": {
+				"name": "uni-datetime-picker",
+				"props": {
+					"placeholder": "请选择开始考试时间"
+				}
+			},
+			"componentForShow": {
+				"name": "uni-dateformat",
+				"props": {
+					"format": "yyyy-MM-dd hh:mm:ss"
+				}
+			}
+		},
+		"finished_date": {
+			"bsonType": "timestamp",
+			"title": "完成时间",
+			"description": "完成考试时间",
+			"label": "完成时间",
+			"componentForEdit": {
+				"name": "uni-datetime-picker",
+				"props": {
+					"placeholder": "请选择完成考试时间"
+				}
+			},
+			"componentForShow": {
+				"name": "uni-dateformat",
+				"props": {
+					"format": "yyyy-MM-dd hh:mm:ss"
+				}
+			}
+		},
+		"created_date": {
+			"bsonType": "timestamp",
+			"title": "创建时间",
+			"description": "创建时间",
+			"label": "创建时间",
+			"forceDefaultValue": {
+				"$env": "now"
+			},
+			"componentForShow": {
+				"name": "uni-dateformat",
+				"props": {
+					"format": "yyyy-MM-dd hh:mm:ss"
+				}
+			}
+		},
+		"updated_date": {
+			"bsonType": "timestamp",
+			"title": "更新时间",
+			"description": "更新时间",
+			"label": "更新时间",
+			"forceDefaultValue": {
+				"$env": "now"
+			},
+			"componentForShow": {
+				"name": "uni-dateformat",
+				"props": {
+					"format": "yyyy-MM-dd hh:mm:ss"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,185 @@
+{
+	"bsonType": "object",
+	"required": ["exam_id", "start_time", "end_time"],
+	"permission": {
+		"read": true,
+		"create": true,
+		"update": true,
+		"delete": true
+	},
+	"properties": {
+		"_id": {
+			"description": "存储文档 ID，系统自动生成"
+		},
+		"exam_id": {
+			"bsonType": "string",
+			"title": "试卷ID",
+			"description": "试卷ID",
+			"label": "试卷ID",
+			"componentForEdit": {
+				"name": "uni-data-select",
+				"props": {
+					"placeholder": "请选择试卷",
+					"collection": "exams",
+					"field": "title as text, _id as value"
+				}
+			},
+			"componentForShow": {
+				"name": "uni-data-select",
+				"props": {
+					"disabled": true,
+					"collection": "exams",
+					"field": "title as text, _id as value"
+				}
+			}
+		},
+		"title": {
+			"bsonType": "string",
+			"title": "安排标题",
+			"description": "考试安排标题",
+			"label": "安排标题",
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"placeholder": "请输入考试安排标题"
+				}
+			}
+		},
+		"description": {
+			"bsonType": "string",
+			"title": "安排描述",
+			"description": "考试安排描述",
+			"label": "安排描述",
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"type": "textarea",
+					"placeholder": "请输入考试安排描述"
+				}
+			}
+		},
+		"start_time": {
+			"bsonType": "timestamp",
+			"title": "开始时间",
+			"description": "考试开始时间",
+			"label": "开始时间",
+			"componentForEdit": {
+				"name": "uni-datetime-picker",
+				"props": {
+					"placeholder": "请选择考试开始时间"
+				}
+			},
+			"componentForShow": {
+				"name": "uni-dateformat",
+				"props": {
+					"format": "yyyy-MM-dd hh:mm:ss"
+				}
+			}
+		},
+		"end_time": {
+			"bsonType": "timestamp",
+			"title": "结束时间",
+			"description": "考试结束时间",
+			"label": "结束时间",
+			"componentForEdit": {
+				"name": "uni-datetime-picker",
+				"props": {
+					"placeholder": "请选择考试结束时间"
+				}
+			},
+			"componentForShow": {
+				"name": "uni-dateformat",
+				"props": {
+					"format": "yyyy-MM-dd hh:mm:ss"
+				}
+			}
+		},
+		"allowed_users": {
+			"bsonType": "array",
+			"title": "允许用户",
+			"description": "允许参加考试的用户ID列表",
+			"label": "允许用户",
+			"arrayType": "string",
+			"componentForEdit": {
+				"name": "billkes-form-user-select",
+				"props": {
+					"placeholder": "请选择允许参加考试的用户",
+					"collection": "exam-users",
+					"field": "nickname as text, _id as value"
+				}
+			},
+			"componentForShow": {
+				"name": "billkes-table-user-list",
+				"props": {
+					"collection": "exam-users",
+					"field": "nickname"
+				}
+			}
+		},
+		"status": {
+			"bsonType": "int",
+			"title": "状态",
+			"description": "考试安排状态：0-未开始，1-进行中，2-已结束",
+			"label": "状态",
+			"defaultValue": 0,
+			"minimum": 0,
+			"maximum": 2,
+			"enum": [{
+					"value": 0,
+					"text": "未开始"
+				},
+				{
+					"value": 1,
+					"text": "进行中"
+				},
+				{
+					"value": 2,
+					"text": "已结束"
+				}
+			],
+			"componentForEdit": {
+				"name": "uni-data-select",
+				"props": {
+					"placeholder": "请选择考试安排状态"
+				}
+			},
+			"componentForShow": {
+				"name": "uni-badge",
+				"props": {
+					"type": "primary",
+					"text": "未开始"
+				}
+			}
+		},
+		"created_date": {
+			"bsonType": "timestamp",
+			"title": "创建时间",
+			"description": "创建时间",
+			"label": "创建时间",
+			"forceDefaultValue": {
+				"$env": "now"
+			},
+			"componentForShow": {
+				"name": "uni-dateformat",
+				"props": {
+					"format": "yyyy-MM-dd hh:mm:ss"
+				}
+			}
+		},
+		"updated_date": {
+			"bsonType": "timestamp",
+			"title": "更新时间",
+			"description": "更新时间",
+			"label": "更新时间",
+			"forceDefaultValue": {
+				"$env": "now"
+			},
+			"componentForShow": {
+				"name": "uni-dateformat",
+				"props": {
+					"format": "yyyy-MM-dd hh:mm:ss"
+				}
+			}
+		}
+	}
+}

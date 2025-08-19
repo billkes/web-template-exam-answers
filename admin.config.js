@@ -77,9 +77,40 @@ export default {
 				text: 'uni-admin 插件',
 				value: 'https://ext.dcloud.net.cn/?cat1=7&cat2=74'
 			}]
+		}, {
+			menu_id: "billkes-exam",
+			text: '考试答题模版',
+			icon: 'admin-icons-kaifashili',
+			url: "",
+			children: [{
+				menu_id: "billkes-exam-questions",
+				text: '考试题目',
+				icon: 'admin-icons-table',
+				value: '/pages/exam-questions/list',
+			}, {
+				menu_id: "billkes-exam-records",
+				text: '考试记录',
+				icon: 'admin-icons-table',
+				value: '/pages/exam-records/list',
+			}, {
+				menu_id: "billkes-exams",
+				text: '考试管理',
+				icon: 'admin-icons-table',
+				value: '/pages/exams/list',
+			}, {
+				menu_id: "billkes-exam-schedules",
+				text: '考试安排',
+				icon: 'admin-icons-table',
+				value: '/pages/exam-schedules/list',
+			}, {
+				menu_id: "billkes-exem-users",
+				text: '用户管理',
+				icon: 'admin-icons-table',
+				value: '/pages/exem-users/list',
+			}]
 		}]
 	},
 	uniStat: {
-		
+
 	}
 }
