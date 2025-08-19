@@ -101,18 +101,18 @@
 			"label": "允许用户",
 			"arrayType": "string",
 			"componentForEdit": {
-				"name": "billkes-form-user-select",
+				"name": "uni-data-select",
 				"props": {
 					"placeholder": "请选择允许参加考试的用户",
 					"collection": "exam-users",
-					"field": "nickname as text, _id as value"
+					"field": "username as text, _id as value"
 				}
 			},
 			"componentForShow": {
 				"name": "billkes-table-user-list",
 				"props": {
 					"collection": "exam-users",
-					"field": "nickname"
+					"field": "username"
 				}
 			}
 		},

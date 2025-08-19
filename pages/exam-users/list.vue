@@ -59,7 +59,7 @@
 </template>
 
 <script>
-  import { enumConverter, filterToWhere } from '../../js_sdk/validator/exem-users.js';
+  import { enumConverter, filterToWhere } from '../../js_sdk/validator/exam-users.js';
 
   const db = uniCloud.database()
   // 表查询配置
@@ -77,7 +77,7 @@
   export default {
     data() {
       return {
-        collectionList: "exem-users",
+        collectionList: "exam-users",
         query: '',
         where: '',
         orderby: dbOrderBy,
@@ -119,7 +119,7 @@
           height: 64
         },
         exportExcel: {
-          "filename": "exem-users.xls",
+          "filename": "exam-users.xls",
           "type": "xls",
           "fields": {
             "用户名": "username",

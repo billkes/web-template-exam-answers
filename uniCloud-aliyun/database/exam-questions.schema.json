@@ -67,15 +67,13 @@
 			}
 		},
 		"answer": {
-			"bsonType": "string",
+			"bsonType": "array",
+			"arrayType": "string",
 			"title": "答案",
 			"description": "题目答案",
 			"label": "答案",
 			"componentForEdit": {
-				"name": "uni-easyinput",
-				"props": {
-					"placeholder": "请输入题目答案"
-				}
+				"name": "billkes-form-answer"
 			}
 		},
 		"analysis": {

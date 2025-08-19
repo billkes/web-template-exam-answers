@@ -24,7 +24,7 @@
             <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'title')" sortable @sort-change="sortChange($event, 'title')">题目标题</uni-th>
             <uni-th align="center" filter-type="select" :filter-data="options.filterData.type_localdata" @filter-change="filterChange($event, 'type')">题目类型</uni-th>
             <uni-th align="center" sortable @sort-change="sortChange($event, 'options')">选项</uni-th>
-            <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'answer')" sortable @sort-change="sortChange($event, 'answer')">答案</uni-th>
+            <uni-th align="center" sortable @sort-change="sortChange($event, 'answer')">答案</uni-th>
             <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'analysis')" sortable @sort-change="sortChange($event, 'analysis')">解析</uni-th>
             <uni-th align="center" filter-type="select" :filter-data="options.filterData.difficulty_localdata" @filter-change="filterChange($event, 'difficulty')">难度</uni-th>
             <uni-th align="center" sortable @sort-change="sortChange($event, 'tags')">标签</uni-th>

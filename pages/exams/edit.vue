@@ -8,7 +8,7 @@
         <uni-easyinput type="textarea" placeholder="试卷描述" v-model="formData.description"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="questions" label="题目列表" required>
-        <billkes-form-exam-questions :multiple="true" v-model="formData.questions"></billkes-form-exam-questions>
+        <billkes-form-exam-questions schemaKey="exam-questions" :multiple="true" v-model="formData.questions"></billkes-form-exam-questions>
       </uni-forms-item>
       <uni-forms-item name="total_score" label="总分" required>
         <uni-easyinput type="number" placeholder="请输入试卷总分" v-model="formData.total_score"></uni-easyinput>

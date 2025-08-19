@@ -43,7 +43,10 @@
 			"label": "题目列表",
 			"arrayType": "object",
 			"componentForEdit": {
-				"name": "billkes-form-exam-questions"
+				"name": "billkes-form-exam-questions",
+				"props": {
+					"schemaKey": "exam-questions"
+				}
 			},
 			"componentForShow": {
 				"name": "billkes-table-questions-count",

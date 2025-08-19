@@ -3,28 +3,15 @@
 		<view class="questions-selector">
 			<!-- 搜索框 -->
 			<view class="search-box">
-				<uni-easyinput 
-					v-model="searchKeyword" 
-					placeholder="搜索题目标题"
-					:clearable="true"
-					@input="handleSearch"
-				/>
+				<uni-easyinput v-model="searchKeyword" placeholder="搜索题目标题" :clearable="true" @input="handleSearch" />
 			</view>
-			
+
 			<!-- 题目列表 -->
 			<view class="questions-list">
-				<view 
-					v-for="question in filteredQuestions" 
-					:key="question._id"
-					class="question-item"
-					:class="{ 'selected': isSelected(question._id) }"
-					@click="toggleQuestion(question)"
-				>
+				<view v-for="question in filteredQuestions" :key="question._id" class="question-item"
+					:class="{ 'selected': isSelected(question._id) }" @click="toggleQuestion(question)">
 					<view class="question-checkbox">
-						<checkbox 
-							:checked="isSelected(question._id)"
-							:disabled="disabled"
-						/>
+						<checkbox :checked="isSelected(question._id)" :disabled="disabled" />
 					</view>
 					<view class="question-content">
 						<view class="question-title">{{ question.title }}</view>
@@ -36,18 +23,18 @@
 					</view>
 				</view>
 			</view>
-			
+
 			<!-- 加载更多 -->
 			<view v-if="hasMore" class="load-more">
 				<uni-load-more :status="loadMoreStatus" @click="loadMore" />
 			</view>
-			
+
 			<!-- 空状态 -->
 			<view v-if="filteredQuestions.length === 0" class="empty-state">
 				<text>暂无题目数据</text>
 			</view>
 		</view>
-		
+
 		<!-- 已选题目统计 -->
 		<view v-if="selectedQuestions.length > 0" class="selected-summary">
 			<text>已选择 {{ selectedQuestions.length }} 道题目</text>
@@ -63,21 +50,11 @@
 				type: Array,
 				default: () => []
 			},
-			// 是否禁用
-			disabled: {
-				type: Boolean,
-				default: false
-			},
-			// 占位符
-			placeholder: {
+			// 云数据库表名
+			schemaKey: {
 				type: String,
-				default: '请选择考试题目'
+				require: true,
 			},
-			// 最大选择数量
-			maxCount: {
-				type: Number,
-				default: 0
-			}
 		},
 		data() {
 			return {
@@ -96,7 +73,7 @@
 				if (!this.searchKeyword) {
 					return this.questions
 				}
-				return this.questions.filter(question => 
+				return this.questions.filter(question =>
 					question.title.toLowerCase().includes(this.searchKeyword.toLowerCase())
 				)
 			}
@@ -127,37 +104,37 @@
 			// 加载题目数据
 			async loadQuestions() {
 				if (this.loading || !this.hasMore) return
-				
+
 				this.loading = true
 				this.loadMoreStatus = 'loading'
-				
+
 				try {
 					const db = uniCloud.database()
-					const collection = db.collection('exam-questions')
-					
+					const collection = db.collection(this.schemaKey || "")
+
 					// 构建查询条件
 					let query = collection
-					
+
 					// 如果有搜索关键词，添加搜索条件
 					if (this.searchKeyword) {
 						query = query.where({
 							title: new RegExp(this.searchKeyword, 'i')
 						})
 					}
-					
+
 					// 执行查询
 					const result = await query
 						.skip((this.page - 1) * this.pageSize)
 						.limit(this.pageSize)
 						.get()
-					
+
 					if (result.data && result.data.length > 0) {
 						if (this.page === 1) {
 							this.questions = result.data
 						} else {
 							this.questions = [...this.questions, ...result.data]
 						}
-						
+
 						// 检查是否还有更多数据
 						if (result.data.length < this.pageSize) {
 							this.hasMore = false
@@ -166,7 +143,7 @@
 							this.hasMore = true
 							this.loadMoreStatus = 'more'
 						}
-						
+
 						this.page++
 					} else {
 						this.hasMore = false
@@ -182,14 +159,14 @@
 					this.loading = false
 				}
 			},
-			
+
 			// 加载更多
 			loadMore() {
 				if (this.loadMoreStatus === 'more') {
 					this.loadQuestions()
 				}
 			},
-			
+
 			// 处理搜索
 			handleSearch() {
 				// 重置分页
@@ -200,18 +177,18 @@
 				// 重新加载数据
 				this.loadQuestions()
 			},
-			
+
 			// 判断题目是否已选中
 			isSelected(questionId) {
 				return this.selectedQuestions.some(q => q._id === questionId)
 			},
-			
+
 			// 切换题目选择状态
 			toggleQuestion(question) {
 				if (this.disabled) return
-				
+
 				const index = this.selectedQuestions.findIndex(q => q._id === question._id)
-				
+
 				if (index > -1) {
 					// 取消选择
 					this.selectedQuestions.splice(index, 1)
@@ -224,12 +201,12 @@
 						})
 						return
 					}
-					
+
 					// 添加选择
 					this.selectedQuestions.push(question)
 				}
 			},
-			
+
 			// 获取题目类型文本
 			getQuestionTypeText(type) {
 				const typeMap = {
@@ -238,7 +215,7 @@
 				}
 				return typeMap[type] || type
 			},
-			
+
 			// 获取难度文本
 			getDifficultyText(difficulty) {
 				const difficultyMap = {
@@ -248,7 +225,7 @@
 				}
 				return difficultyMap[difficulty] || difficulty
 			},
-			
+
 			// 验证
 			validate() {
 				return new Promise((resolve, reject) => {
@@ -259,7 +236,7 @@
 					}
 				})
 			},
-			
+
 			// 清空选择
 			clear() {
 				this.selectedQuestions = []
@@ -270,7 +247,7 @@
 				this.questions = []
 				this.loadQuestions()
 			},
-			
+
 			// 重置
 			reset() {
 				this.clear()
@@ -286,18 +263,18 @@
 	.billkes-form-exam-questions {
 		padding: 10px;
 	}
-	
+
 	.search-box {
 		margin-bottom: 15px;
 	}
-	
+
 	.questions-list {
 		max-height: 400px;
 		overflow-y: auto;
 		border: 1px solid #e5e5e5;
 		border-radius: 4px;
 	}
-	
+
 	.question-item {
 		display: flex;
 		align-items: center;
@@ -306,36 +283,36 @@
 		cursor: pointer;
 		transition: background-color 0.2s;
 	}
-	
+
 	.question-item:hover {
 		background-color: #f8f8f8;
 	}
-	
+
 	.question-item.selected {
 		background-color: #e6f7ff;
 		border-left: 3px solid #1890ff;
 	}
-	
+
 	.question-checkbox {
 		margin-right: 10px;
 	}
-	
+
 	.question-content {
 		flex: 1;
 	}
-	
+
 	.question-title {
 		font-size: 14px;
 		color: #333;
 		margin-bottom: 4px;
 		font-weight: 500;
 	}
-	
+
 	.question-meta {
 		display: flex;
 		gap: 8px;
 	}
-	
+
 	.question-type,
 	.question-difficulty,
 	.question-score {
@@ -345,33 +322,33 @@
 		border-radius: 2px;
 		background-color: #f5f5f5;
 	}
-	
+
 	.question-type {
 		color: #1890ff;
 		background-color: #e6f7ff;
 	}
-	
+
 	.question-difficulty {
 		color: #52c41a;
 		background-color: #f6ffed;
 	}
-	
+
 	.question-score {
 		color: #fa8c16;
 		background-color: #fff7e6;
 	}
-	
+
 	.load-more {
 		padding: 10px;
 		text-align: center;
 	}
-	
+
 	.empty-state {
 		padding: 40px 20px;
 		text-align: center;
 		color: #999;
 	}
-	
+
 	.selected-summary {
 		margin-top: 10px;
 		padding: 8px 12px;
@@ -382,22 +359,22 @@
 		font-size: 12px;
 		text-align: center;
 	}
-	
+
 	/* 滚动条样式 */
 	.questions-list::-webkit-scrollbar {
 		width: 6px;
 	}
-	
+
 	.questions-list::-webkit-scrollbar-track {
 		background: #f1f1f1;
 		border-radius: 3px;
 	}
-	
+
 	.questions-list::-webkit-scrollbar-thumb {
 		background: #c1c1c1;
 		border-radius: 3px;
 	}
-	
+
 	.questions-list::-webkit-scrollbar-thumb:hover {
 		background: #a8a8a8;
 	}

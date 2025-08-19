@@ -2,7 +2,7 @@
 
 
 const validator = {
-  "title": {
+  "username": {
     "rules": [
       {
         "required": true
@@ -11,125 +11,101 @@ const validator = {
         "format": "string"
       }
     ],
-    "label": "题目标题",
-    "title": "题目标题"
+    "label": "用户名",
+    "title": "用户名"
   },
-  "type": {
+  "email": {
     "rules": [
       {
         "required": true
       },
+      {
+        "format": "string"
+      }
+    ],
+    "label": "邮箱",
+    "title": "邮箱"
+  },
+  "nickname": {
+    "rules": [
+      {
+        "format": "string"
+      }
+    ],
+    "label": "昵称",
+    "title": "昵称"
+  },
+  "avatar": {
+    "rules": [
+      {
+        "format": "string"
+      }
+    ],
+    "label": "头像",
+    "title": "头像"
+  },
+  "role": {
+    "rules": [
       {
         "format": "string"
       },
       {
         "range": [
           {
-            "value": "single",
-            "text": "单选题"
+            "value": "admin",
+            "text": "管理员"
           },
           {
-            "value": "multiple",
-            "text": "多选题"
+            "value": "teacher",
+            "text": "教师"
+          },
+          {
+            "value": "student",
+            "text": "学生"
           }
         ]
       }
     ],
-    "label": "题目类型",
-    "title": "题目类型"
+    "label": "角色",
+    "title": "角色"
   },
-  "options": {
-    "rules": [
-      {
-        "required": true
-      },
-      {
-        "format": "array"
-      },
-      {
-        "arrayType": "string"
-      }
-    ],
-    "label": "选项",
-    "title": "选项"
-  },
-  "answer": {
-    "rules": [
-      {
-        "required": true
-      },
-      {
-        "format": "array"
-      },
-      {
-        "arrayType": "string"
-      }
-    ],
-    "label": "答案",
-    "title": "答案"
-  },
-  "analysis": {
-    "rules": [
-      {
-        "format": "string"
-      }
-    ],
-    "label": "解析",
-    "title": "解析"
-  },
-  "difficulty": {
+  "status": {
     "rules": [
       {
         "format": "int"
       },
       {
-        "minimum": 1,
-        "maximum": 3
+        "minimum": 0,
+        "maximum": 1
       },
       {
         "range": [
           {
+            "value": 0,
+            "text": "禁用"
+          },
+          {
             "value": 1,
-            "text": "简单"
-          },
-          {
-            "value": 2,
-            "text": "中等"
-          },
-          {
-            "value": 3,
-            "text": "困难"
+            "text": "启用"
           }
         ]
       }
     ],
-    "label": "难度",
-    "title": "难度",
+    "label": "状态",
+    "title": "状态",
     "defaultValue": 1
-  },
-  "tags": {
-    "rules": [
-      {
-        "format": "array"
-      },
-      {
-        "arrayType": "string"
-      }
-    ],
-    "label": "标签",
-    "title": "标签"
   }
 }
 
 const enumConverter = {
-  "type_valuetotext": {
-    "single": "单选题",
-    "multiple": "多选题"
+  "role_valuetotext": {
+    "admin": "管理员",
+    "teacher": "教师",
+    "student": "学生"
   },
-  "difficulty_valuetotext": {
-    "1": "简单",
-    "2": "中等",
-    "3": "困难"
+  "status_valuetotext": {
+    "0": "禁用",
+    "1": "启用"
   }
 }
 

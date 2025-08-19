@@ -17,7 +17,7 @@
         <uni-datetime-picker placeholder="请选择考试结束时间" return-type="timestamp" v-model="formData.end_time"></uni-datetime-picker>
       </uni-forms-item>
       <uni-forms-item name="allowed_users" label="允许用户">
-        <billkes-form-user-select placeholder="请选择允许参加考试的用户" collection="exam-users" field="nickname as text, _id as value" :multiple="true" v-model="formData.allowed_users"></billkes-form-user-select>
+        <uni-data-select placeholder="请选择允许参加考试的用户" collection="exam-users" field="username as text, _id as value" :multiple="true" v-model="formData.allowed_users"></uni-data-select>
       </uni-forms-item>
       <uni-forms-item name="status" label="状态">
         <uni-data-select placeholder="请选择考试安排状态" v-model="formData.status" :localdata="formOptions.status_localdata"></uni-data-select>

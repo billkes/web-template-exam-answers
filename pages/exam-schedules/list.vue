@@ -43,7 +43,7 @@
               <uni-dateformat format="yyyy-MM-dd hh:mm:ss" :value="item.end_time"></uni-dateformat>
             </uni-td>
             <uni-td align="center">
-              <billkes-table-user-list collection="exam-users" field="nickname" :value="item.allowed_users"></billkes-table-user-list>
+              <billkes-table-user-list collection="exam-users" field="username" :value="item.allowed_users"></billkes-table-user-list>
             </uni-td>
             <uni-td align="center">
               <billkes-table-tag :enum="options.filterData.status_localdata" :value="item.status"></billkes-table-tag>

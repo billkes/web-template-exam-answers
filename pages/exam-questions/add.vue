@@ -11,7 +11,7 @@
         <billkes-form-exam-opt :multiple="true" v-model="formData.options"></billkes-form-exam-opt>
       </uni-forms-item>
       <uni-forms-item name="answer" label="答案" required>
-        <uni-easyinput placeholder="题目答案" v-model="formData.answer"></uni-easyinput>
+        <billkes-form-answer :multiple="true" v-model="formData.answer"></billkes-form-answer>
       </uni-forms-item>
       <uni-forms-item name="analysis" label="解析">
         <uni-easyinput type="textarea" placeholder="题目解析" v-model="formData.analysis"></uni-easyinput>
@@ -57,7 +57,7 @@
         "title": "",
         "type": "",
         "options": [],
-        "answer": "",
+        "answer": [],
         "analysis": "",
         "difficulty": 1,
         "tags": []
