@@ -55,7 +55,7 @@
 			"title": "选项",
 			"description": "题目选项（选择题使用）",
 			"label": "选项",
-			"arrayType": "object",
+			"arrayType": "string",
 			"componentForEdit": {
 				"name": "billkes-form-exam-opt"
 			},
@@ -122,18 +122,6 @@
 				"name": "billkes-table-tag",
 				"props": {
 					":enum": "options.filterData.difficulty_localdata"
-				}
-			}
-		},
-		"subject": {
-			"bsonType": "string",
-			"title": "科目",
-			"description": "所属科目",
-			"label": "科目",
-			"componentForEdit": {
-				"name": "uni-easyinput",
-				"props": {
-					"placeholder": "请输入所属科目"
 				}
 			}
 		},

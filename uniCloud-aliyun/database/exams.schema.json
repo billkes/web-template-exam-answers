@@ -89,18 +89,6 @@
 				}
 			}
 		},
-		"subject": {
-			"bsonType": "string",
-			"title": "科目",
-			"description": "所属科目",
-			"label": "科目",
-			"componentForEdit": {
-				"name": "uni-easyinput",
-				"props": {
-					"placeholder": "请输入所属科目"
-				}
-			}
-		},
 		"tags": {
 			"bsonType": "array",
 			"title": "标签",

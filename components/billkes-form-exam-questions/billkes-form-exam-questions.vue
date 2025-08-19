@@ -1,81 +1,57 @@
 <template>
 	<view class="billkes-form-exam-questions">
-		<uni-forms ref="form" :model="formData" :rules="rules">
-			<!-- 题目标题 -->
-			<uni-forms-item label="题目标题" name="title" required>
+		<view class="questions-selector">
+			<!-- 搜索框 -->
+			<view class="search-box">
 				<uni-easyinput 
-					v-model="formData.title" 
-					placeholder="请输入题目标题"
+					v-model="searchKeyword" 
+					placeholder="搜索题目标题"
 					:clearable="true"
+					@input="handleSearch"
 				/>
-			</uni-forms-item>
+			</view>
 			
-			<!-- 题目类型 -->
-			<uni-forms-item label="题目类型" name="type" required>
-				<uni-data-select 
-					v-model="formData.type" 
-					:localdata="typeOptions"
-					placeholder="请选择题目类型"
-					:clear="false"
-					@change="handleTypeChange"
-				/>
-			</uni-forms-item>
+			<!-- 题目列表 -->
+			<view class="questions-list">
+				<view 
+					v-for="question in filteredQuestions" 
+					:key="question._id"
+					class="question-item"
+					:class="{ 'selected': isSelected(question._id) }"
+					@click="toggleQuestion(question)"
+				>
+					<view class="question-checkbox">
+						<checkbox 
+							:checked="isSelected(question._id)"
+							:disabled="disabled"
+						/>
+					</view>
+					<view class="question-content">
+						<view class="question-title">{{ question.title }}</view>
+						<view class="question-meta">
+							<text class="question-type">{{ getQuestionTypeText(question.type) }}</text>
+							<text class="question-difficulty">{{ getDifficultyText(question.difficulty) }}</text>
+							<text class="question-score">{{ question.total_score || 0 }}分</text>
+						</view>
+					</view>
+				</view>
+			</view>
 			
-			<!-- 题目选项 -->
-			<uni-forms-item label="选项" name="options" required>
-				<billkes-form-exam-opt 
-					v-model="formData.options"
-					:question-type="formData.type"
-					@change="handleOptionsChange"
-				/>
-			</uni-forms-item>
+			<!-- 加载更多 -->
+			<view v-if="hasMore" class="load-more">
+				<uni-load-more :status="loadMoreStatus" @click="loadMore" />
+			</view>
 			
-			<!-- 答案 -->
-			<uni-forms-item label="答案" name="answer" required>
-				<uni-easyinput 
-					v-model="formData.answer" 
-					placeholder="请输入题目答案"
-					:clearable="true"
-				/>
-			</uni-forms-item>
-			
-			<!-- 解析 -->
-			<uni-forms-item label="解析" name="analysis">
-				<uni-easyinput 
-					v-model="formData.analysis" 
-					type="textarea"
-					placeholder="请输入题目解析"
-					:clearable="true"
-				/>
-			</uni-forms-item>
-			
-			<!-- 难度 -->
-			<uni-forms-item label="难度" name="difficulty" required>
-				<uni-data-select 
-					v-model="formData.difficulty" 
-					:localdata="difficultyOptions"
-					placeholder="请选择题目难度"
-					:clear="false"
-				/>
-			</uni-forms-item>
-			
-			<!-- 科目 -->
-			<uni-forms-item label="科目" name="subject">
-				<uni-easyinput 
-					v-model="formData.subject" 
-					placeholder="请输入所属科目"
-					:clearable="true"
-				/>
-			</uni-forms-item>
-			
-			<!-- 标签 -->
-			<uni-forms-item label="标签" name="tags">
-				<billkes-form-tags 
-					v-model="formData.tags"
-					placeholder="请输入题目标签"
-				/>
-			</uni-forms-item>
-		</uni-forms>
+			<!-- 空状态 -->
+			<view v-if="filteredQuestions.length === 0" class="empty-state">
+				<text>暂无题目数据</text>
+			</view>
+		</view>
+		
+		<!-- 已选题目统计 -->
+		<view v-if="selectedQuestions.length > 0" class="selected-summary">
+			<text>已选择 {{ selectedQuestions.length }} 道题目</text>
+		</view>
 	</view>
 </template>
 
@@ -84,148 +60,222 @@
 		name: 'billkes-form-exam-questions',
 		props: {
 			modelValue: {
-				type: Object,
-				default: () => ({})
+				type: Array,
+				default: () => []
 			},
-			// 是否多选模式
-			multiple: {
+			// 是否禁用
+			disabled: {
 				type: Boolean,
 				default: false
+			},
+			// 占位符
+			placeholder: {
+				type: String,
+				default: '请选择考试题目'
+			},
+			// 最大选择数量
+			maxCount: {
+				type: Number,
+				default: 0
 			}
 		},
 		data() {
 			return {
-				formData: {
-					title: '',
-					type: 'single',
-					options: [],
-					answer: '',
-					analysis: '',
-					difficulty: 1,
-					subject: '',
-					tags: []
-				},
-				rules: {
-					title: {
-						rules: [{
-							required: true,
-							errorMessage: '请输入题目标题'
-						}]
-					},
-					type: {
-						rules: [{
-							required: true,
-							errorMessage: '请选择题目类型'
-						}]
-					},
-					options: {
-						rules: [{
-							required: true,
-							errorMessage: '请设置题目选项'
-						}, {
-							validateFunction: (rule, value, data, callback) => {
-								if (!Array.isArray(value) || value.length < 2) {
-									callback('至少需要设置2个选项')
-								} else {
-									callback()
-								}
-							}
-						}]
-					},
-					answer: {
-						rules: [{
-							required: true,
-							errorMessage: '请输入题目答案'
-						}]
-					},
-					difficulty: {
-						rules: [{
-							required: true,
-							errorMessage: '请选择题目难度'
-						}]
-					}
-				},
-				typeOptions: [
-					{ value: 'single', text: '单选题' },
-					{ value: 'multiple', text: '多选题' }
-				],
-				difficultyOptions: [
-					{ value: 1, text: '简单' },
-					{ value: 2, text: '中等' },
-					{ value: 3, text: '困难' }
-				]
+				searchKeyword: '',
+				questions: [],
+				selectedQuestions: [],
+				loadMoreStatus: 'more',
+				hasMore: true,
+				page: 1,
+				pageSize: 20,
+				loading: false
+			}
+		},
+		computed: {
+			filteredQuestions() {
+				if (!this.searchKeyword) {
+					return this.questions
+				}
+				return this.questions.filter(question => 
+					question.title.toLowerCase().includes(this.searchKeyword.toLowerCase())
+				)
 			}
 		},
 		watch: {
 			modelValue: {
 				handler(newVal) {
 					if (newVal) {
-						this.formData = { ...this.formData, ...newVal }
+						this.selectedQuestions = [...newVal]
+					} else {
+						this.selectedQuestions = []
 					}
 				},
 				immediate: true,
 				deep: true
 			},
-			formData: {
+			selectedQuestions: {
 				handler(newVal) {
 					this.$emit('update:modelValue', newVal)
 				},
 				deep: true
 			}
 		},
+		created() {
+			this.loadQuestions()
+		},
 		methods: {
-			// 处理题目类型变化
-			handleTypeChange(value) {
-				// 当题目类型变化时，重置选项和答案
-				if (value !== this.formData.type) {
-					this.formData.options = []
-					this.formData.answer = ''
-				}
-			},
-			
-			// 处理选项变化
-			handleOptionsChange(options) {
-				// 当选项变化时，如果答案不在选项中，清空答案
-				if (Array.isArray(options) && options.length > 0) {
-					const optionValues = options.map(opt => opt.value)
-					if (this.formData.answer && !optionValues.includes(this.formData.answer)) {
-						this.formData.answer = ''
+			// 加载题目数据
+			async loadQuestions() {
+				if (this.loading || !this.hasMore) return
+				
+				this.loading = true
+				this.loadMoreStatus = 'loading'
+				
+				try {
+					const db = uniCloud.database()
+					const collection = db.collection('exam-questions')
+					
+					// 构建查询条件
+					let query = collection
+					
+					// 如果有搜索关键词，添加搜索条件
+					if (this.searchKeyword) {
+						query = query.where({
+							title: new RegExp(this.searchKeyword, 'i')
+						})
 					}
+					
+					// 执行查询
+					const result = await query
+						.skip((this.page - 1) * this.pageSize)
+						.limit(this.pageSize)
+						.get()
+					
+					if (result.data && result.data.length > 0) {
+						if (this.page === 1) {
+							this.questions = result.data
+						} else {
+							this.questions = [...this.questions, ...result.data]
+						}
+						
+						// 检查是否还有更多数据
+						if (result.data.length < this.pageSize) {
+							this.hasMore = false
+							this.loadMoreStatus = 'noMore'
+						} else {
+							this.hasMore = true
+							this.loadMoreStatus = 'more'
+						}
+						
+						this.page++
+					} else {
+						this.hasMore = false
+						this.loadMoreStatus = 'noMore'
+					}
+				} catch (error) {
+					console.error('加载题目失败:', error)
+					uni.showToast({
+						title: '加载题目失败',
+						icon: 'none'
+					})
+				} finally {
+					this.loading = false
 				}
 			},
 			
-			// 验证表单
+			// 加载更多
+			loadMore() {
+				if (this.loadMoreStatus === 'more') {
+					this.loadQuestions()
+				}
+			},
+			
+			// 处理搜索
+			handleSearch() {
+				// 重置分页
+				this.page = 1
+				this.hasMore = true
+				this.loadMoreStatus = 'more'
+				this.questions = []
+				// 重新加载数据
+				this.loadQuestions()
+			},
+			
+			// 判断题目是否已选中
+			isSelected(questionId) {
+				return this.selectedQuestions.some(q => q._id === questionId)
+			},
+			
+			// 切换题目选择状态
+			toggleQuestion(question) {
+				if (this.disabled) return
+				
+				const index = this.selectedQuestions.findIndex(q => q._id === question._id)
+				
+				if (index > -1) {
+					// 取消选择
+					this.selectedQuestions.splice(index, 1)
+				} else {
+					// 检查最大选择数量限制
+					if (this.maxCount > 0 && this.selectedQuestions.length >= this.maxCount) {
+						uni.showToast({
+							title: `最多只能选择${this.maxCount}道题目`,
+							icon: 'none'
+						})
+						return
+					}
+					
+					// 添加选择
+					this.selectedQuestions.push(question)
+				}
+			},
+			
+			// 获取题目类型文本
+			getQuestionTypeText(type) {
+				const typeMap = {
+					'single': '单选题',
+					'multiple': '多选题'
+				}
+				return typeMap[type] || type
+			},
+			
+			// 获取难度文本
+			getDifficultyText(difficulty) {
+				const difficultyMap = {
+					1: '简单',
+					2: '中等',
+					3: '困难'
+				}
+				return difficultyMap[difficulty] || difficulty
+			},
+			
+			// 验证
 			validate() {
 				return new Promise((resolve, reject) => {
-					this.$refs.form.validate().then(res => {
-						resolve(res)
-					}).catch(err => {
-						reject(err)
-					})
+					if (this.selectedQuestions.length === 0) {
+						reject(new Error('请至少选择一道题目'))
+					} else {
+						resolve(this.selectedQuestions)
+					}
 				})
 			},
 			
-			// 清空表单
+			// 清空选择
 			clear() {
-				this.formData = {
-					title: '',
-					type: 'single',
-					options: [],
-					answer: '',
-					analysis: '',
-					difficulty: 1,
-					subject: '',
-					tags: []
-				}
-				this.$refs.form.clearValidate()
+				this.selectedQuestions = []
+				this.searchKeyword = ''
+				this.page = 1
+				this.hasMore = true
+				this.loadMoreStatus = 'more'
+				this.questions = []
+				this.loadQuestions()
 			},
 			
-			// 重置表单
+			// 重置
 			reset() {
+				this.clear()
 				if (this.modelValue) {
-					this.formData = { ...this.formData, ...this.modelValue }
-				} else {
-					this.clear()
+					this.selectedQuestions = [...this.modelValue]
 				}
 			}
 		}
@@ -237,27 +287,118 @@
 		padding: 10px;
 	}
 	
-	/* 表单项间距 */
-	:deep(.uni-forms-item) {
+	.search-box {
 		margin-bottom: 15px;
 	}
 	
-	/* 标签样式 */
-	:deep(.uni-forms-item__label) {
+	.questions-list {
+		max-height: 400px;
+		overflow-y: auto;
+		border: 1px solid #e5e5e5;
+		border-radius: 4px;
+	}
+	
+	.question-item {
+		display: flex;
+		align-items: center;
+		padding: 12px;
+		border-bottom: 1px solid #f0f0f0;
+		cursor: pointer;
+		transition: background-color 0.2s;
+	}
+	
+	.question-item:hover {
+		background-color: #f8f8f8;
+	}
+	
+	.question-item.selected {
+		background-color: #e6f7ff;
+		border-left: 3px solid #1890ff;
+	}
+	
+	.question-checkbox {
+		margin-right: 10px;
+	}
+	
+	.question-content {
+		flex: 1;
+	}
+	
+	.question-title {
 		font-size: 14px;
 		color: #333;
+		margin-bottom: 4px;
 		font-weight: 500;
 	}
 	
-	/* 输入框样式 */
-	:deep(.uni-easyinput) {
-		background-color: #f8f8f8;
-		border-radius: 4px;
+	.question-meta {
+		display: flex;
+		gap: 8px;
 	}
 	
-	/* 选择器样式 */
-	:deep(.uni-data-select) {
-		background-color: #f8f8f8;
+	.question-type,
+	.question-difficulty,
+	.question-score {
+		font-size: 12px;
+		color: #666;
+		padding: 2px 6px;
+		border-radius: 2px;
+		background-color: #f5f5f5;
+	}
+	
+	.question-type {
+		color: #1890ff;
+		background-color: #e6f7ff;
+	}
+	
+	.question-difficulty {
+		color: #52c41a;
+		background-color: #f6ffed;
+	}
+	
+	.question-score {
+		color: #fa8c16;
+		background-color: #fff7e6;
+	}
+	
+	.load-more {
+		padding: 10px;
+		text-align: center;
+	}
+	
+	.empty-state {
+		padding: 40px 20px;
+		text-align: center;
+		color: #999;
+	}
+	
+	.selected-summary {
+		margin-top: 10px;
+		padding: 8px 12px;
+		background-color: #f6ffed;
+		border: 1px solid #b7eb8f;
 		border-radius: 4px;
+		color: #52c41a;
+		font-size: 12px;
+		text-align: center;
+	}
+	
+	/* 滚动条样式 */
+	.questions-list::-webkit-scrollbar {
+		width: 6px;
+	}
+	
+	.questions-list::-webkit-scrollbar-track {
+		background: #f1f1f1;
+		border-radius: 3px;
+	}
+	
+	.questions-list::-webkit-scrollbar-thumb {
+		background: #c1c1c1;
+		border-radius: 3px;
+	}
+	
+	.questions-list::-webkit-scrollbar-thumb:hover {
+		background: #a8a8a8;
 	}
 </style>
