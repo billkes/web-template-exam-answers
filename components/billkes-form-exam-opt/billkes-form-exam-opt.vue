@@ -16,7 +16,7 @@
 									<checkbox 
 										:checked="isCorrect(option)" 
 										@change="toggleCorrect(option)"
-										:disabled="disabled"
+
 									/>
 									<text>正确答案</text>
 								</label>
@@ -33,7 +33,6 @@
 								class="form-input" 
 								placeholder="请输入选项内容"
 								@input="handleOptionInput(index, $event)"
-								:disabled="disabled"
 							/>
 						</view>
 					</view>
@@ -68,16 +67,6 @@
 			modelValue: {
 				type: Array,
 				default: () => []
-			},
-			// 题目类型
-			questionType: {
-				type: String,
-				default: 'single' // single 或 multiple
-			},
-			// 是否禁用
-			disabled: {
-				type: Boolean,
-				default: false
 			}
 		},
 		data() {
@@ -138,7 +127,6 @@
 			
 			// 切换正确答案状态
 			toggleCorrect(option) {
-				if (this.disabled) return
 				
 				const index = this.correctAnswers.indexOf(option)
 				if (index > -1) {
@@ -146,13 +134,8 @@
 					this.correctAnswers.splice(index, 1)
 				} else {
 					// 添加正确答案
-					if (this.questionType === 'single') {
-						// 单选题，只能有一个正确答案
-						this.correctAnswers = [option]
-					} else {
-						// 多选题，可以有多个正确答案
+						// 添加正确答案（支持多选）
 						this.correctAnswers.push(option)
-					}
 				}
 			},
 			
@@ -212,13 +195,6 @@
 					}
 				}
 				
-				// 如果是单选题，检查是否只有一个正确答案
-				if (this.questionType === 'single' && this.correctAnswers.length > 1) {
-					return {
-						valid: false,
-						message: '单选题只能有一个正确答案'
-					}
-				}
 				
 				return {
 					valid: true,
@@ -365,11 +341,6 @@
 		border-color: #007aff;
 	}
 	
-	.form-input:disabled {
-		background-color: #f5f5f5;
-		color: #999;
-		cursor: not-allowed;
-	}
 	
 	.add-more {
 		display: flex;
