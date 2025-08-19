@@ -167,8 +167,11 @@
 ✅ **已完成**: 支持HBuilderX schema2code功能
 ✅ **已完成**: 简单输入框使用纯文本显示
 ✅ **已完成**: 枚举字段使用billkes-table-tag组件
-⏳ **待完成**: billkes-form-exam-questions.vue组件实现
-⏳ **待完成**: billkes-table-tag组件实现
+✅ **已完成**: billkes-form-exam-questions.vue组件实现
+✅ **已完成**: billkes-table-tag组件实现
+✅ **已完成**: billkes-form-exam-answers.vue组件实现
+✅ **已完成**: billkes-form-exam-opt.vue组件实现
+✅ **已完成**: billkes-form-user-select.vue组件实现
 ⏳ **待完成**: 功能测试和CI验证
 
 ---
