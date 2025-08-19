@@ -14,7 +14,13 @@
 	export default {
 		name: 'billkes-form-avatar',
 		props: {
+			/* 兼容旧写法 value */
 			value: {
+				type: String,
+				default: ''
+			},
+			/* 推荐写法 modelValue */
+			modelValue: {
 				type: String,
 				default: ''
 			},
@@ -45,13 +51,22 @@
 		},
 		data() {
 			return {
-				currentAvatar: this.value,
+				currentAvatar: '',
 				uploading: false
 			}
 		},
+		computed: {
+			// 统一取父级传入的值
+			_value() {
+				return this.modelValue !== '' ? this.modelValue : this.value;
+			}
+		},
 		watch: {
-			value(newVal) {
-				this.currentAvatar = newVal;
+			_value: {
+				immediate: true,
+				handler(newVal) {
+					this.currentAvatar = newVal;
+				}
 			}
 		},
 		methods: {
@@ -62,25 +77,22 @@
 
 			async handleUpload() {
 				if (this.uploading) return;
-
 				try {
 					this.uploading = true;
 
-					// 选择图片
 					const res = await uni.chooseImage({
 						count: 1,
 						sizeType: ['compressed'],
 						sourceType: ['album', 'camera']
 					});
-
 					const tempFilePath = res.tempFilePaths[0];
 
-					// 检查文件大小
-					const fileInfo = await uni.getFileInfo({
+					const {
+						size
+					} = await uni.getFileInfo({
 						filePath: tempFilePath
 					});
-
-					if (fileInfo.size > this.maxSize * 1024) {
+					if (size > this.maxSize * 1024) {
 						uni.showToast({
 							title: `图片大小不能超过${this.maxSize}KB`,
 							icon: 'none'
@@ -88,38 +100,34 @@
 						return;
 					}
 
-					// 上传图片
 					let uploadResult;
 					if (this.uploadUrl) {
-						// 使用自定义上传地址
 						uploadResult = await uni.uploadFile({
 							url: this.uploadUrl,
 							filePath: tempFilePath,
 							name: 'file'
 						});
-
 						const response = JSON.parse(uploadResult.data);
 						this.currentAvatar = response.url;
 					} else {
-						// 使用uniCloud上传
 						uploadResult = await uniCloud.uploadFile({
 							filePath: tempFilePath,
 							cloudPath: `avatar/${Date.now()}_${Math.random().toString(36).substr(2, 9)}.jpg`
 						});
-
 						this.currentAvatar = uploadResult.fileID;
 					}
 
-					this.$emit('input', this.currentAvatar);
+					// 关键：把值同步给父级
+					this.$emit('update:modelValue', this.currentAvatar);
+					this.$emit('update:value', this.currentAvatar);
 					this.$emit('change', this.currentAvatar);
 
 					uni.showToast({
 						title: '上传成功',
 						icon: 'success'
 					});
-
-				} catch (error) {
-					console.error('上传失败:', error);
+				} catch (err) {
+					console.error('上传失败:', err);
 					uni.showToast({
 						title: '上传失败',
 						icon: 'none'
@@ -131,7 +139,8 @@
 
 			clearAvatar() {
 				this.currentAvatar = '';
-				this.$emit('input', '');
+				this.$emit('update:modelValue', '');
+				this.$emit('update:value', '');
 				this.$emit('change', '');
 			}
 		}
