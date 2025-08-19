@@ -83,13 +83,6 @@
 					"type": "number",
 					"placeholder": "请输入考试总得分"
 				}
-			},
-			"componentForShow": {
-				"name": "uni-easyinput",
-				"props": {
-					"type": "number",
-					"disabled": true
-				}
 			}
 		},
 		"time_spent": {
@@ -139,10 +132,9 @@
 				}
 			},
 			"componentForShow": {
-				"name": "uni-badge",
+				"name": "billkes-table-tag",
 				"props": {
-					"type": "success",
-					"text": "已完成"
+					":enum": "options.filterData.status_localdata"
 				}
 			}
 		},

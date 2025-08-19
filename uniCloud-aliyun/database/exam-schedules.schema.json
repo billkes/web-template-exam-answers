@@ -43,12 +43,6 @@
 				"props": {
 					"placeholder": "请输入考试安排标题"
 				}
-			},
-			"componentForShow": {
-				"name": "uni-easyinput",
-				"props": {
-					"disabled": true
-				}
 			}
 		},
 		"description": {
@@ -61,13 +55,6 @@
 				"props": {
 					"type": "textarea",
 					"placeholder": "请输入考试安排描述"
-				}
-			},
-			"componentForShow": {
-				"name": "uni-easyinput",
-				"props": {
-					"type": "textarea",
-					"disabled": true
 				}
 			}
 		},
@@ -157,10 +144,9 @@
 				}
 			},
 			"componentForShow": {
-				"name": "uni-badge",
+				"name": "billkes-table-tag",
 				"props": {
-					"type": "primary",
-					"text": "未开始"
+					":enum": "options.filterData.status_localdata"
 				}
 			}
 		},

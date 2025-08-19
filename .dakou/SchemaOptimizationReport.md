@@ -96,14 +96,82 @@
 3. **页面生成**: 验证自动生成的后台管理页面功能正常
 4. **CI验证**: 提交PR并通过CI验证流程
 
+## 第二次优化（2025-08-19 11:20）
+
+根据用户反馈，进行了进一步的优化，主要解决以下问题：
+
+### 优化内容
+
+#### 1. 简化简单输入框的显示配置
+- **问题**: 如果表单中使用简单输入框（uni-easyinput），表格中展示纯文本时无需配置componentForShow
+- **解决方案**: 移除了以下字段的componentForShow配置：
+  - `exam-questions.schema.json`: title, answer, analysis, subject
+  - `exams.schema.json`: title, description, total_score, subject
+  - `exam-records.schema.json`: total_score
+  - `exam-schedules.schema.json`: title, description
+  - `exem-users.schema.json`: username, email, nickname
+
+#### 2. 优化枚举字段的显示组件
+- **问题**: 如果componentForEdit配置为uni-data-select并使用静态数据，componentForShow不应使用uni-badge
+- **解决方案**: 将所有枚举字段的componentForShow改为billkes-table-tag组件：
+  - `exam-questions.schema.json`: type, difficulty
+  - `exams.schema.json`: status
+  - `exam-records.schema.json`: status
+  - `exam-schedules.schema.json`: status
+  - `exem-users.schema.json`: role, status
+
+#### 3. billkes-table-tag组件配置
+- **组件用途**: 用于显示枚举值的标签形式
+- **配置示例**:
+  ```json
+  "componentForShow": {
+    "name": "billkes-table-tag",
+    "props": {
+      ":enum": "options.filterData.status_localdata"
+    }
+  }
+  ```
+- **生成结果**: `<billkes-table-tag :enum="options.filterData.status_localdata" :value="item.status"></billkes-table-tag>`
+
+### 优化后的效果
+
+#### 简单输入框
+- **优化前**: 使用uni-easyinput + disabled=true
+- **优化后**: 直接显示纯文本，无需componentForShow配置
+- **好处**: 简化配置，提高性能
+
+#### 枚举字段
+- **优化前**: 使用uni-badge或uni-data-select + disabled=true
+- **优化后**: 使用billkes-table-tag组件，支持动态标签显示
+- **好处**: 更好的视觉效果，支持多色标签，与编辑组件数据源一致
+
+### 保持不变的部分
+
+#### 数据库关联字段
+- exam_id, user_id等使用collection关联的字段保持uni-data-select组件
+- 这些字段需要从数据库获取数据，不适合使用billkes-table-tag
+
+#### 自定义组件
+- 所有billkes-form-*和billkes-table-*组件保持不变
+- 复杂数据类型（数组、对象等）的显示组件保持不变
+
+#### 时间字段
+- created_date, updated_date等时间字段保持uni-dateformat组件
+- 这些字段需要特殊的时间格式化显示
+
 ## 完成状态
 
-✅ **已完成**: 5个JSON schema文件的优化
+✅ **已完成**: 5个JSON schema文件的初次优化
+✅ **已完成**: 第二次优化，简化配置并改进枚举字段显示
 ✅ **已完成**: 符合uniCloud官方文档标准
 ✅ **已完成**: 支持HBuilderX schema2code功能
-⏳ **待完成**: 组件开发和功能测试
-⏳ **待完成**: CI验证和PR提交
+✅ **已完成**: 简单输入框使用纯文本显示
+✅ **已完成**: 枚举字段使用billkes-table-tag组件
+⏳ **待完成**: billkes-form-exam-questions.vue组件实现
+⏳ **待完成**: billkes-table-tag组件实现
+⏳ **待完成**: 功能测试和CI验证
 
 ---
-**优化完成时间**: 2025-08-19 09:29:36
-**文档版本**: v1.0
+**初次优化完成时间**: 2025-08-19 09:29:36
+**第二次优化完成时间**: 2025-08-19 11:20:45
+**文档版本**: v2.0

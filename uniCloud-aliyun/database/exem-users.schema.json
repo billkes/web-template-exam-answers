@@ -21,12 +21,6 @@
 				"props": {
 					"placeholder": "请输入用户名"
 				}
-			},
-			"componentForShow": {
-				"name": "uni-easyinput",
-				"props": {
-					"disabled": true
-				}
 			}
 		},
 		"email": {
@@ -39,12 +33,6 @@
 				"props": {
 					"placeholder": "请输入邮箱地址"
 				}
-			},
-			"componentForShow": {
-				"name": "uni-easyinput",
-				"props": {
-					"disabled": true
-				}
 			}
 		},
 		"nickname": {
@@ -56,12 +44,6 @@
 				"name": "uni-easyinput",
 				"props": {
 					"placeholder": "请输入昵称"
-				}
-			},
-			"componentForShow": {
-				"name": "uni-easyinput",
-				"props": {
-					"disabled": true
 				}
 			}
 		},
@@ -108,9 +90,9 @@
 				}
 			},
 			"componentForShow": {
-				"name": "uni-data-select",
+				"name": "billkes-table-tag",
 				"props": {
-					"disabled": true
+					":enum": "options.filterData.role_localdata"
 				}
 			}
 		},
@@ -138,10 +120,9 @@
 				}
 			},
 			"componentForShow": {
-				"name": "uni-badge",
+				"name": "billkes-table-tag",
 				"props": {
-					"type": "success",
-					"text": "启用"
+					":enum": "options.filterData.status_localdata"
 				}
 			}
 		},

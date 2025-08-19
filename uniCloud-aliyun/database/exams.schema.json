@@ -21,12 +21,6 @@
 				"props": {
 					"placeholder": "请输入试卷标题"
 				}
-			},
-			"componentForShow": {
-				"name": "uni-easyinput",
-				"props": {
-					"disabled": true
-				}
 			}
 		},
 		"description": {
@@ -39,13 +33,6 @@
 				"props": {
 					"type": "textarea",
 					"placeholder": "请输入试卷描述"
-				}
-			},
-			"componentForShow": {
-				"name": "uni-easyinput",
-				"props": {
-					"type": "textarea",
-					"disabled": true
 				}
 			}
 		},
@@ -76,13 +63,6 @@
 				"props": {
 					"type": "number",
 					"placeholder": "请输入试卷总分"
-				}
-			},
-			"componentForShow": {
-				"name": "uni-easyinput",
-				"props": {
-					"type": "number",
-					"disabled": true
 				}
 			}
 		},
@@ -118,12 +98,6 @@
 				"name": "uni-easyinput",
 				"props": {
 					"placeholder": "请输入所属科目"
-				}
-			},
-			"componentForShow": {
-				"name": "uni-easyinput",
-				"props": {
-					"disabled": true
 				}
 			}
 		},
@@ -170,10 +144,9 @@
 				}
 			},
 			"componentForShow": {
-				"name": "uni-badge",
+				"name": "billkes-table-tag",
 				"props": {
-					"type": "success",
-					"text": "发布"
+					":enum": "options.filterData.status_localdata"
 				}
 			}
 		},
