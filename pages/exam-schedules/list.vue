@@ -46,7 +46,7 @@
               <billkes-table-user-list collection="exam-users" field="nickname" :value="item.allowed_users"></billkes-table-user-list>
             </uni-td>
             <uni-td align="center">
-              <uni-badge type="primary" text="未开始" :value="item.status"></uni-badge>
+              <billkes-table-tag :enum="options.filterData.status_localdata" :value="item.status"></billkes-table-tag>
             </uni-td>
             <uni-td align="center">
               <view class="uni-group">

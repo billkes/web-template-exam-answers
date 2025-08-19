@@ -46,7 +46,7 @@
               <billkes-table-duration unit="秒" format="mm:ss" :value="item.time_spent"></billkes-table-duration>
             </uni-td>
             <uni-td align="center">
-              <uni-badge type="success" text="已完成" :value="item.status"></uni-badge>
+              <billkes-table-tag :enum="options.filterData.status_localdata" :value="item.status"></billkes-table-tag>
             </uni-td>
             <uni-td align="center">
               <uni-dateformat format="yyyy-MM-dd hh:mm:ss" :value="item.started_date"></uni-dateformat>

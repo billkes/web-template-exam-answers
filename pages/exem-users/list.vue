@@ -37,10 +37,10 @@
               <billkes-table-avatar mode="aspectFit" :value="item.avatar"></billkes-table-avatar>
             </uni-td>
             <uni-td align="center">
-              <uni-data-select disabled="true" :value="item.role"></uni-data-select>
+              <billkes-table-tag :enum="options.filterData.role_localdata" :value="item.role"></billkes-table-tag>
             </uni-td>
             <uni-td align="center">
-              <uni-badge type="success" text="启用" :value="item.status"></uni-badge>
+              <billkes-table-tag :enum="options.filterData.status_localdata" :value="item.status"></billkes-table-tag>
             </uni-td>
             <uni-td align="center">
               <view class="uni-group">

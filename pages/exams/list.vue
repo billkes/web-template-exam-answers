@@ -38,13 +38,15 @@
               <billkes-table-questions-count showCount="true" :value="item.questions"></billkes-table-questions-count>
             </uni-td>
             <uni-td align="center">{{item.total_score}}</uni-td>
-            <uni-td align="center">{{item.duration}}</uni-td>
+            <uni-td align="center">
+              <billkes-table-duration unit="分钟" format="hh:mm" :value="item.duration"></billkes-table-duration>
+            </uni-td>
             <uni-td align="center">{{item.subject}}</uni-td>
             <uni-td align="center">
               <billkes-table-tags separator=", " :value="item.tags"></billkes-table-tags>
             </uni-td>
             <uni-td align="center">
-              <uni-badge type="success" text="发布" :value="item.status"></uni-badge>
+              <billkes-table-tag :enum="options.filterData.status_localdata" :value="item.status"></billkes-table-tag>
             </uni-td>
             <uni-td align="center">
               <view class="uni-group">

@@ -34,7 +34,7 @@
           <uni-tr v-for="(item,index) in data" :key="index">
             <uni-td align="center">{{item.title}}</uni-td>
             <uni-td align="center">
-              <uni-data-select disabled="true" :value="item.type"></uni-data-select>
+              <billkes-table-tag :enum="options.filterData.type_localdata" :value="item.type"></billkes-table-tag>
             </uni-td>
             <uni-td align="center">
               <billkes-table-options showCount="true" :value="item.options"></billkes-table-options>
@@ -42,7 +42,7 @@
             <uni-td align="center">{{item.answer}}</uni-td>
             <uni-td align="center">{{item.analysis}}</uni-td>
             <uni-td align="center">
-              <uni-badge type="warning" text="中等" :value="item.difficulty"></uni-badge>
+              <billkes-table-tag :enum="options.filterData.difficulty_localdata" :value="item.difficulty"></billkes-table-tag>
             </uni-td>
             <uni-td align="center">{{item.subject}}</uni-td>
             <uni-td align="center">

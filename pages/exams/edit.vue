@@ -14,7 +14,7 @@
         <uni-easyinput type="number" placeholder="请输入试卷总分" v-model="formData.total_score"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="duration" label="考试时长">
-        <uni-easyinput type="number" placeholder="考试时长（分钟）" v-model="formData.duration"></uni-easyinput>
+        <billkes-form-duration placeholder="考试时长（分钟）" unit="分钟" minDuration="1" maxDuration="480" type="number" v-model="formData.duration"></billkes-form-duration>
       </uni-forms-item>
       <uni-forms-item name="subject" label="科目">
         <uni-easyinput placeholder="所属科目" v-model="formData.subject"></uni-easyinput>

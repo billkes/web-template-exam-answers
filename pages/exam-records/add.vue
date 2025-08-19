@@ -14,7 +14,7 @@
         <uni-easyinput type="number" placeholder="请输入考试总得分" v-model="formData.total_score"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="time_spent" label="用时">
-        <uni-easyinput type="number" placeholder="考试用时（秒）" v-model="formData.time_spent"></uni-easyinput>
+        <billkes-form-duration placeholder="考试用时（秒）" unit="秒" minDuration="0" maxDuration="7200" type="number" v-model="formData.time_spent"></billkes-form-duration>
       </uni-forms-item>
       <uni-forms-item name="status" label="状态">
         <uni-data-select placeholder="请选择考试状态" v-model="formData.status" :localdata="formOptions.status_localdata"></uni-data-select>
