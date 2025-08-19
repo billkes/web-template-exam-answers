@@ -11,16 +11,7 @@
 					<view class="option-header">
 						<text class="option-index">选项 {{ String.fromCharCode(65 + index) }}</text>
 						<view class="option-actions">
-							<view class="correct-toggle">
-								<label class="checkbox-label">
-									<checkbox 
-										:checked="isCorrect(option)" 
-										@change="toggleCorrect(option)"
-
-									/>
-									<text>正确答案</text>
-								</label>
-							</view>
+							
 							<button class="delete-btn" @click="removeOption(index)" type="warn" size="mini">删除</button>
 						</view>
 					</view>
@@ -120,24 +111,6 @@
 				})
 			},
 			
-			// 判断是否为正确答案
-			isCorrect(option) {
-				return this.correctAnswers.includes(option)
-			},
-			
-			// 切换正确答案状态
-			toggleCorrect(option) {
-				
-				const index = this.correctAnswers.indexOf(option)
-				if (index > -1) {
-					// 取消正确答案
-					this.correctAnswers.splice(index, 1)
-				} else {
-					// 添加正确答案
-						// 添加正确答案（支持多选）
-						this.correctAnswers.push(option)
-				}
-			},
 			
 			// 处理选项输入
 			handleOptionInput(index, event) {
@@ -158,73 +131,6 @@
 				const index = this.options.indexOf(option)
 				return index >= 0 ? String.fromCharCode(65 + index) : option
 			},
-			
-			// 验证选项
-			validate() {
-				if (this.options.length < 2) {
-					return {
-						valid: false,
-						message: '请至少添加两个选项'
-					}
-				}
-				
-				// 检查是否有空选项
-				for (let i = 0; i < this.options.length; i++) {
-					if (!this.options[i] || this.options[i].trim() === '') {
-						return {
-							valid: false,
-							message: `选项 ${String.fromCharCode(65 + i)} 的内容不能为空`
-						}
-					}
-				}
-				
-				// 检查是否有重复选项
-				const uniqueOptions = [...new Set(this.options)]
-				if (uniqueOptions.length !== this.options.length) {
-					return {
-						valid: false,
-						message: '选项内容不能重复'
-					}
-				}
-				
-				// 检查是否至少有一个正确答案
-				if (this.correctAnswers.length === 0) {
-					return {
-						valid: false,
-						message: '请至少设置一个正确答案'
-					}
-				}
-				
-				
-				return {
-					valid: true,
-					message: ''
-				}
-			},
-			
-			// 获取正确答案
-			getCorrectAnswers() {
-				return [...this.correctAnswers]
-			},
-			
-			// 设置正确答案
-			setCorrectAnswers(answers) {
-				if (Array.isArray(answers)) {
-					this.correctAnswers = answers.filter(answer => this.options.includes(answer))
-				}
-			},
-			
-			// 清空选项
-			clear() {
-				this.options = []
-				this.correctAnswers = []
-			},
-			
-			// 重置选项
-			reset() {
-				this.options = Array.isArray(this.modelValue) ? [...this.modelValue] : []
-				this.correctAnswers = []
-			}
 		}
 	}
 </script>
