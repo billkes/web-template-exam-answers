@@ -17,6 +17,9 @@
 - [uniCloud uni-data-select下拉框组件](https://uniapp.dcloud.net.cn/component/uniui/uni-data-select.html)
 - [uniCloud dataCom组件规范](https://uniapp.dcloud.net.cn/component/datacom.html)
 
+### 云函数/云对象
+- [uniCloud 定时触发](https://doc.dcloud.net.cn/uniCloud/trigger.html)
+
 ## 快速开始指南
 
 ### 1. 创建数据库 Schema
@@ -27,6 +30,9 @@
 
 ### 3. 使用扩展 JS
 为 Schema 添加扩展 JS 文件，实现复杂的业务逻辑。
+
+### 4. 开启定时器
+...
 
 ## 最佳实践
 
