@@ -12,25 +12,18 @@
 
 ### 编辑组件 (billkes-form-*)
 
-- `billkes-form-input`: 文本输入框组件
-- `billkes-form-select`: 下拉选择框组件
-- `billkes-form-date`: 日期选择器组件
-- `billkes-form-checkbox`: 复选框组件
-- `billkes-form-radio`: 单选框组件
-- `billkes-form-textarea`: 多行文本输入框组件
-- `billkes-form-number`: 数字输入框组件
+- `billkes-form-avatar`: 头像表单组件
+- `billkes-form-exam-records-answers`: 考试记录答案表单组件
+- `billkes-form-question-options`: 题目选项表单组件
 
 ### 显示组件 (billkes-table-*)
 
-- `billkes-table-text`: 文本显示组件
-- `billkes-table-date`: 日期显示组件
-- `billkes-table-status`: 状态显示组件
-- `billkes-table-action`: 操作按钮组件
-- `billkes-table-image`: 图片显示组件
+- `billkes-table-avatar`: 头像显示组件
+- `billkes-table-duration`: 时长显示组件
+- `billkes-table-exam-records-answers`: 考试记录答案显示组件
+- `billkes-table-exams-questions`: 考试题目显示组件
+- `billkes-table-question-options`: 题目选项显示组件
 
 ## 自动生成的表单
 
 > HBuilderX 会根据 schema 配置自动生成包含这些组件的表单页面，无需手动编写表单代码。
-
-
-
