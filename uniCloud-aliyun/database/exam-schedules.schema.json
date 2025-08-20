@@ -13,9 +13,8 @@
 		},
 		"exam_id": {
 			"bsonType": "string",
-			"title": "试卷ID",
-			"description": "试卷ID",
-			"label": "试卷ID",
+			"title": "试卷",
+			"label": "试卷",
 			"componentForEdit": {
 				"name": "uni-data-select",
 				"props": {
@@ -27,41 +26,40 @@
 			"componentForShow": {
 				"name": "uni-data-select",
 				"props": {
-					"disabled": true,
 					"collection": "exams",
-					"field": "title as text, _id as value"
+					"field": "title as text, _id as value",
+					":getone": true,
+					":where": "`_id == '${item.exam_id}'`",
+					"align": "center",
+					"mode": "none",
+					":clear": false,
+					":wrap": true,
+					":hideRight": true,
+					":disabled": true
 				}
 			}
 		},
 		"title": {
 			"bsonType": "string",
 			"title": "安排标题",
-			"description": "考试安排标题",
-			"label": "安排标题",
-			"componentForEdit": {
-				"name": "uni-easyinput",
-				"props": {
-					"placeholder": "请输入考试安排标题"
-				}
-			}
+			"description": "请输入考试安排标题",
+			"label": "安排标题"
 		},
 		"description": {
 			"bsonType": "string",
 			"title": "安排描述",
-			"description": "考试安排描述",
+			"description": "请输入考试安排描述",
 			"label": "安排描述",
 			"componentForEdit": {
 				"name": "uni-easyinput",
 				"props": {
-					"type": "textarea",
-					"placeholder": "请输入考试安排描述"
+					"type": "textarea"
 				}
 			}
 		},
 		"start_time": {
 			"bsonType": "timestamp",
 			"title": "开始时间",
-			"description": "考试开始时间",
 			"label": "开始时间",
 			"componentForEdit": {
 				"name": "uni-datetime-picker",
@@ -72,14 +70,14 @@
 			"componentForShow": {
 				"name": "uni-dateformat",
 				"props": {
-					"format": "yyyy-MM-dd hh:mm:ss"
+					"format": "yyyy-MM-dd hh:mm:ss",
+					":date": "item.start_time"
 				}
 			}
 		},
 		"end_time": {
 			"bsonType": "timestamp",
 			"title": "结束时间",
-			"description": "考试结束时间",
 			"label": "结束时间",
 			"componentForEdit": {
 				"name": "uni-datetime-picker",
@@ -90,14 +88,14 @@
 			"componentForShow": {
 				"name": "uni-dateformat",
 				"props": {
-					"format": "yyyy-MM-dd hh:mm:ss"
+					"format": "yyyy-MM-dd hh:mm:ss",
+					":date": "item.start_time"
 				}
 			}
 		},
 		"allowed_users": {
 			"bsonType": "array",
 			"title": "允许用户",
-			"description": "允许参加考试的用户ID列表",
 			"label": "允许用户",
 			"arrayType": "string",
 			"componentForEdit": {
@@ -109,17 +107,96 @@
 				}
 			},
 			"componentForShow": {
-				"name": "billkes-table-user-list",
+				"name": "uni-data-select",
 				"props": {
 					"collection": "exam-users",
-					"field": "username"
+					"field": "username as text, _id as value",
+					":page-size": "item.allowed_users?.length || 10",
+					":where": "`_id in ${JSON.stringify(item.allowed_users)}`",
+					"align": "center",
+					"mode": "none",
+					":multiple": true,
+					":clear": false,
+					":wrap": true,
+					":hideRight": true,
+					":disabled": true
+				}
+			}
+		},
+		"duration": {
+			"bsonType": "int",
+			"title": "考试时长",
+			"description": "考试时长（分钟）",
+			"label": "考试时长",
+			"minimum": 1,
+			"maximum": 200,
+			"componentForShow": {
+				"name": "billkes-table-duration",
+				"props": {
+					"unit": "m"
+				}
+			}
+		},
+		"simple_score": {
+			"bsonType": "number",
+			"title": "简单题分数",
+			"description": "试卷简单题分数",
+			"label": "简单题分数",
+			"minimum": 1,
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"type": "number",
+					"placeholder": "请输入试卷简单题分数"
+				}
+			}
+		},
+		"medium_score": {
+			"bsonType": "number",
+			"title": "中等题分数",
+			"description": "试卷中等题分数",
+			"label": "中等题分数",
+			"minimum": 1,
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"type": "number",
+					"placeholder": "请输入试卷中等题分数"
+				}
+			}
+		},
+		"difficult_score": {
+			"bsonType": "number",
+			"title": "困难题分数",
+			"description": "试卷困难题分数",
+			"label": "困难题分数",
+			"minimum": 1,
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"type": "number",
+					"placeholder": "请输入试卷困难题分数"
+				}
+			}
+		},
+		"total_score": {
+			"bsonType": "number",
+			"title": "总分",
+			"description": "试卷总分",
+			"label": "总分",
+			"minimum": 0,
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"type": "number",
+					":disabled": true,
+					"placeholder": "自动计算"
 				}
 			}
 		},
 		"status": {
 			"bsonType": "int",
 			"title": "状态",
-			"description": "考试安排状态：0-未开始，1-进行中，2-已结束",
 			"label": "状态",
 			"defaultValue": 0,
 			"minimum": 0,
@@ -144,9 +221,15 @@
 				}
 			},
 			"componentForShow": {
-				"name": "billkes-table-tag",
+				"name": "uni-data-select",
 				"props": {
-					":enum": "options.filterData.status_localdata"
+					":localdata": "options.filterData.status_localdata",
+					"align": "center",
+					"mode": "none",
+					":clear": false,
+					":wrap": true,
+					":hideRight": true,
+					":disabled": true
 				}
 			}
 		},

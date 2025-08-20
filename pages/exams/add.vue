@@ -2,24 +2,15 @@
   <view class="uni-container">
     <uni-forms ref="form" :model="formData" validateTrigger="bind">
       <uni-forms-item name="title" label="试卷标题" required>
-        <uni-easyinput placeholder="试卷标题" v-model="formData.title"></uni-easyinput>
+        <uni-easyinput placeholder="请输入试卷标题" v-model="formData.title"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="description" label="试卷描述">
-        <uni-easyinput type="textarea" placeholder="试卷描述" v-model="formData.description"></uni-easyinput>
+        <uni-easyinput type="textarea" placeholder="请输入试卷描述" v-model="formData.description"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="questions" label="题目列表" required>
-        <billkes-form-exam-questions schemaKey="exam-questions" :multiple="true" v-model="formData.questions"></billkes-form-exam-questions>
+        <uni-data-select placeholder="请选择题目" collection="exam-questions" field="title as text, _id as value" :multiple="true" v-model="formData.questions"></uni-data-select>
       </uni-forms-item>
-      <uni-forms-item name="total_score" label="总分" required>
-        <uni-easyinput type="number" placeholder="请输入试卷总分" v-model="formData.total_score"></uni-easyinput>
-      </uni-forms-item>
-      <uni-forms-item name="duration" label="考试时长">
-        <billkes-form-duration placeholder="考试时长（分钟）" unit="分钟" minDuration="1" maxDuration="480" type="number" v-model="formData.duration"></billkes-form-duration>
-      </uni-forms-item>
-      <uni-forms-item name="tags" label="标签">
-        <billkes-form-tags placeholder="请选择试卷标签" :multiple="true" v-model="formData.tags"></billkes-form-tags>
-      </uni-forms-item>
-      <uni-forms-item name="status" label="状态">
+      <uni-forms-item name="status" label="状态" required>
         <uni-data-select placeholder="请选择试卷状态" v-model="formData.status" :localdata="formOptions.status_localdata"></uni-data-select>
       </uni-forms-item>
       <view class="uni-button-group">
@@ -57,9 +48,6 @@
         "title": "",
         "description": "",
         "questions": [],
-        "total_score": null,
-        "duration": null,
-        "tags": [],
         "status": 0
       }
       return {

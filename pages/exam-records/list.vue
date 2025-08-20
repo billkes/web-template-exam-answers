@@ -21,8 +21,8 @@
         v-slot:default="{data,pagination,loading,error,options}" :options="options" loadtime="manual" @load="onqueryload">
         <uni-table ref="table" :loading="loading" :emptyText="error.message || '没有更多数据'" border stripe type="selection" @selection-change="selectionChange">
           <uni-tr>
-            <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'exam_id')" sortable @sort-change="sortChange($event, 'exam_id')">试卷ID</uni-th>
-            <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'user_id')" sortable @sort-change="sortChange($event, 'user_id')">用户ID</uni-th>
+            <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'exam_id')" sortable @sort-change="sortChange($event, 'exam_id')">试卷</uni-th>
+            <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'user_id')" sortable @sort-change="sortChange($event, 'user_id')">用户</uni-th>
             <uni-th align="center" sortable @sort-change="sortChange($event, 'answers')">答题记录</uni-th>
             <uni-th align="center" sortable @sort-change="sortChange($event, 'total_score')">总得分</uni-th>
             <uni-th align="center" filter-type="range" @filter-change="filterChange($event, 'time_spent')" sortable @sort-change="sortChange($event, 'time_spent')">用时</uni-th>
@@ -33,26 +33,26 @@
           </uni-tr>
           <uni-tr v-for="(item,index) in data" :key="index">
             <uni-td align="center">
-              <uni-data-select disabled="true" collection="exams" field="title as text, _id as value" :value="item.exam_id"></uni-data-select>
+              <uni-data-select collection="exams" field="title as text, _id as value" :getone="true" :where="`_id == '${item.exam_id}'`" align="center" mode="none" :clear="false" :wrap="true" :hideRight="true" :disabled="true" :value="item.exam_id"></uni-data-select>
             </uni-td>
             <uni-td align="center">
-              <uni-data-select disabled="true" collection="exam-users" field="nickname as text, _id as value" :value="item.user_id"></uni-data-select>
+              <uni-data-select collection="exam-users" field="nickname as text, _id as value" :getone="true" :where="`_id == '${item.user_id}'`" align="center" mode="none" :clear="false" :wrap="true" :hideRight="true" :disabled="true" :value="item.user_id"></uni-data-select>
             </uni-td>
             <uni-td align="center">
-              <billkes-table-answers-summary showSummary="true" :value="item.answers"></billkes-table-answers-summary>
+              <billkes-table-exam-records-answers :value="item.answers"></billkes-table-exam-records-answers>
             </uni-td>
             <uni-td align="center">{{item.total_score}}</uni-td>
             <uni-td align="center">
-              <billkes-table-duration unit="秒" format="mm:ss" :value="item.time_spent"></billkes-table-duration>
+              <billkes-table-duration unit="s" :value="item.time_spent"></billkes-table-duration>
             </uni-td>
             <uni-td align="center">
-              <billkes-table-tag :enum="options.filterData.status_localdata" :value="item.status"></billkes-table-tag>
+              <uni-data-select :localdata="options.filterData.status_localdata" align="center" mode="none" :clear="false" :wrap="true" :hideRight="true" :disabled="true" :value="item.status"></uni-data-select>
             </uni-td>
             <uni-td align="center">
-              <uni-dateformat format="yyyy-MM-dd hh:mm:ss" :value="item.started_date"></uni-dateformat>
+              <uni-dateformat format="yyyy-MM-dd hh:mm:ss" :date="item.started_date" :value="item.started_date"></uni-dateformat>
             </uni-td>
             <uni-td align="center">
-              <uni-dateformat format="yyyy-MM-dd hh:mm:ss" :value="item.finished_date"></uni-dateformat>
+              <uni-dateformat format="yyyy-MM-dd hh:mm:ss" :date="finished_date" :value="item.finished_date"></uni-dateformat>
             </uni-td>
             <uni-td align="center">
               <view class="uni-group">
@@ -120,8 +120,8 @@
           "filename": "exam-records.xls",
           "type": "xls",
           "fields": {
-            "试卷ID": "exam_id",
-            "用户ID": "user_id",
+            "试卷": "exam_id",
+            "用户": "user_id",
             "答题记录": "answers",
             "总得分": "total_score",
             "用时": "time_spent",

@@ -11,8 +11,8 @@ const validator = {
         "format": "string"
       }
     ],
-    "label": "试卷ID",
-    "title": "试卷ID"
+    "label": "试卷",
+    "title": "试卷"
   },
   "user_id": {
     "rules": [
@@ -23,8 +23,8 @@ const validator = {
         "format": "string"
       }
     ],
-    "label": "用户ID",
-    "title": "用户ID"
+    "label": "用户",
+    "title": "用户"
   },
   "answers": {
     "rules": [
@@ -59,7 +59,8 @@ const validator = {
         "format": "int"
       },
       {
-        "minimum": 0
+        "minimum": 60,
+        "maximum": 12000
       }
     ],
     "label": "用时",

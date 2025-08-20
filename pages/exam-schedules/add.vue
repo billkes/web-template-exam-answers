@@ -1,14 +1,14 @@
 <template>
   <view class="uni-container">
     <uni-forms ref="form" :model="formData" validateTrigger="bind">
-      <uni-forms-item name="exam_id" label="试卷ID" required>
-        <uni-data-select placeholder="试卷ID" collection="exams" field="title as text, _id as value" v-model="formData.exam_id"></uni-data-select>
+      <uni-forms-item name="exam_id" label="试卷" required>
+        <uni-data-select placeholder="请选择试卷" collection="exams" field="title as text, _id as value" v-model="formData.exam_id"></uni-data-select>
       </uni-forms-item>
       <uni-forms-item name="title" label="安排标题">
-        <uni-easyinput placeholder="考试安排标题" v-model="formData.title"></uni-easyinput>
+        <uni-easyinput placeholder="请输入考试安排标题" v-model="formData.title"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="description" label="安排描述">
-        <uni-easyinput type="textarea" placeholder="考试安排描述" v-model="formData.description"></uni-easyinput>
+        <uni-easyinput type="textarea" placeholder="请输入考试安排描述" v-model="formData.description"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="start_time" label="开始时间" required>
         <uni-datetime-picker placeholder="请选择考试开始时间" return-type="timestamp" v-model="formData.start_time"></uni-datetime-picker>
@@ -18,6 +18,21 @@
       </uni-forms-item>
       <uni-forms-item name="allowed_users" label="允许用户">
         <uni-data-select placeholder="请选择允许参加考试的用户" collection="exam-users" field="username as text, _id as value" :multiple="true" v-model="formData.allowed_users"></uni-data-select>
+      </uni-forms-item>
+      <uni-forms-item name="duration" label="考试时长">
+        <uni-easyinput placeholder="考试时长（分钟）" type="number" v-model="formData.duration"></uni-easyinput>
+      </uni-forms-item>
+      <uni-forms-item name="simple_score" label="简单题分数">
+        <uni-easyinput type="number" placeholder="请输入试卷简单题分数" v-model="formData.simple_score"></uni-easyinput>
+      </uni-forms-item>
+      <uni-forms-item name="medium_score" label="中等题分数">
+        <uni-easyinput type="number" placeholder="请输入试卷中等题分数" v-model="formData.medium_score"></uni-easyinput>
+      </uni-forms-item>
+      <uni-forms-item name="difficult_score" label="困难题分数">
+        <uni-easyinput type="number" placeholder="请输入试卷困难题分数" v-model="formData.difficult_score"></uni-easyinput>
+      </uni-forms-item>
+      <uni-forms-item name="total_score" label="总分">
+        <uni-easyinput type="number" :disabled="true" placeholder="自动计算" v-model="formData.total_score"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="status" label="状态">
         <uni-data-select placeholder="请选择考试安排状态" v-model="formData.status" :localdata="formOptions.status_localdata"></uni-data-select>
@@ -60,6 +75,11 @@
         "start_time": null,
         "end_time": null,
         "allowed_users": [],
+        "duration": null,
+        "simple_score": null,
+        "medium_score": null,
+        "difficult_score": null,
+        "total_score": null,
         "status": 0
       }
       return {

@@ -62,7 +62,39 @@ const validator = {
         "format": "array"
       },
       {
-        "arrayType": "string"
+        "arrayType": "int"
+      },
+      {
+        "range": [
+          {
+            "value": 0,
+            "text": "A"
+          },
+          {
+            "value": 1,
+            "text": "B"
+          },
+          {
+            "value": 2,
+            "text": "C"
+          },
+          {
+            "value": 3,
+            "text": "D"
+          },
+          {
+            "value": 4,
+            "text": "E"
+          },
+          {
+            "value": 5,
+            "text": "F"
+          },
+          {
+            "value": 6,
+            "text": "G"
+          }
+        ]
       }
     ],
     "label": "答案",
@@ -106,18 +138,6 @@ const validator = {
     "label": "难度",
     "title": "难度",
     "defaultValue": 1
-  },
-  "tags": {
-    "rules": [
-      {
-        "format": "array"
-      },
-      {
-        "arrayType": "string"
-      }
-    ],
-    "label": "标签",
-    "title": "标签"
   }
 }
 
@@ -126,6 +146,36 @@ const enumConverter = {
     "single": "单选题",
     "multiple": "多选题"
   },
+  "answer_valuetotext": [
+    {
+      "value": 0,
+      "text": "A"
+    },
+    {
+      "value": 1,
+      "text": "B"
+    },
+    {
+      "value": 2,
+      "text": "C"
+    },
+    {
+      "value": 3,
+      "text": "D"
+    },
+    {
+      "value": 4,
+      "text": "E"
+    },
+    {
+      "value": 5,
+      "text": "F"
+    },
+    {
+      "value": 6,
+      "text": "G"
+    }
+  ],
   "difficulty_valuetotext": {
     "1": "简单",
     "2": "中等",

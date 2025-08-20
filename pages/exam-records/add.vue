@@ -1,20 +1,20 @@
 <template>
   <view class="uni-container">
     <uni-forms ref="form" :model="formData" validateTrigger="bind">
-      <uni-forms-item name="exam_id" label="试卷ID" required>
-        <uni-data-select placeholder="试卷ID" collection="exams" field="title as text, _id as value" v-model="formData.exam_id"></uni-data-select>
+      <uni-forms-item name="exam_id" label="试卷" required>
+        <uni-data-select placeholder="请选择试卷" collection="exams" field="title as text, _id as value" v-model="formData.exam_id"></uni-data-select>
       </uni-forms-item>
-      <uni-forms-item name="user_id" label="用户ID" required>
-        <uni-data-select placeholder="用户ID" collection="exam-users" field="nickname as text, _id as value" v-model="formData.user_id"></uni-data-select>
+      <uni-forms-item name="user_id" label="用户" required>
+        <uni-data-select placeholder="请选择用户" collection="exam-users" field="nickname as text, _id as value" v-model="formData.user_id"></uni-data-select>
       </uni-forms-item>
       <uni-forms-item name="answers" label="答题记录" required>
-        <billkes-form-exam-answers :multiple="true" v-model="formData.answers"></billkes-form-exam-answers>
+        <billkes-form-exam-records-answers :multiple="true" v-model="formData.answers"></billkes-form-exam-records-answers>
       </uni-forms-item>
       <uni-forms-item name="total_score" label="总得分">
-        <uni-easyinput type="number" placeholder="请输入考试总得分" v-model="formData.total_score"></uni-easyinput>
+        <uni-easyinput placeholder="自动计算" type="number" :disabled="true" v-model="formData.total_score"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="time_spent" label="用时">
-        <billkes-form-duration placeholder="考试用时（秒）" unit="秒" minDuration="0" maxDuration="7200" type="number" v-model="formData.time_spent"></billkes-form-duration>
+        <uni-easyinput placeholder="请输入用时（秒）" type="number" v-model="formData.time_spent"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="status" label="状态">
         <uni-data-select placeholder="请选择考试状态" v-model="formData.status" :localdata="formOptions.status_localdata"></uni-data-select>

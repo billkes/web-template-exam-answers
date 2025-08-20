@@ -16,7 +16,7 @@
       </view>
     </view>
     <view class="uni-container">
-      <unicloud-db ref="udb" :collection="collectionList" field="title,type,options,answer,analysis,difficulty,tags" :where="where" page-data="replace"
+      <unicloud-db ref="udb" :collection="collectionList" field="title,type,options,answer,analysis,difficulty" :where="where" page-data="replace"
         :orderby="orderby" :getcount="true" :page-size="options.pageSize" :page-current="options.pageCurrent"
         v-slot:default="{data,pagination,loading,error,options}" :options="options" loadtime="manual" @load="onqueryload">
         <uni-table ref="table" :loading="loading" :emptyText="error.message || '没有更多数据'" border stripe type="selection" @selection-change="selectionChange">
@@ -24,27 +24,25 @@
             <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'title')" sortable @sort-change="sortChange($event, 'title')">题目标题</uni-th>
             <uni-th align="center" filter-type="select" :filter-data="options.filterData.type_localdata" @filter-change="filterChange($event, 'type')">题目类型</uni-th>
             <uni-th align="center" sortable @sort-change="sortChange($event, 'options')">选项</uni-th>
-            <uni-th align="center" sortable @sort-change="sortChange($event, 'answer')">答案</uni-th>
+            <uni-th align="center" filter-type="select" :filter-data="options.filterData.answer_localdata" @filter-change="filterChange($event, 'answer')">答案</uni-th>
             <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'analysis')" sortable @sort-change="sortChange($event, 'analysis')">解析</uni-th>
             <uni-th align="center" filter-type="select" :filter-data="options.filterData.difficulty_localdata" @filter-change="filterChange($event, 'difficulty')">难度</uni-th>
-            <uni-th align="center" sortable @sort-change="sortChange($event, 'tags')">标签</uni-th>
             <uni-th align="center">操作</uni-th>
           </uni-tr>
           <uni-tr v-for="(item,index) in data" :key="index">
             <uni-td align="center">{{item.title}}</uni-td>
             <uni-td align="center">
-              <billkes-table-tag :enum="options.filterData.type_localdata" :value="item.type"></billkes-table-tag>
+              <uni-data-select :localdata="options.filterData.type_localdata" align="center" mode="none" :clear="false" :wrap="true" :hideRight="true" :disabled="true" :value="item.type"></uni-data-select>
             </uni-td>
             <uni-td align="center">
-              <billkes-table-options showCount="true" :value="item.options"></billkes-table-options>
+              <billkes-table-question-options :value="item.options"></billkes-table-question-options>
             </uni-td>
-            <uni-td align="center">{{item.answer}}</uni-td>
+            <uni-td align="center">
+              <uni-data-select :localdata="options.filterData.answer_localdata" align="center" mode="none" :clear="false" :wrap="true" :hideRight="true" :disabled="true" :multiple="true" :value="item.answer"></uni-data-select>
+            </uni-td>
             <uni-td align="center">{{item.analysis}}</uni-td>
             <uni-td align="center">
-              <billkes-table-tag :enum="options.filterData.difficulty_localdata" :value="item.difficulty"></billkes-table-tag>
-            </uni-td>
-            <uni-td align="center">
-              <billkes-table-tags separator=", " :value="item.tags"></billkes-table-tags>
+              <uni-data-select :localdata="options.filterData.difficulty_localdata" align="center" mode="none" :clear="false" :wrap="true" :hideRight="true" :disabled="true" :value="item.difficulty"></uni-data-select>
             </uni-td>
             <uni-td align="center">
               <view class="uni-group">
@@ -101,6 +99,36 @@
                 "text": "多选题"
               }
             ],
+            "answer_localdata": [
+              {
+                "value": 0,
+                "text": "A"
+              },
+              {
+                "value": 1,
+                "text": "B"
+              },
+              {
+                "value": 2,
+                "text": "C"
+              },
+              {
+                "value": 3,
+                "text": "D"
+              },
+              {
+                "value": 4,
+                "text": "E"
+              },
+              {
+                "value": 5,
+                "text": "F"
+              },
+              {
+                "value": 6,
+                "text": "G"
+              }
+            ],
             "difficulty_localdata": [
               {
                 "value": 1,
@@ -131,8 +159,7 @@
             "选项": "options",
             "答案": "answer",
             "解析": "analysis",
-            "难度": "difficulty",
-            "标签": "tags"
+            "难度": "difficulty"
           }
         },
         exportExcelData: []

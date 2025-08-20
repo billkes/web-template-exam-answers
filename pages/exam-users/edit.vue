@@ -2,19 +2,16 @@
   <view class="uni-container">
     <uni-forms ref="form" :model="formData" validateTrigger="bind">
       <uni-forms-item name="username" label="用户名" required>
-        <uni-easyinput placeholder="用户名" v-model="formData.username"></uni-easyinput>
+        <uni-easyinput placeholder="请输入用户名" v-model="formData.username"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="email" label="邮箱" required>
-        <uni-easyinput placeholder="邮箱" v-model="formData.email"></uni-easyinput>
+        <uni-easyinput placeholder="请输入邮箱地址" v-model="formData.email"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="nickname" label="昵称">
-        <uni-easyinput placeholder="昵称" v-model="formData.nickname"></uni-easyinput>
+        <uni-easyinput placeholder="请输入昵称" v-model="formData.nickname"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="avatar" label="头像">
-        <billkes-form-avatar placeholder="头像URL" v-model="formData.avatar"></billkes-form-avatar>
-      </uni-forms-item>
-      <uni-forms-item name="role" label="角色">
-        <uni-data-select placeholder="请选择用户角色" v-model="formData.role" :localdata="formOptions.role_localdata"></uni-data-select>
+        <billkes-form-avatar v-model="formData.avatar"></billkes-form-avatar>
       </uni-forms-item>
       <uni-forms-item name="status" label="状态">
         <uni-data-select placeholder="请选择用户状态" v-model="formData.status" :localdata="formOptions.status_localdata"></uni-data-select>
@@ -55,26 +52,11 @@
         "email": "",
         "nickname": "",
         "avatar": "",
-        "role": "",
         "status": 1
       }
       return {
         formData,
         formOptions: {
-          "role_localdata": [
-            {
-              "value": "admin",
-              "text": "管理员"
-            },
-            {
-              "value": "teacher",
-              "text": "教师"
-            },
-            {
-              "value": "student",
-              "text": "学生"
-            }
-          ],
           "status_localdata": [
             {
               "value": 0,
@@ -145,7 +127,7 @@
         uni.showLoading({
           mask: true
         })
-        db.collection(dbCollectionName).doc(id).field("username,email,nickname,avatar,role,status").get().then((res) => {
+        db.collection(dbCollectionName).doc(id).field("username,email,nickname,avatar,status").get().then((res) => {
           const data = res.result.data[0]
           if (data) {
             this.formData = data

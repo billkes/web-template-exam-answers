@@ -14,19 +14,12 @@
 		"title": {
 			"bsonType": "string",
 			"title": "题目标题",
-			"description": "题目标题",
-			"label": "题目标题",
-			"componentForEdit": {
-				"name": "uni-easyinput",
-				"props": {
-					"placeholder": "请输入题目标题"
-				}
-			}
+			"description": "请输入题目标题",
+			"label": "题目标题"
 		},
 		"type": {
 			"bsonType": "string",
 			"title": "题目类型",
-			"description": "题目类型：single-单选题，multiple-多选题",
 			"label": "题目类型",
 			"enum": [{
 					"value": "single",
@@ -44,9 +37,15 @@
 				}
 			},
 			"componentForShow": {
-				"name": "billkes-table-tag",
+				"name": "uni-data-select",
 				"props": {
-					":enum": "options.filterData.type_localdata"
+					":localdata": "options.filterData.type_localdata",
+					"align": "center",
+					"mode": "none",
+					":clear": false,
+					":wrap": true,
+					":hideRight": true,
+					":disabled": true
 				}
 			}
 		},
@@ -57,35 +56,76 @@
 			"label": "选项",
 			"arrayType": "string",
 			"componentForEdit": {
-				"name": "billkes-form-exam-opt"
+				"name": "billkes-form-question-options"
 			},
 			"componentForShow": {
-				"name": "billkes-table-options",
-				"props": {
-					"showCount": true
-				}
+				"name": "billkes-table-question-options"
 			}
 		},
 		"answer": {
 			"bsonType": "array",
-			"arrayType": "string",
+			"arrayType": "int",
 			"title": "答案",
 			"description": "题目答案",
 			"label": "答案",
+			"enum": [{
+					"value": 0,
+					"text": "A"
+				},
+				{
+					"value": 1,
+					"text": "B"
+				},
+				{
+					"value": 2,
+					"text": "C"
+				},
+				{
+					"value": 3,
+					"text": "D"
+				},
+				{
+					"value": 4,
+					"text": "E"
+				},
+				{
+					"value": 5,
+					"text": "F"
+				},
+				{
+					"value": 6,
+					"text": "G"
+				}
+			],
 			"componentForEdit": {
-				"name": "billkes-form-answer"
+				"name": "uni-data-select",
+				"props": {
+					"placeholder": "请选择题目答案"
+				}
+			},
+			"componentForShow": {
+				"name": "uni-data-select",
+				"props": {
+					":localdata": "options.filterData.answer_localdata",
+					"align": "center",
+					"mode": "none",
+					":clear": false,
+					":wrap": true,
+					":hideRight": true,
+					":disabled": true,
+					":multiple": true
+				}
 			}
 		},
 		"analysis": {
 			"bsonType": "string",
 			"title": "解析",
-			"description": "题目解析",
+			"description": "请输入题目解析",
 			"label": "解析",
 			"componentForEdit": {
 				"name": "uni-easyinput",
 				"props": {
-					"type": "textarea",
-					"placeholder": "请输入题目解析"
+					"type": "textarea"
 				}
 			}
 		},
@@ -117,25 +157,15 @@
 				}
 			},
 			"componentForShow": {
-				"name": "billkes-table-tag",
+				"name": "uni-data-select",
 				"props": {
-					":enum": "options.filterData.difficulty_localdata"
-				}
-			}
-		},
-		"tags": {
-			"bsonType": "array",
-			"title": "标签",
-			"description": "题目标签",
-			"label": "标签",
-			"arrayType": "string",
-			"componentForEdit": {
-				"name": "billkes-form-tags"
-			},
-			"componentForShow": {
-				"name": "billkes-table-tags",
-				"props": {
-					"separator": ", "
+					":localdata": "options.filterData.difficulty_localdata",
+					"align": "center",
+					"mode": "none",
+					":clear": false,
+					":wrap": true,
+					":hideRight": true,
+					":disabled": true
 				}
 			}
 		},

@@ -32,53 +32,17 @@ const validator = {
         "format": "array"
       },
       {
-        "arrayType": "object"
+        "arrayType": "string"
       }
     ],
     "label": "题目列表",
     "title": "题目列表"
   },
-  "total_score": {
+  "status": {
     "rules": [
       {
         "required": true
       },
-      {
-        "format": "number"
-      },
-      {
-        "minimum": 0
-      }
-    ],
-    "label": "总分",
-    "title": "总分"
-  },
-  "duration": {
-    "rules": [
-      {
-        "format": "int"
-      },
-      {
-        "minimum": 1
-      }
-    ],
-    "label": "考试时长",
-    "title": "考试时长"
-  },
-  "tags": {
-    "rules": [
-      {
-        "format": "array"
-      },
-      {
-        "arrayType": "string"
-      }
-    ],
-    "label": "标签",
-    "title": "标签"
-  },
-  "status": {
-    "rules": [
       {
         "format": "int"
       },

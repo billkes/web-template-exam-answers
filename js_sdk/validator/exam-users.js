@@ -44,31 +44,6 @@ const validator = {
     "label": "头像",
     "title": "头像"
   },
-  "role": {
-    "rules": [
-      {
-        "format": "string"
-      },
-      {
-        "range": [
-          {
-            "value": "admin",
-            "text": "管理员"
-          },
-          {
-            "value": "teacher",
-            "text": "教师"
-          },
-          {
-            "value": "student",
-            "text": "学生"
-          }
-        ]
-      }
-    ],
-    "label": "角色",
-    "title": "角色"
-  },
   "status": {
     "rules": [
       {
@@ -98,11 +73,6 @@ const validator = {
 }
 
 const enumConverter = {
-  "role_valuetotext": {
-    "admin": "管理员",
-    "teacher": "教师",
-    "student": "学生"
-  },
   "status_valuetotext": {
     "0": "禁用",
     "1": "启用"

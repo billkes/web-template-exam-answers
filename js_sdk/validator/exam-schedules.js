@@ -11,8 +11,8 @@ const validator = {
         "format": "string"
       }
     ],
-    "label": "试卷ID",
-    "title": "试卷ID"
+    "label": "试卷",
+    "title": "试卷"
   },
   "title": {
     "rules": [
@@ -67,6 +67,67 @@ const validator = {
     ],
     "label": "允许用户",
     "title": "允许用户"
+  },
+  "duration": {
+    "rules": [
+      {
+        "format": "int"
+      },
+      {
+        "minimum": 1,
+        "maximum": 200
+      }
+    ],
+    "label": "考试时长",
+    "title": "考试时长"
+  },
+  "simple_score": {
+    "rules": [
+      {
+        "format": "number"
+      },
+      {
+        "minimum": 1
+      }
+    ],
+    "label": "简单题分数",
+    "title": "简单题分数"
+  },
+  "medium_score": {
+    "rules": [
+      {
+        "format": "number"
+      },
+      {
+        "minimum": 1
+      }
+    ],
+    "label": "中等题分数",
+    "title": "中等题分数"
+  },
+  "difficult_score": {
+    "rules": [
+      {
+        "format": "number"
+      },
+      {
+        "minimum": 1
+      }
+    ],
+    "label": "困难题分数",
+    "title": "困难题分数"
+  },
+  "total_score": {
+    "rules": [
+      {
+        "format": "number"
+      },
+      {
+        "minimum": 0
+      }
+    ],
+    "label": "总分",
+    "title": "总分"
   },
   "status": {
     "rules": [

@@ -2,25 +2,22 @@
   <view class="uni-container">
     <uni-forms ref="form" :model="formData" validateTrigger="bind">
       <uni-forms-item name="title" label="题目标题" required>
-        <uni-easyinput placeholder="题目标题" v-model="formData.title"></uni-easyinput>
+        <uni-easyinput placeholder="请输入题目标题" v-model="formData.title"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="type" label="题目类型" required>
         <uni-data-select placeholder="请选择题目类型" v-model="formData.type" :localdata="formOptions.type_localdata"></uni-data-select>
       </uni-forms-item>
       <uni-forms-item name="options" label="选项" required>
-        <billkes-form-exam-opt :multiple="true" v-model="formData.options"></billkes-form-exam-opt>
+        <billkes-form-question-options :multiple="true" v-model="formData.options"></billkes-form-question-options>
       </uni-forms-item>
       <uni-forms-item name="answer" label="答案" required>
-        <billkes-form-answer :multiple="true" v-model="formData.answer"></billkes-form-answer>
+        <uni-data-select placeholder="请选择题目答案" :multiple="true" v-model="formData.answer" :localdata="formOptions.answer_localdata"></uni-data-select>
       </uni-forms-item>
       <uni-forms-item name="analysis" label="解析">
-        <uni-easyinput type="textarea" placeholder="题目解析" v-model="formData.analysis"></uni-easyinput>
+        <uni-easyinput type="textarea" placeholder="请输入题目解析" v-model="formData.analysis"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="difficulty" label="难度">
         <uni-data-select placeholder="请选择题目难度" v-model="formData.difficulty" :localdata="formOptions.difficulty_localdata"></uni-data-select>
-      </uni-forms-item>
-      <uni-forms-item name="tags" label="标签">
-        <billkes-form-tags :multiple="true" v-model="formData.tags"></billkes-form-tags>
       </uni-forms-item>
       <view class="uni-button-group">
         <button type="primary" class="uni-button" style="width: 100px;" @click="submit">提交</button>
@@ -59,8 +56,7 @@
         "options": [],
         "answer": [],
         "analysis": "",
-        "difficulty": 1,
-        "tags": []
+        "difficulty": 1
       }
       return {
         formData,
@@ -73,6 +69,36 @@
             {
               "value": "multiple",
               "text": "多选题"
+            }
+          ],
+          "answer_localdata": [
+            {
+              "value": 0,
+              "text": "A"
+            },
+            {
+              "value": 1,
+              "text": "B"
+            },
+            {
+              "value": 2,
+              "text": "C"
+            },
+            {
+              "value": 3,
+              "text": "D"
+            },
+            {
+              "value": 4,
+              "text": "E"
+            },
+            {
+              "value": 5,
+              "text": "F"
+            },
+            {
+              "value": 6,
+              "text": "G"
             }
           ],
           "difficulty_localdata": [

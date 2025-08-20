@@ -16,7 +16,7 @@
       </view>
     </view>
     <view class="uni-container">
-      <unicloud-db ref="udb" :collection="collectionList" field="username,email,nickname,avatar,role,status" :where="where" page-data="replace"
+      <unicloud-db ref="udb" :collection="collectionList" field="username,email,nickname,avatar,status" :where="where" page-data="replace"
         :orderby="orderby" :getcount="true" :page-size="options.pageSize" :page-current="options.pageCurrent"
         v-slot:default="{data,pagination,loading,error,options}" :options="options" loadtime="manual" @load="onqueryload">
         <uni-table ref="table" :loading="loading" :emptyText="error.message || '没有更多数据'" border stripe type="selection" @selection-change="selectionChange">
@@ -25,7 +25,6 @@
             <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'email')" sortable @sort-change="sortChange($event, 'email')">邮箱</uni-th>
             <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'nickname')" sortable @sort-change="sortChange($event, 'nickname')">昵称</uni-th>
             <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'avatar')" sortable @sort-change="sortChange($event, 'avatar')">头像</uni-th>
-            <uni-th align="center" filter-type="select" :filter-data="options.filterData.role_localdata" @filter-change="filterChange($event, 'role')">角色</uni-th>
             <uni-th align="center" filter-type="select" :filter-data="options.filterData.status_localdata" @filter-change="filterChange($event, 'status')">状态</uni-th>
             <uni-th align="center">操作</uni-th>
           </uni-tr>
@@ -37,10 +36,7 @@
               <billkes-table-avatar mode="aspectFit" :value="item.avatar"></billkes-table-avatar>
             </uni-td>
             <uni-td align="center">
-              <billkes-table-tag :enum="options.filterData.role_localdata" :value="item.role"></billkes-table-tag>
-            </uni-td>
-            <uni-td align="center">
-              <billkes-table-tag :enum="options.filterData.status_localdata" :value="item.status"></billkes-table-tag>
+              <uni-data-select :localdata="options.filterData.status_localdata" align="center" mode="none" :clear="false" :wrap="true" :hideRight="true" :disabled="true" :value="item.status"></uni-data-select>
             </uni-td>
             <uni-td align="center">
               <view class="uni-group">
@@ -87,20 +83,6 @@
           pageSize,
           pageCurrent,
           filterData: {
-            "role_localdata": [
-              {
-                "value": "admin",
-                "text": "管理员"
-              },
-              {
-                "value": "teacher",
-                "text": "教师"
-              },
-              {
-                "value": "student",
-                "text": "学生"
-              }
-            ],
             "status_localdata": [
               {
                 "value": 0,
@@ -126,7 +108,6 @@
             "邮箱": "email",
             "昵称": "nickname",
             "头像": "avatar",
-            "角色": "role",
             "状态": "status"
           }
         },

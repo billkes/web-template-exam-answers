@@ -1,5 +1,5 @@
 <template>
-	<view class="billkes-table-questions-count">
+	<view class="billkes-table-exams-questions">
 		<text v-if="count > 0" class="count-text">{{ count }}题</text>
 		<text v-else class="empty-text">-</text>
 	</view>
@@ -7,7 +7,7 @@
 
 <script>
 	export default {
-		name: 'billkes-table-questions-count',
+		name: 'billkes-table-exams-questions',
 		props: {
 			value: {
 				type: Array,
@@ -23,9 +23,10 @@
 </script>
 
 <style scoped>
-	.billkes-table-questions-count {
+	.billkes-table-exams-questions {
 		display: flex;
 		align-items: center;
+		justify-content: center;
 	}
 
 	.count-text {

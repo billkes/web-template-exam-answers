@@ -1,6 +1,6 @@
 {
 	"bsonType": "object",
-	"required": ["title", "questions", "total_score"],
+	"required": ["title", "questions", "duration", "status"],
 	"permission": {
 		"read": true,
 		"create": true,
@@ -14,25 +14,18 @@
 		"title": {
 			"bsonType": "string",
 			"title": "试卷标题",
-			"description": "试卷标题",
-			"label": "试卷标题",
-			"componentForEdit": {
-				"name": "uni-easyinput",
-				"props": {
-					"placeholder": "请输入试卷标题"
-				}
-			}
+			"description": "请输入试卷标题",
+			"label": "试卷标题"
 		},
 		"description": {
 			"bsonType": "string",
 			"title": "试卷描述",
-			"description": "试卷描述",
+			"description": "请输入试卷描述",
 			"label": "试卷描述",
 			"componentForEdit": {
 				"name": "uni-easyinput",
 				"props": {
-					"type": "textarea",
-					"placeholder": "请输入试卷描述"
+					"type": "textarea"
 				}
 			}
 		},
@@ -41,74 +34,17 @@
 			"title": "题目列表",
 			"description": "试卷包含的题目列表",
 			"label": "题目列表",
-			"arrayType": "object",
-			"componentForEdit": {
-				"name": "billkes-form-exam-questions",
-				"props": {
-					"schemaKey": "exam-questions"
-				}
-			},
-			"componentForShow": {
-				"name": "billkes-table-questions-count",
-				"props": {
-					"showCount": true
-				}
-			}
-		},
-		"total_score": {
-			"bsonType": "number",
-			"title": "总分",
-			"description": "试卷总分",
-			"label": "总分",
-			"minimum": 0,
-			"componentForEdit": {
-				"name": "uni-easyinput",
-				"props": {
-					"type": "number",
-					"placeholder": "请输入试卷总分"
-				}
-			}
-		},
-		"duration": {
-			"bsonType": "int",
-			"title": "考试时长",
-			"description": "考试时长（分钟）",
-			"label": "考试时长",
-			"minimum": 1,
-			"componentForEdit": {
-				"name": "billkes-form-duration",
-				"props": {
-					"placeholder": "请输入考试时长",
-					"unit": "分钟",
-					"minDuration": 1,
-					"maxDuration": 480
-				}
-			},
-			"componentForShow": {
-				"name": "billkes-table-duration",
-				"props": {
-					"unit": "分钟",
-					"format": "hh:mm"
-				}
-			}
-		},
-		"tags": {
-			"bsonType": "array",
-			"title": "标签",
-			"description": "试卷标签",
-			"label": "标签",
 			"arrayType": "string",
 			"componentForEdit": {
-				"name": "billkes-form-tags",
+				"name": "uni-data-select",
 				"props": {
-					"placeholder": "请选择试卷标签"
+					"placeholder": "请选择题目",
+					"collection": "exam-questions",
+					"field": "title as text, _id as value"
 				}
 			},
 			"componentForShow": {
-				"name": "billkes-table-tags",
-				"props": {
-					"separator": ", "
-				}
+				"name": "billkes-table-exams-questions"
 			}
 		},
 		"status": {
@@ -135,9 +71,15 @@
 				}
 			},
 			"componentForShow": {
-				"name": "billkes-table-tag",
+				"name": "uni-data-select",
 				"props": {
-					":enum": "options.filterData.status_localdata"
+					":localdata": "options.filterData.status_localdata",
+					"align": "center",
+					"mode": "none",
+					":clear": false,
+					":wrap": true,
+					":hideRight": true,
+					":disabled": true
 				}
 			}
 		},

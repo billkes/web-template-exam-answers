@@ -16,7 +16,7 @@
       </view>
     </view>
     <view class="uni-container">
-      <unicloud-db ref="udb" :collection="collectionList" field="title,description,questions,total_score,duration,tags,status" :where="where" page-data="replace"
+      <unicloud-db ref="udb" :collection="collectionList" field="title,description,questions,status" :where="where" page-data="replace"
         :orderby="orderby" :getcount="true" :page-size="options.pageSize" :page-current="options.pageCurrent"
         v-slot:default="{data,pagination,loading,error,options}" :options="options" loadtime="manual" @load="onqueryload">
         <uni-table ref="table" :loading="loading" :emptyText="error.message || '没有更多数据'" border stripe type="selection" @selection-change="selectionChange">
@@ -24,9 +24,6 @@
             <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'title')" sortable @sort-change="sortChange($event, 'title')">试卷标题</uni-th>
             <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'description')" sortable @sort-change="sortChange($event, 'description')">试卷描述</uni-th>
             <uni-th align="center" sortable @sort-change="sortChange($event, 'questions')">题目列表</uni-th>
-            <uni-th align="center" sortable @sort-change="sortChange($event, 'total_score')">总分</uni-th>
-            <uni-th align="center" filter-type="range" @filter-change="filterChange($event, 'duration')" sortable @sort-change="sortChange($event, 'duration')">考试时长</uni-th>
-            <uni-th align="center" sortable @sort-change="sortChange($event, 'tags')">标签</uni-th>
             <uni-th align="center" filter-type="select" :filter-data="options.filterData.status_localdata" @filter-change="filterChange($event, 'status')">状态</uni-th>
             <uni-th align="center">操作</uni-th>
           </uni-tr>
@@ -34,17 +31,10 @@
             <uni-td align="center">{{item.title}}</uni-td>
             <uni-td align="center">{{item.description}}</uni-td>
             <uni-td align="center">
-              <billkes-table-questions-count showCount="true" :value="item.questions"></billkes-table-questions-count>
-            </uni-td>
-            <uni-td align="center">{{item.total_score}}</uni-td>
-            <uni-td align="center">
-              <billkes-table-duration unit="分钟" format="hh:mm" :value="item.duration"></billkes-table-duration>
+              <billkes-table-exams-questions :value="item.questions"></billkes-table-exams-questions>
             </uni-td>
             <uni-td align="center">
-              <billkes-table-tags separator=", " :value="item.tags"></billkes-table-tags>
-            </uni-td>
-            <uni-td align="center">
-              <billkes-table-tag :enum="options.filterData.status_localdata" :value="item.status"></billkes-table-tag>
+              <uni-data-select :localdata="options.filterData.status_localdata" align="center" mode="none" :clear="false" :wrap="true" :hideRight="true" :disabled="true" :value="item.status"></uni-data-select>
             </uni-td>
             <uni-td align="center">
               <view class="uni-group">
@@ -115,9 +105,6 @@
             "试卷标题": "title",
             "试卷描述": "description",
             "题目列表": "questions",
-            "总分": "total_score",
-            "考试时长": "duration",
-            "标签": "tags",
             "状态": "status"
           }
         },

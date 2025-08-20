@@ -1,5 +1,5 @@
 <template>
-	<view class="billkes-table-options">
+	<view class="billkes-table-question-options">
 		<view v-if="displayOptions.length > 0" class="options-list">
 			<view v-for="(option, index) in displayOptions" :key="index" class="option-item">
 				<text class="option-label">{{ getOptionLabel(index) }}.</text>
@@ -13,7 +13,7 @@
 
 <script>
 	export default {
-		name: 'billkes-table-options',
+		name: 'billkes-table-question-options',
 		props: {
 			value: {
 				type: Array,
@@ -61,7 +61,7 @@
 </script>
 
 <style scoped>
-	.billkes-table-options {
+	.billkes-table-question-options {
 		display: flex;
 		align-items: flex-start;
 	}

@@ -14,85 +14,32 @@
 		"username": {
 			"bsonType": "string",
 			"title": "用户名",
-			"description": "用户名",
-			"label": "用户名",
-			"componentForEdit": {
-				"name": "uni-easyinput",
-				"props": {
-					"placeholder": "请输入用户名"
-				}
-			}
+			"description": "请输入用户名",
+			"label": "用户名"
 		},
 		"email": {
 			"bsonType": "string",
 			"title": "邮箱",
-			"description": "邮箱",
-			"label": "邮箱",
-			"componentForEdit": {
-				"name": "uni-easyinput",
-				"props": {
-					"placeholder": "请输入邮箱地址"
-				}
-			}
+			"description": "请输入邮箱地址",
+			"label": "邮箱"
 		},
 		"nickname": {
 			"bsonType": "string",
 			"title": "昵称",
-			"description": "昵称",
-			"label": "昵称",
-			"componentForEdit": {
-				"name": "uni-easyinput",
-				"props": {
-					"placeholder": "请输入昵称"
-				}
-			}
+			"description": "请输入昵称",
+			"label": "昵称"
 		},
 		"avatar": {
 			"bsonType": "string",
 			"title": "头像",
-			"description": "头像URL",
 			"label": "头像",
 			"componentForEdit": {
-				"name": "billkes-form-avatar",
-				"props": {
-					"placeholder": "请上传头像"
-				}
+				"name": "billkes-form-avatar"
 			},
 			"componentForShow": {
 				"name": "billkes-table-avatar",
 				"props": {
 					"mode": "aspectFit"
-				}
-			}
-		},
-		"role": {
-			"bsonType": "string",
-			"title": "角色",
-			"description": "用户角色：admin-管理员，teacher-教师，student-学生",
-			"label": "角色",
-			"enum": [{
-					"value": "admin",
-					"text": "管理员"
-				},
-				{
-					"value": "teacher",
-					"text": "教师"
-				},
-				{
-					"value": "student",
-					"text": "学生"
-				}
-			],
-			"componentForEdit": {
-				"name": "uni-data-select",
-				"props": {
-					"placeholder": "请选择用户角色"
-				}
-			},
-			"componentForShow": {
-				"name": "billkes-table-tag",
-				"props": {
-					":enum": "options.filterData.role_localdata"
 				}
 			}
 		},
@@ -120,9 +67,15 @@
 				}
 			},
 			"componentForShow": {
-				"name": "billkes-table-tag",
+				"name": "uni-data-select",
 				"props": {
-					":enum": "options.filterData.status_localdata"
+					":localdata": "options.filterData.status_localdata",
+					"align": "center",
+					"mode": "none",
+					":clear": false,
+					":wrap": true,
+					":hideRight": true,
+					":disabled": true
 				}
 			}
 		},

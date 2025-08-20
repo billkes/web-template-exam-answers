@@ -13,9 +13,8 @@
 		},
 		"exam_id": {
 			"bsonType": "string",
-			"title": "试卷ID",
-			"description": "试卷ID",
-			"label": "试卷ID",
+			"title": "试卷",
+			"label": "试卷",
 			"componentForEdit": {
 				"name": "uni-data-select",
 				"props": {
@@ -27,17 +26,23 @@
 			"componentForShow": {
 				"name": "uni-data-select",
 				"props": {
-					"disabled": true,
 					"collection": "exams",
-					"field": "title as text, _id as value"
+					"field": "title as text, _id as value",
+					":getone": true,
+					":where": "`_id == '${item.exam_id}'`",
+					"align": "center",
+					"mode": "none",
+					":clear": false,
+					":wrap": true,
+					":hideRight": true,
+					":disabled": true
 				}
 			}
 		},
 		"user_id": {
 			"bsonType": "string",
-			"title": "用户ID",
-			"description": "用户ID",
-			"label": "用户ID",
+			"title": "用户",
+			"label": "用户",
 			"componentForEdit": {
 				"name": "uni-data-select",
 				"props": {
@@ -49,69 +54,62 @@
 			"componentForShow": {
 				"name": "uni-data-select",
 				"props": {
-					"disabled": true,
 					"collection": "exam-users",
-					"field": "nickname as text, _id as value"
+					"field": "nickname as text, _id as value",
+					":getone": true,
+					":where": "`_id == '${item.user_id}'`",
+					"align": "center",
+					"mode": "none",
+					":clear": false,
+					":wrap": true,
+					":hideRight": true,
+					":disabled": true
 				}
 			}
 		},
 		"answers": {
 			"bsonType": "array",
 			"title": "答题记录",
-			"description": "答题记录",
 			"label": "答题记录",
 			"arrayType": "object",
 			"componentForEdit": {
-				"name": "billkes-form-exam-answers"
+				"name": "billkes-form-exam-records-answers"
 			},
 			"componentForShow": {
-				"name": "billkes-table-answers-summary",
-				"props": {
-					"showSummary": true
-				}
+				"name": "billkes-table-exam-records-answers"
 			}
 		},
 		"total_score": {
 			"bsonType": "number",
 			"title": "总得分",
-			"description": "考试总得分",
 			"label": "总得分",
 			"minimum": 0,
 			"componentForEdit": {
 				"name": "uni-easyinput",
 				"props": {
+					"placeholder": "自动计算",
 					"type": "number",
-					"placeholder": "请输入考试总得分"
+					":disabled": true
 				}
 			}
 		},
 		"time_spent": {
 			"bsonType": "int",
 			"title": "用时",
-			"description": "考试用时（秒）",
+			"description": "请输入用时（秒）",
 			"label": "用时",
-			"minimum": 0,
-			"componentForEdit": {
-				"name": "billkes-form-duration",
-				"props": {
-					"placeholder": "请输入考试用时",
-					"unit": "秒",
-					"minDuration": 0,
-					"maxDuration": 7200
-				}
-			},
+			"minimum": 60,
+			"maximum": 12000,
 			"componentForShow": {
 				"name": "billkes-table-duration",
 				"props": {
-					"unit": "秒",
-					"format": "mm:ss"
+					"unit": "s"
 				}
 			}
 		},
 		"status": {
 			"bsonType": "int",
 			"title": "状态",
-			"description": "考试状态：0-未完成，1-已完成",
 			"label": "状态",
 			"defaultValue": 0,
 			"minimum": 0,
@@ -132,16 +130,21 @@
 				}
 			},
 			"componentForShow": {
-				"name": "billkes-table-tag",
+				"name": "uni-data-select",
 				"props": {
-					":enum": "options.filterData.status_localdata"
+					":localdata": "options.filterData.status_localdata",
+					"align": "center",
+					"mode": "none",
+					":clear": false,
+					":wrap": true,
+					":hideRight": true,
+					":disabled": true
 				}
 			}
 		},
 		"started_date": {
 			"bsonType": "timestamp",
 			"title": "开始时间",
-			"description": "开始考试时间",
 			"label": "开始时间",
 			"componentForEdit": {
 				"name": "uni-datetime-picker",
@@ -152,14 +155,14 @@
 			"componentForShow": {
 				"name": "uni-dateformat",
 				"props": {
-					"format": "yyyy-MM-dd hh:mm:ss"
+					"format": "yyyy-MM-dd hh:mm:ss",
+					":date": "item.started_date"
 				}
 			}
 		},
 		"finished_date": {
 			"bsonType": "timestamp",
 			"title": "完成时间",
-			"description": "完成考试时间",
 			"label": "完成时间",
 			"componentForEdit": {
 				"name": "uni-datetime-picker",
@@ -170,7 +173,8 @@
 			"componentForShow": {
 				"name": "uni-dateformat",
 				"props": {
-					"format": "yyyy-MM-dd hh:mm:ss"
+					"format": "yyyy-MM-dd hh:mm:ss",
+					":date": "finished_date"
 				}
 			}
 		},
