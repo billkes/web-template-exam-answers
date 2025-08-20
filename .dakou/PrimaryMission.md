@@ -2,8 +2,6 @@
 
 > 为高效工作，应严格按照步骤进行，以免返工
 
-1. 组件中我间接的定义answers的类型，在我看来需要将当时的题目存在options中，而不是只保留一个id。我这边提供类型，请做修改。
-
 详看文件：
 components/billkes-form-exam-records-answers/billkes-form-exam-records-answers.vue(需做修改)
 uniCloud-aliyun/database/exam-records.schema.json
@@ -46,4 +44,5 @@ type RecordsType = {
 }
 ```
 
-2. 将此处更新写入.dakou/ChangeLog.md
+1. 
+2. 

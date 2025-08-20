@@ -135,7 +135,7 @@
 					}
 				],
 				current: 0,
-				answers: [/* {
+								answers: [/* {
 					questions: {
 						"_id": "68a44dc2a674f439f9281bbb",
 						"difficulty": 1,
@@ -154,6 +154,24 @@
 						"created_date": 1755598274222,
 						"updated_date": 1755598274222
 					},
+					exam_schedules: {
+						"_id": "schedule1",
+						"exam_id": "exam1",
+						"title": "第一次月考",
+						"description": "高一第一次月考",
+						"start_time": 1755598274222,
+						"end_time": 1755684674222,
+						"allowed_users": ["user1", "user2"],
+						"duration": 120,
+						"simple_score": 2,
+						"medium_score": 4,
+						"difficult_score": 6,
+						"total_score": 100,
+						"status": 1,
+						"created_date": 1755598274222,
+						"updated_date": 1755598274222
+					},
+					full_mark: 2,
 					score: 0,
 					is_correct: 1,
 					user_answer: [2]

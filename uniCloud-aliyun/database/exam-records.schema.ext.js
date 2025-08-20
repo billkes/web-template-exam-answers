@@ -110,22 +110,118 @@ module.exports = {
 
 // 初始化答题进度
 function initializeAnswerProgress(answers) {
-    return answers.map(answer => ({
-        question_id: answer.question_id || answer,
-        selected_answer: answer.selected_answer || [],
-        answer_time: answer.answer_time || 0,
-        is_answered: answer.is_answered || false,
-        last_saved: new Date()
-    }))
+    return answers.map(answer => {
+        // 如果answer已经包含了完整的题目信息和考试安排信息
+        if (answer.questions && answer.exam_schedules) {
+            // 计算本题满分
+            let fullMark = 0;
+            switch (answer.questions.difficulty) {
+                case 1: // 简单
+                    fullMark = answer.exam_schedules.simple_score || 1;
+                    break;
+                case 2: // 中等
+                    fullMark = answer.exam_schedules.medium_score || 2;
+                    break;
+                case 3: // 困难
+                    fullMark = answer.exam_schedules.difficult_score || 3;
+                    break;
+                default:
+                    fullMark = 1;
+            }
+            
+            // 检查答案是否正确并计算得分
+            const result = checkAnswerAndCalculateScore(answer.questions, answer.user_answer);
+            
+            return {
+                ...answer,
+                full_mark: fullMark,
+                score: result.isCorrect ? fullMark : 0,
+                is_correct: result.isCorrect ? 1 : 0,
+                last_saved: new Date()
+            };
+        }
+        
+        // 保持原有的处理逻辑
+        return {
+            question_id: answer.question_id || answer,
+            selected_answer: answer.selected_answer || [],
+            answer_time: answer.answer_time || 0,
+            is_answered: answer.is_answered || false,
+            last_saved: new Date()
+        };
+    });
 }
 
 // 更新答题进度
 function updateAnswerProgress(answers) {
-    return answers.map(answer => ({
-        ...answer,
-        is_answered: answer.selected_answer && answer.selected_answer.length > 0,
-        last_saved: new Date()
-    }))
+    return answers.map(answer => {
+        // 如果answer已经包含了完整的题目信息和考试安排信息
+        if (answer.questions && answer.exam_schedules) {
+            // 计算本题满分
+            let fullMark = 0;
+            switch (answer.questions.difficulty) {
+                case 1: // 简单
+                    fullMark = answer.exam_schedules.simple_score || 1;
+                    break;
+                case 2: // 中等
+                    fullMark = answer.exam_schedules.medium_score || 2;
+                    break;
+                case 3: // 困难
+                    fullMark = answer.exam_schedules.difficult_score || 3;
+                    break;
+                default:
+                    fullMark = 1;
+            }
+            
+            // 检查答案是否正确并计算得分
+            const result = checkAnswerAndCalculateScore(answer.questions, answer.user_answer);
+            
+            return {
+                ...answer,
+                full_mark: fullMark,
+                score: result.isCorrect ? fullMark : 0,
+                is_correct: result.isCorrect ? 1 : 0,
+                is_answered: answer.user_answer && answer.user_answer.length > 0,
+                last_saved: new Date()
+            };
+        }
+        
+        // 保持原有的处理逻辑
+        return {
+            ...answer,
+            is_answered: answer.selected_answer && answer.selected_answer.length > 0,
+            last_saved: new Date()
+        };
+    });
+}
+
+// 检查答案并计算得分
+function checkAnswerAndCalculateScore(question, userAnswer) {
+    if (!userAnswer || userAnswer.length === 0) {
+        return { isCorrect: false, score: 0 };
+    }
+    
+    const correctAnswer = question.answer || [];
+    const userAnswerArray = Array.isArray(userAnswer) ? userAnswer : [userAnswer];
+    
+    // 单选题：完全匹配
+    if (question.type === 'single') {
+        const isCorrect = userAnswerArray.length === 1 && 
+                         correctAnswer.length === 1 && 
+                         userAnswerArray[0] === correctAnswer[0];
+        return { isCorrect, score: isCorrect ? 1 : 0 };
+    }
+    
+    // 多选题：完全匹配
+    if (question.type === 'multiple') {
+        const sortedUser = userAnswerArray.sort();
+        const sortedCorrect = correctAnswer.sort();
+        const isCorrect = sortedUser.length === sortedCorrect.length && 
+                         sortedUser.every((val, index) => val === sortedCorrect[index]);
+        return { isCorrect, score: isCorrect ? 1 : 0 };
+    }
+    
+    return { isCorrect: false, score: 0 };
 }
 
 // 计算考试得分
@@ -156,6 +252,29 @@ async function calculateExamScore(examId, userAnswers) {
         
         // 计算每个题目的得分
         for (const userAnswer of userAnswers) {
+            // 如果userAnswer已经包含了完整信息
+            if (userAnswer.questions && userAnswer.exam_schedules) {
+                const result = checkAnswerAndCalculateScore(userAnswer.questions, userAnswer.user_answer);
+                if (result.isCorrect) {
+                    // 根据题目难度和考试安排确定分数
+                    switch (userAnswer.questions.difficulty) {
+                        case 1: // 简单
+                            totalScore += userAnswer.exam_schedules.simple_score || 1;
+                            break;
+                        case 2: // 中等
+                            totalScore += userAnswer.exam_schedules.medium_score || 2;
+                            break;
+                        case 3: // 困难
+                            totalScore += userAnswer.exam_schedules.difficult_score || 3;
+                            break;
+                        default:
+                            totalScore += 1;
+                    }
+                }
+                continue;
+            }
+            
+            // 保持原有的处理逻辑
             const question = questions.find(q => q._id === userAnswer.question_id)
             if (!question) continue
             

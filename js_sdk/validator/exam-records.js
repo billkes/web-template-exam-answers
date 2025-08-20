@@ -78,6 +78,10 @@ const validator = {
       {
         "range": [
           {
+            "value": -1,
+            "text": "未开始"
+          },
+          {
             "value": 0,
             "text": "未完成"
           },
@@ -115,7 +119,8 @@ const validator = {
 const enumConverter = {
   "status_valuetotext": {
     "0": "未完成",
-    "1": "已完成"
+    "1": "已完成",
+    "-1": "未开始"
   }
 }
 

@@ -71,6 +71,10 @@
         formOptions: {
           "status_localdata": [
             {
+              "value": -1,
+              "text": "未开始"
+            },
+            {
               "value": 0,
               "text": "未完成"
             },
