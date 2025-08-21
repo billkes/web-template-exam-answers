@@ -10,8 +10,9 @@
 
 详看文档：
 云对象（uni-id-co）：https://doc.dcloud.net.cn/uniCloud/uni-id/cloud-object.html
+云函数综述：https://doc.dcloud.net.cn/uniCloud/cf-functions.html
+普通云函数：https://doc.dcloud.net.cn/uniCloud/cf-callfunction.html
 
-1. 编写云函数代码，添加动作：注册、登录、获取用户信息，实现代码
-间接调用云对象中的对应方法
-
-2. 开发最简易的测试页面，调用云函数测试动作
+1. 测试注册
+2. 测试登录
+3. 测试获取用户信息

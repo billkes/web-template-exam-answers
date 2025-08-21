@@ -2,10 +2,11 @@
 
 > 为高效工作，应严格按照步骤进行，以免返工
 
-详看文件：
-components/billkes-form-exam-records-answers/billkes-form-exam-records-answers.vue(需做修改)
-uniCloud-aliyun/database/exam-records.schema.json
-uniCloud-aliyun/database/exam-records.schema.ext.js(需做修改)
+## 详看文件：
+1. 考试记录表：uniCloud-aliyun/database/exam-records.schema.json
+2. 云函数：uniCloud-aliyun/cloudfunctions/billkes-exam-template/index.js
+3. 测试答题页面 pages/test-answer/test-answer.vue
+4. 测试考试列表页面 pages/test-exam-list/test-exam-list.vue
 
 ```ts
 type AnswersType = {
@@ -44,7 +45,10 @@ type AnswersType = {
 }
 ```
 
-报名：
+## 考试列表 & 答题 步骤描述
+
+### 报名：
+
 1. 考生移动端，调用云函数，传入参数exam_schedules_id和user_id
 2. 将exam-records.status默认为-1（未开始） 
 3. 根据exam_records.exam_schedules_id获取exam-schedules详情，exam-schedules.exam_id找到exams详情，遍历exams.questions数组，通过id获取exam-questions详情
@@ -52,28 +56,37 @@ type AnswersType = {
 5. 将exam_records.total_full_mark计算 
 6. 云函数调用新增exam_records 
 
-开考：
+### 开考：
+
 1. 考生移动端，调用云函数，传入参数id
 2. 云函数用id获取exam_records详情，将status改为0（未完成）
 3. 调用更新exam_records
 4. 返回"抹除化"的数据，不要直接去掉，在移动端类型严格！
 
-继考：
+### 继考：
+
 1. 考生移动端，调用云函数，传入参数id
 2. 云函数用id获取exam_records详情，
 3. 返回"抹除化"的数据，不要直接去掉，在移动端类型严格！
 
-答题：
+### 答题：
+
 1. 考生移动端，调用云函数，传入参数id、index和user_answer
 2. 云函数用id获取exam_records详情
 3. 将exam_records.answers[index].user_answer替换
 4. 将exam_records.is_correct和exam_records.score计算
 5. 调用更新exam_records
 
-交卷：
+### 交卷：
+
 1. 考生移动端，调用云函数，传入参数id
 2. 云函数用id获取exam_records详情
 3. 将exam_records.status改为已完成（2）
 4. 将exam_records.finished_date赋值当前时间
 5. 遍历answers，将exam_records.total_score计算 
 6. 将exam_records.time_spent计算
+
+## 执行任务
+
+1. 云函数中生成代码实现所有动作：获取我的考试列表、获取随机考试列表、报名、开考、答题、答题、交卷
+2. 生成测试答题页面 & 测试考试列表页面，测试移动端用的功能
