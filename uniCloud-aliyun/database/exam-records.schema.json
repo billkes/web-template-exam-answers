@@ -15,7 +15,7 @@
     "_id": {
       "description": "存储文档 ID，系统自动生成"
     },
-    "exam_id": {
+    "exam_schedules_id": {
       "bsonType": "string",
       "title": "试卷",
       "label": "试卷",
@@ -23,14 +23,14 @@
         "name": "uni-data-select",
         "props": {
           "placeholder": "请选择试卷",
-          "collection": "exams",
+          "collection": "exam-schedules",
           "field": "title as text, _id as value"
         }
       },
       "componentForShow": {
         "name": "uni-data-select",
         "props": {
-          "collection": "exams",
+          "collection": "exam-schedules",
           "field": "title as text, _id as value",
           ":getone": true,
           ":where": "`_id == '${item.exam_id}'`",
@@ -81,6 +81,20 @@
       },
       "componentForShow": {
         "name": "billkes-table-exam-records-answers"
+      }
+    },
+    "total_full_mark": {
+      "bsonType": "number",
+      "title": "总满分",
+      "label": "总满分",
+      "minimum": 0,
+      "componentForEdit": {
+        "name": "uni-easyinput",
+        "props": {
+          "placeholder": "自动计算",
+          "type": "number",
+          ":disabled": true
+        }
       }
     },
     "total_score": {

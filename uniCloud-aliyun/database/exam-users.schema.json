@@ -1,6 +1,6 @@
 {
 	"bsonType": "object",
-	"required": ["username", "email"],
+	"required": ["user_id","username"],
 	"permission": {
 		"read": true,
 		"create": true,
@@ -10,6 +10,34 @@
 	"properties": {
 		"_id": {
 			"description": "存储文档 ID，系统自动生成"
+		},
+		"user_id": {
+			"bsonType": "string",
+			"title": "系统用户",
+			"label": "系统用户",
+			"componentForEdit": {
+				"name": "uni-data-select",
+				"props": {
+					"placeholder": "请选择系统用户",
+					"collection": "uni-id-users",
+					"field": "nickname as text, _id as value"
+				}
+			},
+			"componentForShow": {
+				"name": "uni-data-select",
+				"props": {
+					"collection": "uni-id-users",
+					"field": "nickname as text, _id as value",
+					":getone": true,
+					":where": "`_id == '${item.user_id}'`",
+					"align": "center",
+					"mode": "none",
+					":clear": false,
+					":wrap": true,
+					":hideRight": true,
+					":disabled": true
+				}
+			}
 		},
 		"username": {
 			"bsonType": "string",

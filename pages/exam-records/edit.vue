@@ -1,14 +1,17 @@
 <template>
   <view class="uni-container">
     <uni-forms ref="form" :model="formData" validateTrigger="bind">
-      <uni-forms-item name="exam_id" label="试卷" required>
-        <uni-data-select placeholder="请选择试卷" collection="exams" field="title as text, _id as value" v-model="formData.exam_id"></uni-data-select>
+      <uni-forms-item name="exam_schedules_id" label="试卷">
+        <uni-data-select placeholder="请选择试卷" collection="exam-schedules" field="title as text, _id as value" v-model="formData.exam_schedules_id"></uni-data-select>
       </uni-forms-item>
       <uni-forms-item name="user_id" label="用户" required>
         <uni-data-select placeholder="请选择用户" collection="exam-users" field="nickname as text, _id as value" v-model="formData.user_id"></uni-data-select>
       </uni-forms-item>
       <uni-forms-item name="answers" label="答题记录" required>
         <billkes-form-exam-records-answers :multiple="true" v-model="formData.answers"></billkes-form-exam-records-answers>
+      </uni-forms-item>
+      <uni-forms-item name="total_full_mark" label="总满分">
+        <uni-easyinput placeholder="自动计算" type="number" :disabled="true" v-model="formData.total_full_mark"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="total_score" label="总得分">
         <uni-easyinput placeholder="自动计算" type="number" :disabled="true" v-model="formData.total_score"></uni-easyinput>
@@ -57,9 +60,10 @@
   export default {
     data() {
       let formData = {
-        "exam_id": "",
+        "exam_schedules_id": "",
         "user_id": "",
         "answers": [],
+        "total_full_mark": null,
         "total_score": null,
         "time_spent": null,
         "status": 0,
@@ -143,7 +147,7 @@
         uni.showLoading({
           mask: true
         })
-        db.collection(dbCollectionName).doc(id).field("exam_id,user_id,answers,total_score,time_spent,status,started_date,finished_date").get().then((res) => {
+        db.collection(dbCollectionName).doc(id).field("exam_schedules_id,user_id,answers,total_full_mark,total_score,time_spent,status,started_date,finished_date").get().then((res) => {
           const data = res.result.data[0]
           if (data) {
             this.formData = data

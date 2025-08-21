@@ -107,6 +107,21 @@ export default {
 				text: '用户管理',
 				icon: 'admin-icons-table',
 				value: '/pages/exam-users/list',
+			}, {
+				menu_id: "test-register-login",
+				text: '移动端测试注册登录',
+				icon: 'admin-icons-pulgin',
+				value: '/pages/test-register-login/test-register-login',
+			}, {
+				menu_id: "test-exam-list",
+				text: '移动端测试考试列表',
+				icon: 'admin-icons-pulgin',
+				value: '/pages/test-exam-list/test-exam-list',
+			}, {
+				menu_id: "test-answer",
+				text: '移动端测试答题',
+				icon: 'admin-icons-pulgin',
+				value: '/pages/test-answer/test-answer',
 			}]
 		}]
 	},

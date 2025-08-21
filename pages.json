@@ -228,6 +228,27 @@
 			"style": {
 				"navigationBarTitleText": "列表"
 			}
+		},
+		{
+			"path" : "pages/test-register-login/test-register-login",
+			"style" : 
+			{
+				"navigationBarTitleText" : "移动端测试注册登录"
+			}
+		},
+		{
+			"path" : "pages/test-exam-list/test-exam-list",
+			"style" : 
+			{
+				"navigationBarTitleText" : "移动端测试考试列表"
+			}
+		},
+		{
+			"path" : "pages/test-answer/test-answer",
+			"style" : 
+			{
+				"navigationBarTitleText" : "移动端测试答题"
+			}
 		}
 	],
 	"subPackages": [{

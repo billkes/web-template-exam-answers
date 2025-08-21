@@ -2,6 +2,18 @@
 
 
 const validator = {
+  "user_id": {
+    "rules": [
+      {
+        "required": true
+      },
+      {
+        "format": "string"
+      }
+    ],
+    "label": "系统用户",
+    "title": "系统用户"
+  },
   "username": {
     "rules": [
       {
@@ -16,9 +28,6 @@ const validator = {
   },
   "email": {
     "rules": [
-      {
-        "required": true
-      },
       {
         "format": "string"
       }

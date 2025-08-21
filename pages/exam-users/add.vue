@@ -1,10 +1,13 @@
 <template>
   <view class="uni-container">
     <uni-forms ref="form" :model="formData" validateTrigger="bind">
+      <uni-forms-item name="user_id" label="系统用户" required>
+        <uni-data-select placeholder="请选择系统用户" collection="uni-id-users" field="nickname as text, _id as value" v-model="formData.user_id"></uni-data-select>
+      </uni-forms-item>
       <uni-forms-item name="username" label="用户名" required>
         <uni-easyinput placeholder="请输入用户名" v-model="formData.username"></uni-easyinput>
       </uni-forms-item>
-      <uni-forms-item name="email" label="邮箱" required>
+      <uni-forms-item name="email" label="邮箱">
         <uni-easyinput placeholder="请输入邮箱地址" v-model="formData.email"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="nickname" label="昵称">
@@ -48,6 +51,7 @@
   export default {
     data() {
       let formData = {
+        "user_id": "",
         "username": "",
         "email": "",
         "nickname": "",

@@ -8,7 +8,7 @@ uniCloud-aliyun/database/exam-records.schema.json
 uniCloud-aliyun/database/exam-records.schema.ext.js(需做修改)
 
 ```ts
-type RecordsType = {
+type AnswersType = {
 	questions : {
 		_id : string // 题目ID，对应exam-questions表的_id
 		difficulty : number // 题目难度：1-简单，2-中等，3-困难
@@ -44,5 +44,36 @@ type RecordsType = {
 }
 ```
 
-1. 
-2. 
+报名：
+1. 考生移动端，调用云函数，传入参数exam_schedules_id和user_id
+2. 将exam-records.status默认为-1（未开始） 
+3. 根据exam_records.exam_schedules_id获取exam-schedules详情，exam-schedules.exam_id找到exams详情，遍历exams.questions数组，通过id获取exam-questions详情
+4. 对exam-records.answers初始化，长度要求与exams.questions数组长度一致，类型为上面的AnswersType[]
+5. 将exam_records.total_full_mark计算 
+6. 云函数调用新增exam_records 
+
+开考：
+1. 考生移动端，调用云函数，传入参数id
+2. 云函数用id获取exam_records详情，将status改为0（未完成）
+3. 调用更新exam_records
+4. 返回"抹除化"的数据，不要直接去掉，在移动端类型严格！
+
+继考：
+1. 考生移动端，调用云函数，传入参数id
+2. 云函数用id获取exam_records详情，
+3. 返回"抹除化"的数据，不要直接去掉，在移动端类型严格！
+
+答题：
+1. 考生移动端，调用云函数，传入参数id、index和user_answer
+2. 云函数用id获取exam_records详情
+3. 将exam_records.answers[index].user_answer替换
+4. 将exam_records.is_correct和exam_records.score计算
+5. 调用更新exam_records
+
+交卷：
+1. 考生移动端，调用云函数，传入参数id
+2. 云函数用id获取exam_records详情
+3. 将exam_records.status改为已完成（2）
+4. 将exam_records.finished_date赋值当前时间
+5. 遍历answers，将exam_records.total_score计算 
+6. 将exam_records.time_spent计算

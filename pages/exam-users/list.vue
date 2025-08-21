@@ -16,11 +16,12 @@
       </view>
     </view>
     <view class="uni-container">
-      <unicloud-db ref="udb" :collection="collectionList" field="username,email,nickname,avatar,status" :where="where" page-data="replace"
+      <unicloud-db ref="udb" :collection="collectionList" field="user_id,username,email,nickname,avatar,status" :where="where" page-data="replace"
         :orderby="orderby" :getcount="true" :page-size="options.pageSize" :page-current="options.pageCurrent"
         v-slot:default="{data,pagination,loading,error,options}" :options="options" loadtime="manual" @load="onqueryload">
         <uni-table ref="table" :loading="loading" :emptyText="error.message || '没有更多数据'" border stripe type="selection" @selection-change="selectionChange">
           <uni-tr>
+            <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'user_id')" sortable @sort-change="sortChange($event, 'user_id')">系统用户</uni-th>
             <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'username')" sortable @sort-change="sortChange($event, 'username')">用户名</uni-th>
             <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'email')" sortable @sort-change="sortChange($event, 'email')">邮箱</uni-th>
             <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'nickname')" sortable @sort-change="sortChange($event, 'nickname')">昵称</uni-th>
@@ -29,6 +30,9 @@
             <uni-th align="center">操作</uni-th>
           </uni-tr>
           <uni-tr v-for="(item,index) in data" :key="index">
+            <uni-td align="center">
+              <uni-data-select collection="uni-id-users" field="nickname as text, _id as value" :getone="true" :where="`_id == '${item.user_id}'`" align="center" mode="none" :clear="false" :wrap="true" :hideRight="true" :disabled="true" :value="item.user_id"></uni-data-select>
+            </uni-td>
             <uni-td align="center">{{item.username}}</uni-td>
             <uni-td align="center">{{item.email}}</uni-td>
             <uni-td align="center">{{item.nickname}}</uni-td>
@@ -104,6 +108,7 @@
           "filename": "exam-users.xls",
           "type": "xls",
           "fields": {
+            "系统用户": "user_id",
             "用户名": "username",
             "邮箱": "email",
             "昵称": "nickname",

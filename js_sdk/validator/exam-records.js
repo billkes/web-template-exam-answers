@@ -2,11 +2,8 @@
 
 
 const validator = {
-  "exam_id": {
+  "exam_schedules_id": {
     "rules": [
-      {
-        "required": true
-      },
       {
         "format": "string"
       }
@@ -40,6 +37,18 @@ const validator = {
     ],
     "label": "答题记录",
     "title": "答题记录"
+  },
+  "total_full_mark": {
+    "rules": [
+      {
+        "format": "number"
+      },
+      {
+        "minimum": 0
+      }
+    ],
+    "label": "总满分",
+    "title": "总满分"
   },
   "total_score": {
     "rules": [
