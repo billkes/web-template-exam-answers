@@ -49,39 +49,20 @@ async function register(params) {
             }
         })
 
-        const registerRes = JSON.stringify(res, null, 2);
+        console.log('registerRes: ', JSON.stringify(res, null, 2));
 
-        // const registerRes = {
-        //     "statusCode": 400,
-        //     "header": {
-        //         "date": "Thu, 21 Aug 2025 08:29:06 GMT",
-        //         "content-type": "application/json;charset=UTF-8",
-        //         "transfer-encoding": "chunked",
-        //         "connection": "keep-alive",
-        //         "set-cookie": [
-        //             "aliyungf_tc=b920ed362133c80ae2ae73b55b7bcda22af79be4a926a25e9ff7f9fc00866d60; Path=/; HttpOnly",
-        //             "acw_tc=ac11000117557649463605436e0667302250c903450c47c20c307ac54d2bfe;path=/;HttpOnly;Max-Age=1800"
-        //         ],
-        //         "request-id": "ac1cc3151755764946483169779"
-        //     },
-        //     "data": {
-        //         "success": false,
-        //         "error": {
-        //             "code": "PrePayResourceExhausted",
-        //             "message": "FC invoke failed, resource exhausted."
-        //         }
-        //     }
-        // }
-
-        console.log('registerRes: ', registerRes);
-
-        // 检查注册结果
-        if (registerRes.result.code !== 0) {
-            return registerRes.result;
+        // 检查注册结果 - 根据实际响应结构调整判断逻辑
+        if (!res.data || !res.data.success) {
+            // 处理注册失败的情况
+            return {
+                code: res.data?.error?.code || 500,
+                message: res.data?.error?.message || '注册失败'
+            };
         }
 
         // 2. 注册成功后，在考生表中创建对应的记录
-        const userId = registerRes.result.uid;
+        // 从响应数据中正确提取用户ID
+        const userId = res.data.uid;
 
         // 构造考生表记录对象，使用数据库的时间戳字段
         const examUserData = {
@@ -102,9 +83,9 @@ async function register(params) {
         return {
             code: 0,
             message: '注册成功',
-            uid: registerRes.result.uid,
-            token: registerRes.result.token,
-            tokenExpired: registerRes.result.tokenExpired
+            uid: res.data.uid,
+            token: res.data.token,
+            tokenExpired: res.data.tokenExpired
         };
     } catch (error) {
         console.error('注册失败: ', error);
@@ -124,15 +105,38 @@ async function login(params) {
             password: params.password
         };
 
-        // 调用uni-id-co云对象的登录方法
-        const res = await uniCloud.callFunction({
-            name: 'uni-id-co',
+        // 调用uni-id-co云对象的登录方法 - 使用URL适配方式
+        const res = await uniCloud.request({
+            url: `${path}/uni-id-co/login`,
+            method: 'POST',
             data: {
-                action: 'login',
+                clientInfo: params.clientInfo,
                 params: loginParams
+            },
+            header: {
+                'Content-Type': 'application/json'
             }
         });
-        return res.result;
+
+        console.log('loginRes: ', JSON.stringify(res, null, 2));
+
+        // 检查登录结果 - 根据实际响应结构调整判断逻辑
+        if (!res.data || !res.data.success) {
+            // 处理登录失败的情况
+            return {
+                code: res.data?.error?.code || 500,
+                message: res.data?.error?.message || '登录失败'
+            };
+        }
+
+        // 返回登录结果，包含token等信息
+        return {
+            code: 0,
+            message: '登录成功',
+            uid: res.data.uid,
+            token: res.data.token,
+            tokenExpired: res.data.tokenExpired
+        };
     } catch (error) {
         console.error('登录失败: ', error);
         return {
@@ -154,26 +158,32 @@ async function getUserInfo(params, context) {
             }
         }
 
-        // 调用uni-id-co云对象验证token并获取用户信息
-        const userInfoRes = await uniCloud.callFunction({
-            name: 'uni-id-co',
+        // 调用uni-id-co云对象验证token并获取用户信息 - 使用URL适配方式
+        const userInfoRes = await uniCloud.request({
+            url: `${path}/uni-id-co/getUserInfo`,
+            method: 'POST',
             data: {
-                action: 'getUserInfo',
+                clientInfo: params.clientInfo,
                 params: {}
             },
-            headers: {
+            header: {
+                'Content-Type': 'application/json',
                 'uni-id-token': token
             }
         });
 
-        console.log('userInfoRes: ', userInfoRes);
+        console.log('userInfoRes: ', JSON.stringify(userInfoRes, null, 2));
 
-        // 检查token验证结果
-        if (userInfoRes.result.code !== 0) {
-            return userInfoRes.result;
+        // 检查token验证结果 - 根据实际响应结构调整判断逻辑
+        if (!userInfoRes.data || !userInfoRes.data.success) {
+            // 处理获取用户信息失败的情况
+            return {
+                code: userInfoRes.data?.error?.code || 500,
+                message: userInfoRes.data?.error?.message || '获取用户信息失败'
+            };
         }
 
-        const userId = userInfoRes.result.uid;
+        const userId = userInfoRes.data.uid;
 
         // 查询考生表中的用户信息
         const examUserRes = await uniCloud.database()

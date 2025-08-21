@@ -12,7 +12,7 @@
 云对象（uni-id-co）：https://doc.dcloud.net.cn/uniCloud/uni-id/cloud-object.html
 云函数综述：https://doc.dcloud.net.cn/uniCloud/cf-functions.html
 普通云函数：https://doc.dcloud.net.cn/uniCloud/cf-callfunction.html
+适配URL化：https://doc.dcloud.net.cn/uniCloud/uni-id/cloud-object.html#adapter-http
 
-1. 测试注册
-2. 测试登录
-3. 测试获取用户信息
+1. 修改云函数登录方法，参考注册时的适配URL化写法
+2. 修改云函数获取用户信息方法，参考注册时的适配URL化写法
