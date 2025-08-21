@@ -1,25 +1,19 @@
 'use strict';
-const uniID = require('uni-id-common')
 
 exports.main = async (event, context) => {
 	//event为客户端上传的参数
 	console.log('event : ', event)
-	
-	// 初始化uni-id-common实例
-	const uniIdCommon = uniID.createInstance({
-		clientInfo: context.CLIENTAPPS[0]
-	})
 	
 	// 根据event中的action参数执行不同操作
 	const { action, params } = event;
 	
 	switch(action) {
 		case 'register':
-			return await register(uniIdCommon, params);
+			return await register(params);
 		case 'login':
-			return await login(uniIdCommon, params);
+			return await login(params);
 		case 'getUserInfo':
-			return await getUserInfo(uniIdCommon, params);
+			return await getUserInfo(params, context);
 		default:
 			return {
 				code: 400,
@@ -29,10 +23,17 @@ exports.main = async (event, context) => {
 };
 
 // 注册功能
-async function register(uniIdCommon, params) {
+async function register(params) {
 	try {
-		const res = await uniIdCommon.register(params);
-		return res;
+		// 直接调用uni-id-co云对象的注册方法
+		const res = await uniCloud.callFunction({
+			name: 'uni-id-co',
+			data: {
+				action: 'register',
+				params: params
+			}
+		});
+		return res.result;
 	} catch (error) {
 		return {
 			code: 500,
@@ -42,10 +43,17 @@ async function register(uniIdCommon, params) {
 }
 
 // 登录功能
-async function login(uniIdCommon, params) {
+async function login(params) {
 	try {
-		const res = await uniIdCommon.login(params);
-		return res;
+		// 直接调用uni-id-co云对象的登录方法
+		const res = await uniCloud.callFunction({
+			name: 'uni-id-co',
+			data: {
+				action: 'login',
+				params: params
+			}
+		});
+		return res.result;
 	} catch (error) {
 		return {
 			code: 500,
@@ -55,10 +63,21 @@ async function login(uniIdCommon, params) {
 }
 
 // 获取用户信息功能
-async function getUserInfo(uniIdCommon, params) {
+async function getUserInfo(params, context) {
 	try {
-		const res = await uniIdCommon.getUserInfo(params);
-		return res;
+		// 直接调用uni-id-co云对象的获取用户信息方法
+		const res = await uniCloud.callFunction({
+			name: 'uni-id-co',
+			data: {
+				action: 'getUserInfo',
+				params: params
+			},
+			// 传递客户端信息
+			headers: {
+				'uni-id-token': context.headers && context.headers['uni-id-token']
+			}
+		});
+		return res.result;
 	} catch (error) {
 		return {
 			code: 500,
