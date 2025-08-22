@@ -98,7 +98,8 @@
 				captchaScene: 'register',
 				captchaUrl: '',
 				result: '',
-				token: '' // 保存token
+				token: '', // 保存token
+				uid: '', // 保存uid
 			}
 		},
 		created() {
@@ -170,7 +171,6 @@
 							icon: 'success',
 							duration: 2000
 						});
-						this.refreshCaptcha();
 					} else {
 						uni.showToast({
 							title: res.result.message || '注册失败',
@@ -205,7 +205,10 @@
 						name: 'billkes-exam-template',
 						data: {
 							action: 'login',
-							params: this.loginData
+							params: {
+								...this.loginData,
+								clientInfo: uni.getSystemInfoSync()
+							}
 						}
 					});
 
@@ -214,7 +217,7 @@
 					// 如果登录成功，保存token
 					if (res.result.code === 0 && res.result.token) {
 						this.token = res.result.token;
-						uni.setStorageSync('uni_id_token', res.result.token);
+						this.uid = res.result.uid
 						uni.showToast({
 							title: '登录成功',
 							icon: 'success',
@@ -240,10 +243,9 @@
 			// 获取用户信息
 			async handleGetUserInfo() {
 				try {
-					// 使用保存的token或从本地存储获取token
-					const token = this.token || uni.getStorageSync('uni_id_token');
-
-					if (!token) {
+					const token = this.token;
+					const uid = this.uid;
+					if (!token || !uid) {
 						uni.showToast({
 							title: '请先登录',
 							icon: 'none',
@@ -258,10 +260,11 @@
 						name: 'billkes-exam-template',
 						data: {
 							action: 'getUserInfo',
-							params: {}
-						},
-						headers: {
-							'uni-id-token': token
+							params: {
+								uniIdToken: token,
+								clientInfo: uni.getSystemInfoSync(),
+								uid: uid
+							}
 						}
 					});
 
