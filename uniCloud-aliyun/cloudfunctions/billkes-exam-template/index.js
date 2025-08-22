@@ -16,9 +16,9 @@ exports.main = async (event, context) => {
         case 'login':
             return await login(params);
         case 'getUserInfo':
-            return await getUserInfo(params, context);
+            return await getUserInfo(params);
         case 'getMyExamList':
-            return await getMyExamList(params, context);
+            return await getMyExamList(params);
         case 'getRandomExamList':
             return await getRandomExamList(params);
         case 'registerExam':
@@ -165,12 +165,11 @@ async function login(params) {
 }
 
 // 获取用户信息功能（获取考生表数据）
-async function getUserInfo(params, context) {
+async function getUserInfo(params) {
     try {
-        // 从请求头中获取用户token信息
         const token = params.uniIdToken;
         const uid = params.uid;
-        if (!token ||  !uid) {
+        if (!token || !uid) {
             return {
                 code: 401,
                 message: '未提供有效的用户凭证'
@@ -236,109 +235,68 @@ async function getUserInfo(params, context) {
     }
 }
 
+async function refreshToken(params) {
+    const {token, clientInfo} = params
+    if (!token || !clientInfo) {
+        return false
+    }
+
+    // 调用uni-id-co云对象
+    const res = await uniCloud.request({
+        url: `${path}/uni-id-co/refreshToken`,
+        method: 'POST',
+        data: {
+            clientInfo: params.clientInfo,
+            uniIdToken: token,
+            params: {}
+        },
+        header: {
+            'Content-Type': 'application/json',
+        }
+    });
+
+    console.log('res: ', res);
+    return !(!res.data || (res.data.errCode !== undefined && res.data.errCode !== 0));
+}
+
 // 获取我的考试列表
-async function getMyExamList(params, context) {
+async function getMyExamList(params) {
     try {
-        // 从请求头中获取用户token信息
-        const token = context.headers && context.headers['uni-id-token'];
-        if (!token) {
+        const token = params.uniIdToken;
+        const uid = params.uid;
+        if (!token || !uid) {
             return {
                 code: 401,
                 message: '未提供有效的用户凭证'
             }
         }
 
-        // 调用uni-id-co云对象验证token并获取用户信息
-        const userInfoRes = await uniCloud.request({
-            url: `${path}/uni-id-co/getUserInfo`,
-            method: 'POST',
-            data: {
-                clientInfo: params.clientInfo,
-                params: {}
-            },
-            header: {
-                'Content-Type': 'application/json',
-                'uni-id-token': token
-            }
-        });
-
-        // 检查token验证结果
-        // 支持两种判断方式：success字段或errCode字段
-        if (!userInfoRes.data || (userInfoRes.data.errCode !== undefined && userInfoRes.data.errCode !== 0)) {
-            return {
-                code: userInfoRes.data?.errCode || userInfoRes.data?.error?.code || 500,
-                message: userInfoRes.data?.errMsg || userInfoRes.data?.error?.message || '获取用户信息失败'
-            };
-        }
-
-        const userId = userInfoRes.data.uid;
-
-        // 查询该用户相关的考试记录
-        const examRecordsRes = await uniCloud.database()
-            .collection('exam-records')
-            .where({
-                user_id: userId
-            })
-            .get();
-
-        // 获取考试安排详情
-        const examScheduleIds = examRecordsRes.data.map(record => record.exam_schedules_id);
-        if (examScheduleIds.length === 0) {
-            return {
-                code: 0,
-                message: '获取考试列表成功',
-                examList: []
-            };
-        }
-
+        // 获取正在进行中的考试安排
+        const currentTime = Date.now();
         const examSchedulesRes = await uniCloud.database()
             .collection('exam-schedules')
             .where({
-                _id: uniCloud.database().command.in(examScheduleIds)
+                start_time: uniCloud.database().command.lt(currentTime),
+                end_time: uniCloud.database().command.gt(currentTime),
+                allowed_users: uniCloud.database().command.in(uid),
+                status: 1 // 1表示进行中
             })
+            .limit(params.limit || 10)
             .get();
 
-        // 获取试卷详情
-        const examIds = examSchedulesRes.data.map(schedule => schedule.exam_id);
-        if (examIds.length === 0) {
-            return {
-                code: 0,
-                message: '获取考试列表成功',
-                examList: []
-            };
-        }
+        // 处理数据
+        const examList = examSchedulesRes.data.map(schedule => {
 
-        const examsRes = await uniCloud.database()
-            .collection('exams')
-            .where({
-                _id: uniCloud.database().command.in(examIds)
-            })
-            .get();
+            // 不展示报考的人
+            schedule.allowed_users = []
 
-        // 整合数据
-        const examList = examRecordsRes.data.map(record => {
-            const schedule = examSchedulesRes.data.find(s => s._id === record.exam_schedules_id);
-            const exam = examsRes.data.find(e => e._id === schedule?.exam_id);
-            
-            return {
-                record_id: record._id,
-                schedule_id: record.exam_schedules_id,
-                exam_id: schedule?.exam_id,
-                title: schedule?.title,
-                description: schedule?.description,
-                start_time: schedule?.start_time,
-                end_time: schedule?.end_time,
-                duration: schedule?.duration,
-                status: record.status, // -1:未开始, 0:未完成, 1:已完成
-                total_score: record.total_score,
-                total_full_mark: record.total_full_mark
-            };
+            return schedule;
         });
 
         return {
             code: 0,
             message: '获取考试列表成功',
-            examList
+            data: examList
         };
     } catch (error) {
         console.error('获取考试列表失败: ', error);
@@ -364,43 +322,19 @@ async function getRandomExamList(params) {
             .limit(params.limit || 10)
             .get();
 
-        // 获取试卷详情
-        const examIds = examSchedulesRes.data.map(schedule => schedule.exam_id);
-        if (examIds.length === 0) {
-            return {
-                code: 0,
-                message: '获取考试列表成功',
-                examList: []
-            };
-        }
-
-        const examsRes = await uniCloud.database()
-            .collection('exams')
-            .where({
-                _id: uniCloud.database().command.in(examIds)
-            })
-            .get();
-
-        // 整合数据
+        // 处理数据
         const examList = examSchedulesRes.data.map(schedule => {
-            const exam = examsRes.data.find(e => e._id === schedule.exam_id);
-            
-            return {
-                schedule_id: schedule._id,
-                exam_id: schedule.exam_id,
-                title: schedule.title,
-                description: schedule.description,
-                start_time: schedule.start_time,
-                end_time: schedule.end_time,
-                duration: schedule.duration,
-                total_full_mark: schedule.total_full_mark
-            };
+
+            // 不展示报考的人
+            schedule.allowed_users = []
+
+            return schedule;
         });
 
         return {
             code: 0,
-            message: '获取考试列表成功',
-            examList
+            message: '获取随机考试列表成功',
+            data: examList,
         };
     } catch (error) {
         console.error('获取随机考试列表失败: ', error);
@@ -414,7 +348,7 @@ async function getRandomExamList(params) {
 // 报名考试
 async function registerExam(params) {
     try {
-        const { exam_schedules_id, user_id } = params;
+        const {exam_schedules_id, user_id} = params;
 
         // 获取考试安排详情
         const examSchedulesRes = await uniCloud.database()
@@ -520,7 +454,7 @@ async function registerExam(params) {
 // 开始考试
 async function startExam(params) {
     try {
-        const { id } = params;
+        const {id} = params;
 
         // 获取考试记录详情
         const examRecordRes = await uniCloud.database()
@@ -571,7 +505,7 @@ async function startExam(params) {
 // 继续考试
 async function continueExam(params) {
     try {
-        const { id } = params;
+        const {id} = params;
 
         // 获取考试记录详情
         const examRecordRes = await uniCloud.database()
@@ -612,7 +546,7 @@ async function continueExam(params) {
 // 答题
 async function answerQuestion(params) {
     try {
-        const { id, index, user_answer } = params;
+        const {id, index, user_answer} = params;
 
         // 获取考试记录详情
         const examRecordRes = await uniCloud.database()
@@ -674,7 +608,7 @@ async function answerQuestion(params) {
 // 交卷
 async function submitExam(params) {
     try {
-        const { id } = params;
+        const {id} = params;
 
         // 获取考试记录详情
         const examRecordRes = await uniCloud.database()
