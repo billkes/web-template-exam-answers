@@ -54,10 +54,6 @@
 
 项目使用 uniCloud 的 DB Schema 功能来定义数据结构，支持 schema2code 自动生成管理页面。
 
-## 贡献指南
-
-欢迎提交 Issue 和 Pull Request 来改进项目。
-
 ## 许可证
 
 MIT License
