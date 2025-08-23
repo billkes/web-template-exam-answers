@@ -2,9 +2,9 @@
   <view class="uni-container">
     <uni-forms ref="form" :model="formData" validateTrigger="bind">
       <uni-forms-item name="exam_id" label="试卷" required>
-        <uni-data-select placeholder="请选择试卷" collection="exams" field="title as text, _id as value" v-model="formData.exam_id"></uni-data-select>
+        <uni-data-select placeholder="请选择试卷" collection="exams" :where="`status == 1`" field="title as text, _id as value" v-model="formData.exam_id"></uni-data-select>
       </uni-forms-item>
-      <uni-forms-item name="title" label="安排标题">
+      <uni-forms-item name="title" label="安排标题" required>
         <uni-easyinput placeholder="请输入考试安排标题" v-model="formData.title"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="description" label="安排描述">
@@ -16,26 +16,35 @@
       <uni-forms-item name="end_time" label="结束时间" required>
         <uni-datetime-picker placeholder="请选择考试结束时间" return-type="timestamp" v-model="formData.end_time"></uni-datetime-picker>
       </uni-forms-item>
-      <uni-forms-item name="allowed_users" label="允许用户">
-        <uni-data-select placeholder="请选择允许参加考试的用户" collection="exam-users" field="username as text, _id as value" :multiple="true" v-model="formData.allowed_users"></uni-data-select>
-      </uni-forms-item>
-      <uni-forms-item name="duration" label="考试时长">
+      <uni-forms-item name="duration" label="考试时长" required>
         <uni-easyinput placeholder="考试时长（分钟）" type="number" v-model="formData.duration"></uni-easyinput>
       </uni-forms-item>
-      <uni-forms-item name="simple_score" label="简单题分数">
+      <uni-forms-item name="simple_score" label="简单题分数" required>
         <uni-easyinput type="number" placeholder="请输入试卷简单题分数" v-model="formData.simple_score"></uni-easyinput>
       </uni-forms-item>
-      <uni-forms-item name="medium_score" label="中等题分数">
+      <uni-forms-item name="simple_count" label="简单题数量" required>
+        <uni-easyinput type="number" placeholder="请输入试卷简单题数量" v-model="formData.simple_count"></uni-easyinput>
+      </uni-forms-item>
+      <uni-forms-item name="medium_score" label="中等题分数" required>
         <uni-easyinput type="number" placeholder="请输入试卷中等题分数" v-model="formData.medium_score"></uni-easyinput>
       </uni-forms-item>
-      <uni-forms-item name="difficult_score" label="困难题分数">
+      <uni-forms-item name="medium_count" label="中等题数量" required>
+        <uni-easyinput type="number" placeholder="请输入试卷中等题数量" v-model="formData.medium_count"></uni-easyinput>
+      </uni-forms-item>
+      <uni-forms-item name="difficult_score" label="困难题分数" required>
         <uni-easyinput type="number" placeholder="请输入试卷困难题分数" v-model="formData.difficult_score"></uni-easyinput>
+      </uni-forms-item>
+      <uni-forms-item name="difficult_count" label="困难题数量" required>
+        <uni-easyinput type="number" placeholder="请输入试卷困难题数量" v-model="formData.difficult_count"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="total_score" label="总分">
         <uni-easyinput type="number" :disabled="true" placeholder="自动计算" v-model="formData.total_score"></uni-easyinput>
       </uni-forms-item>
+      <uni-forms-item name="total_count" label="总题数">
+        <uni-easyinput type="number" :disabled="true" placeholder="自动计算" v-model="formData.total_count"></uni-easyinput>
+      </uni-forms-item>
       <uni-forms-item name="status" label="状态">
-        <uni-data-select placeholder="请选择考试安排状态" v-model="formData.status" :localdata="formOptions.status_localdata"></uni-data-select>
+        <uni-data-select :disabled="true" placeholder="自动计算" v-model="formData.status" :localdata="formOptions.status_localdata"></uni-data-select>
       </uni-forms-item>
       <view class="uni-button-group">
         <button type="primary" class="uni-button" style="width: 100px;" @click="submit">提交</button>
@@ -74,13 +83,16 @@
         "description": "",
         "start_time": null,
         "end_time": null,
-        "allowed_users": [],
-        "duration": null,
+        "duration": 1,
         "simple_score": null,
+        "simple_count": null,
         "medium_score": null,
+        "medium_count": null,
         "difficult_score": null,
+        "difficult_count": null,
         "total_score": null,
-        "status": 0
+        "total_count": null,
+        "status": null
       }
       return {
         formData,
@@ -159,7 +171,7 @@
         uni.showLoading({
           mask: true
         })
-        db.collection(dbCollectionName).doc(id).field("exam_id,title,description,start_time,end_time,allowed_users,duration,simple_score,medium_score,difficult_score,total_score,status").get().then((res) => {
+        db.collection(dbCollectionName).doc(id).field("exam_id,title,description,start_time,end_time,duration,simple_score,simple_count,medium_score,medium_count,difficult_score,difficult_count,total_score,total_count,status").get().then((res) => {
           const data = res.result.data[0]
           if (data) {
             this.formData = data

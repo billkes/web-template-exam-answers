@@ -23,20 +23,17 @@ const validator = {
     "label": "试卷描述",
     "title": "试卷描述"
   },
-  "questions": {
+  "tag_id": {
     "rules": [
       {
         "required": true
       },
       {
-        "format": "array"
-      },
-      {
-        "arrayType": "string"
+        "format": "string"
       }
     ],
-    "label": "题目列表",
-    "title": "题目列表"
+    "label": "科目",
+    "title": "科目"
   },
   "status": {
     "rules": [
@@ -63,9 +60,8 @@ const validator = {
         ]
       }
     ],
-    "label": "状态",
-    "title": "状态",
-    "defaultValue": 0
+    "label": "试卷状态",
+    "title": "试卷状态"
   }
 }
 

@@ -1,6 +1,9 @@
 <template>
   <view class="uni-container">
     <uni-forms ref="form" :model="formData" validateTrigger="bind">
+      <uni-forms-item name="exams_id" label="试卷" required>
+        <uni-data-select placeholder="请选择试卷" collection="exams" field="title as text, _id as value" v-model="formData.exams_id"></uni-data-select>
+      </uni-forms-item>
       <uni-forms-item name="title" label="题目标题" required>
         <uni-easyinput placeholder="请输入题目标题" v-model="formData.title"></uni-easyinput>
       </uni-forms-item>
@@ -10,14 +13,14 @@
       <uni-forms-item name="options" label="选项" required>
         <billkes-form-question-options :multiple="true" v-model="formData.options"></billkes-form-question-options>
       </uni-forms-item>
+      <uni-forms-item name="difficulty" label="难度" required>
+        <uni-data-select placeholder="请选择题目难度" v-model="formData.difficulty" :localdata="formOptions.difficulty_localdata"></uni-data-select>
+      </uni-forms-item>
       <uni-forms-item name="answer" label="答案" required>
         <uni-data-select placeholder="请选择题目答案" :multiple="true" v-model="formData.answer" :localdata="formOptions.answer_localdata"></uni-data-select>
       </uni-forms-item>
       <uni-forms-item name="analysis" label="解析">
         <uni-easyinput type="textarea" placeholder="请输入题目解析" v-model="formData.analysis"></uni-easyinput>
-      </uni-forms-item>
-      <uni-forms-item name="difficulty" label="难度">
-        <uni-data-select placeholder="请选择题目难度" v-model="formData.difficulty" :localdata="formOptions.difficulty_localdata"></uni-data-select>
       </uni-forms-item>
       <view class="uni-button-group">
         <button type="primary" class="uni-button" style="width: 100px;" @click="submit">提交</button>
@@ -51,12 +54,13 @@
   export default {
     data() {
       let formData = {
+        "exams_id": "",
         "title": "",
         "type": "",
         "options": [],
+        "difficulty": 1,
         "answer": [],
-        "analysis": "",
-        "difficulty": 1
+        "analysis": ""
       }
       return {
         formData,
@@ -69,6 +73,20 @@
             {
               "value": "multiple",
               "text": "多选题"
+            }
+          ],
+          "difficulty_localdata": [
+            {
+              "value": 1,
+              "text": "简单"
+            },
+            {
+              "value": 2,
+              "text": "中等"
+            },
+            {
+              "value": 3,
+              "text": "困难"
             }
           ],
           "answer_localdata": [
@@ -99,20 +117,6 @@
             {
               "value": 6,
               "text": "G"
-            }
-          ],
-          "difficulty_localdata": [
-            {
-              "value": 1,
-              "text": "简单"
-            },
-            {
-              "value": 2,
-              "text": "中等"
-            },
-            {
-              "value": 3,
-              "text": "困难"
             }
           ]
         },
@@ -175,7 +179,7 @@
         uni.showLoading({
           mask: true
         })
-        db.collection(dbCollectionName).doc(id).field("title,type,options,answer,analysis,difficulty").get().then((res) => {
+        db.collection(dbCollectionName).doc(id).field("exams_id,title,type,options,difficulty,answer,analysis").get().then((res) => {
           const data = res.result.data[0]
           if (data) {
             this.formData = data

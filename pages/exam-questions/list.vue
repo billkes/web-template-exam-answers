@@ -16,34 +16,38 @@
       </view>
     </view>
     <view class="uni-container">
-      <unicloud-db ref="udb" :collection="collectionList" field="title,type,options,answer,analysis,difficulty" :where="where" page-data="replace"
+      <unicloud-db ref="udb" :collection="collectionList" field="exams_id,title,type,options,difficulty,answer,analysis" :where="where" page-data="replace"
         :orderby="orderby" :getcount="true" :page-size="options.pageSize" :page-current="options.pageCurrent"
         v-slot:default="{data,pagination,loading,error,options}" :options="options" loadtime="manual" @load="onqueryload">
         <uni-table ref="table" :loading="loading" :emptyText="error.message || '没有更多数据'" border stripe type="selection" @selection-change="selectionChange">
           <uni-tr>
+            <uni-th align="center" sortable @sort-change="sortChange($event, 'exams_id')">试卷</uni-th>
             <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'title')" sortable @sort-change="sortChange($event, 'title')">题目标题</uni-th>
             <uni-th align="center" filter-type="select" :filter-data="options.filterData.type_localdata" @filter-change="filterChange($event, 'type')">题目类型</uni-th>
             <uni-th align="center" sortable @sort-change="sortChange($event, 'options')">选项</uni-th>
+            <uni-th align="center" filter-type="select" :filter-data="options.filterData.difficulty_localdata" @filter-change="filterChange($event, 'difficulty')">难度</uni-th>
             <uni-th align="center" filter-type="select" :filter-data="options.filterData.answer_localdata" @filter-change="filterChange($event, 'answer')">答案</uni-th>
             <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'analysis')" sortable @sort-change="sortChange($event, 'analysis')">解析</uni-th>
-            <uni-th align="center" filter-type="select" :filter-data="options.filterData.difficulty_localdata" @filter-change="filterChange($event, 'difficulty')">难度</uni-th>
             <uni-th align="center">操作</uni-th>
           </uni-tr>
           <uni-tr v-for="(item,index) in data" :key="index">
+            <uni-td align="center">
+              <text v-text="item.exams_id?.title || '-'" :value="item.exams_id"></text>
+            </uni-td>
             <uni-td align="center">{{item.title}}</uni-td>
             <uni-td align="center">
-              <uni-data-select :localdata="options.filterData.type_localdata" align="center" mode="none" :clear="false" :wrap="true" :hideRight="true" :disabled="true" :value="item.type"></uni-data-select>
+              <text v-text="options.filterData.type_localdata?.find(o=>o.value===item?.type)?.text || '-'" :value="item.type"></text>
             </uni-td>
             <uni-td align="center">
               <billkes-table-question-options :value="item.options"></billkes-table-question-options>
             </uni-td>
             <uni-td align="center">
-              <uni-data-select :localdata="options.filterData.answer_localdata" align="center" mode="none" :clear="false" :wrap="true" :hideRight="true" :disabled="true" :multiple="true" :value="item.answer"></uni-data-select>
+              <text v-text="options.filterData.difficulty_localdata?.find(o=>o.value===item?.difficulty)?.text || '-'" :value="item.difficulty"></text>
+            </uni-td>
+            <uni-td align="center">
+              <text v-text="Array.isArray(item?.answer) ? item.answer.map(a=>options.filterData.answer_localdata?.find(o=>o.value===a)?.text || '-').join(',')  : '-'" :value="item.answer"></text>
             </uni-td>
             <uni-td align="center">{{item.analysis}}</uni-td>
-            <uni-td align="center">
-              <uni-data-select :localdata="options.filterData.difficulty_localdata" align="center" mode="none" :clear="false" :wrap="true" :hideRight="true" :disabled="true" :value="item.difficulty"></uni-data-select>
-            </uni-td>
             <uni-td align="center">
               <view class="uni-group">
                 <button @click="navigateTo('./edit?id='+item._id, false)" class="uni-button" size="mini" type="primary">修改</button>
@@ -99,6 +103,20 @@
                 "text": "多选题"
               }
             ],
+            "difficulty_localdata": [
+              {
+                "value": 1,
+                "text": "简单"
+              },
+              {
+                "value": 2,
+                "text": "中等"
+              },
+              {
+                "value": 3,
+                "text": "困难"
+              }
+            ],
             "answer_localdata": [
               {
                 "value": 0,
@@ -128,20 +146,6 @@
                 "value": 6,
                 "text": "G"
               }
-            ],
-            "difficulty_localdata": [
-              {
-                "value": 1,
-                "text": "简单"
-              },
-              {
-                "value": 2,
-                "text": "中等"
-              },
-              {
-                "value": 3,
-                "text": "困难"
-              }
             ]
           },
           ...enumConverter
@@ -154,12 +158,13 @@
           "filename": "exam-questions.xls",
           "type": "xls",
           "fields": {
+            "试卷": "exams_id",
             "题目标题": "title",
             "题目类型": "type",
             "选项": "options",
+            "难度": "difficulty",
             "答案": "answer",
-            "解析": "analysis",
-            "难度": "difficulty"
+            "解析": "analysis"
           }
         },
         exportExcelData: []

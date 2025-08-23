@@ -2,6 +2,18 @@
 
 
 const validator = {
+  "exams_id": {
+    "rules": [
+      {
+        "required": true
+      },
+      {
+        "format": "string"
+      }
+    ],
+    "label": "试卷",
+    "title": "试卷"
+  },
   "title": {
     "rules": [
       {
@@ -52,6 +64,38 @@ const validator = {
     ],
     "label": "选项",
     "title": "选项"
+  },
+  "difficulty": {
+    "rules": [
+      {
+        "required": true
+      },
+      {
+        "format": "int"
+      },
+      {
+        "minimum": 1,
+        "maximum": 3
+      },
+      {
+        "range": [
+          {
+            "value": 1,
+            "text": "简单"
+          },
+          {
+            "value": 2,
+            "text": "中等"
+          },
+          {
+            "value": 3,
+            "text": "困难"
+          }
+        ]
+      }
+    ],
+    "label": "难度",
+    "title": "难度"
   },
   "answer": {
     "rules": [
@@ -108,36 +152,6 @@ const validator = {
     ],
     "label": "解析",
     "title": "解析"
-  },
-  "difficulty": {
-    "rules": [
-      {
-        "format": "int"
-      },
-      {
-        "minimum": 1,
-        "maximum": 3
-      },
-      {
-        "range": [
-          {
-            "value": 1,
-            "text": "简单"
-          },
-          {
-            "value": 2,
-            "text": "中等"
-          },
-          {
-            "value": 3,
-            "text": "困难"
-          }
-        ]
-      }
-    ],
-    "label": "难度",
-    "title": "难度",
-    "defaultValue": 1
   }
 }
 
@@ -145,6 +159,11 @@ const enumConverter = {
   "type_valuetotext": {
     "single": "单选题",
     "multiple": "多选题"
+  },
+  "difficulty_valuetotext": {
+    "1": "简单",
+    "2": "中等",
+    "3": "困难"
   },
   "answer_valuetotext": [
     {
@@ -175,12 +194,7 @@ const enumConverter = {
       "value": 6,
       "text": "G"
     }
-  ],
-  "difficulty_valuetotext": {
-    "1": "简单",
-    "2": "中等",
-    "3": "困难"
-  }
+  ]
 }
 
 function filterToWhere(filter, command) {

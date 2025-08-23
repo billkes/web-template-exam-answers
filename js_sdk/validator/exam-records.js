@@ -5,6 +5,9 @@ const validator = {
   "exam_schedules_id": {
     "rules": [
       {
+        "required": true
+      },
+      {
         "format": "string"
       }
     ],
@@ -25,9 +28,6 @@ const validator = {
   },
   "answers": {
     "rules": [
-      {
-        "required": true
-      },
       {
         "format": "array"
       },
@@ -102,8 +102,7 @@ const validator = {
       }
     ],
     "label": "状态",
-    "title": "状态",
-    "defaultValue": 0
+    "title": "状态"
   },
   "started_date": {
     "rules": [

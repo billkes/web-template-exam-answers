@@ -1,13 +1,13 @@
 <template>
   <view class="uni-container">
     <uni-forms ref="form" :model="formData" validateTrigger="bind">
-      <uni-forms-item name="exam_schedules_id" label="试卷">
+      <uni-forms-item name="exam_schedules_id" label="试卷" required>
         <uni-data-select placeholder="请选择试卷" collection="exam-schedules" field="title as text, _id as value" v-model="formData.exam_schedules_id"></uni-data-select>
       </uni-forms-item>
       <uni-forms-item name="user_id" label="用户" required>
-        <uni-data-select placeholder="请选择用户" collection="exam-users" field="nickname as text, _id as value" v-model="formData.user_id"></uni-data-select>
+        <uni-data-select placeholder="请选择用户" collection="uni-id-users" field="nickname as text, _id as value" v-model="formData.user_id"></uni-data-select>
       </uni-forms-item>
-      <uni-forms-item name="answers" label="答题记录" required>
+      <uni-forms-item name="answers" label="答题记录">
         <billkes-form-exam-records-answers :multiple="true" v-model="formData.answers"></billkes-form-exam-records-answers>
       </uni-forms-item>
       <uni-forms-item name="total_full_mark" label="总满分">
@@ -17,16 +17,16 @@
         <uni-easyinput placeholder="自动计算" type="number" :disabled="true" v-model="formData.total_score"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="time_spent" label="用时">
-        <uni-easyinput placeholder="请输入用时（秒）" type="number" v-model="formData.time_spent"></uni-easyinput>
+        <uni-easyinput placeholder="请输入用时（秒）" type="number" :disabled="true" v-model="formData.time_spent"></uni-easyinput>
       </uni-forms-item>
       <uni-forms-item name="status" label="状态">
-        <uni-data-select placeholder="请选择考试状态" v-model="formData.status" :localdata="formOptions.status_localdata"></uni-data-select>
+        <uni-data-select placeholder="自动计算" :disabled="true" v-model="formData.status" :localdata="formOptions.status_localdata"></uni-data-select>
       </uni-forms-item>
       <uni-forms-item name="started_date" label="开始时间">
-        <uni-datetime-picker placeholder="请选择开始考试时间" return-type="timestamp" v-model="formData.started_date"></uni-datetime-picker>
+        <uni-datetime-picker placeholder="自动计算" :disabled="true" return-type="timestamp" v-model="formData.started_date"></uni-datetime-picker>
       </uni-forms-item>
       <uni-forms-item name="finished_date" label="完成时间">
-        <uni-datetime-picker placeholder="请选择完成考试时间" return-type="timestamp" v-model="formData.finished_date"></uni-datetime-picker>
+        <uni-datetime-picker placeholder="自动计算" :disabled="true" return-type="timestamp" v-model="formData.finished_date"></uni-datetime-picker>
       </uni-forms-item>
       <view class="uni-button-group">
         <button type="primary" class="uni-button" style="width: 100px;" @click="submit">提交</button>
@@ -66,7 +66,7 @@
         "total_full_mark": null,
         "total_score": null,
         "time_spent": null,
-        "status": 0,
+        "status": null,
         "started_date": null,
         "finished_date": null
       }

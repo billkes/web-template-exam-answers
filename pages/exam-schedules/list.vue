@@ -16,28 +16,31 @@
       </view>
     </view>
     <view class="uni-container">
-      <unicloud-db ref="udb" :collection="collectionList" field="exam_id,title,description,start_time,end_time,allowed_users,duration,simple_score,medium_score,difficult_score,total_score,status" :where="where" page-data="replace"
+      <unicloud-db ref="udb" :collection="collectionList" field="exam_id,title,description,start_time,end_time,duration,simple_score,simple_count,medium_score,medium_count,difficult_score,difficult_count,total_score,total_count,status" :where="where" page-data="replace"
         :orderby="orderby" :getcount="true" :page-size="options.pageSize" :page-current="options.pageCurrent"
         v-slot:default="{data,pagination,loading,error,options}" :options="options" loadtime="manual" @load="onqueryload">
         <uni-table ref="table" :loading="loading" :emptyText="error.message || '没有更多数据'" border stripe type="selection" @selection-change="selectionChange">
           <uni-tr>
-            <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'exam_id')" sortable @sort-change="sortChange($event, 'exam_id')">试卷</uni-th>
+            <uni-th align="center" sortable @sort-change="sortChange($event, 'exam_id')">试卷</uni-th>
             <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'title')" sortable @sort-change="sortChange($event, 'title')">安排标题</uni-th>
             <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'description')" sortable @sort-change="sortChange($event, 'description')">安排描述</uni-th>
             <uni-th align="center" filter-type="timestamp" @filter-change="filterChange($event, 'start_time')" sortable @sort-change="sortChange($event, 'start_time')">开始时间</uni-th>
             <uni-th align="center" filter-type="timestamp" @filter-change="filterChange($event, 'end_time')" sortable @sort-change="sortChange($event, 'end_time')">结束时间</uni-th>
-            <uni-th align="center" sortable @sort-change="sortChange($event, 'allowed_users')">允许用户</uni-th>
             <uni-th align="center" filter-type="range" @filter-change="filterChange($event, 'duration')" sortable @sort-change="sortChange($event, 'duration')">考试时长</uni-th>
             <uni-th align="center" sortable @sort-change="sortChange($event, 'simple_score')">简单题分数</uni-th>
+            <uni-th align="center" sortable @sort-change="sortChange($event, 'simple_count')">简单题数量</uni-th>
             <uni-th align="center" sortable @sort-change="sortChange($event, 'medium_score')">中等题分数</uni-th>
+            <uni-th align="center" sortable @sort-change="sortChange($event, 'medium_count')">中等题数量</uni-th>
             <uni-th align="center" sortable @sort-change="sortChange($event, 'difficult_score')">困难题分数</uni-th>
+            <uni-th align="center" sortable @sort-change="sortChange($event, 'difficult_count')">困难题数量</uni-th>
             <uni-th align="center" sortable @sort-change="sortChange($event, 'total_score')">总分</uni-th>
+            <uni-th align="center" sortable @sort-change="sortChange($event, 'total_count')">总题数</uni-th>
             <uni-th align="center" filter-type="select" :filter-data="options.filterData.status_localdata" @filter-change="filterChange($event, 'status')">状态</uni-th>
             <uni-th align="center">操作</uni-th>
           </uni-tr>
           <uni-tr v-for="(item,index) in data" :key="index">
             <uni-td align="center">
-              <uni-data-select collection="exams" field="title as text, _id as value" :getone="true" :where="`_id == '${item.exam_id}'`" align="center" mode="none" :clear="false" :wrap="true" :hideRight="true" :disabled="true" :value="item.exam_id"></uni-data-select>
+              <text v-text="item.exam_id?.title || '-'" :value="item.exam_id"></text>
             </uni-td>
             <uni-td align="center">{{item.title}}</uni-td>
             <uni-td align="center">{{item.description}}</uni-td>
@@ -48,17 +51,18 @@
               <uni-dateformat format="yyyy-MM-dd hh:mm:ss" :date="item.start_time" :value="item.end_time"></uni-dateformat>
             </uni-td>
             <uni-td align="center">
-              <uni-data-select collection="exam-users" field="username as text, _id as value" :page-size="item.allowed_users?.length || 10" :where="`_id in ${JSON.stringify(item.allowed_users)}`" align="center" mode="none" :multiple="true" :clear="false" :wrap="true" :hideRight="true" :disabled="true" :value="item.allowed_users"></uni-data-select>
-            </uni-td>
-            <uni-td align="center">
               <billkes-table-duration unit="m" :value="item.duration"></billkes-table-duration>
             </uni-td>
             <uni-td align="center">{{item.simple_score}}</uni-td>
+            <uni-td align="center">{{item.simple_count}}</uni-td>
             <uni-td align="center">{{item.medium_score}}</uni-td>
+            <uni-td align="center">{{item.medium_count}}</uni-td>
             <uni-td align="center">{{item.difficult_score}}</uni-td>
+            <uni-td align="center">{{item.difficult_count}}</uni-td>
             <uni-td align="center">{{item.total_score}}</uni-td>
+            <uni-td align="center">{{item.total_count}}</uni-td>
             <uni-td align="center">
-              <uni-data-select :localdata="options.filterData.status_localdata" align="center" mode="none" :clear="false" :wrap="true" :hideRight="true" :disabled="true" :value="item.status"></uni-data-select>
+              <text v-text="options.filterData.status_localdata?.find(o=>o.value===item?.status)?.text || '-'" :value="item.status"></text>
             </uni-td>
             <uni-td align="center">
               <view class="uni-group">
@@ -135,12 +139,15 @@
             "安排描述": "description",
             "开始时间": "start_time",
             "结束时间": "end_time",
-            "允许用户": "allowed_users",
             "考试时长": "duration",
             "简单题分数": "simple_score",
+            "简单题数量": "simple_count",
             "中等题分数": "medium_score",
+            "中等题数量": "medium_count",
             "困难题分数": "difficult_score",
+            "困难题数量": "difficult_count",
             "总分": "total_score",
+            "总题数": "total_count",
             "状态": "status"
           }
         },

@@ -1,6 +1,6 @@
 {
 	"bsonType": "object",
-	"required": ["title", "type", "options", "answer"],
+	"required": ["exams_id", "title", "type", "options", "answer", "difficulty"],
 	"permission": {
 		"read": true,
 		"create": true,
@@ -10,6 +10,27 @@
 	"properties": {
 		"_id": {
 			"description": "存储文档 ID，系统自动生成"
+		},
+		"exams_id": {
+			"bsonType": "string",
+			"title": "试卷",
+			"description": "请选择试卷",
+			"label": "试卷",
+			"foreignKey": "exams._id",
+			"componentForEdit": {
+				"name": "uni-data-select",
+				"props": {
+					"placeholder": "请选择试卷",
+					"collection": "exams",
+					"field": "title as text, _id as value"
+				}
+			},
+			"componentForShow": {
+				"name": "text",
+				"props": {
+					"v-text": "item.exams_id?.title || '-'"
+				}
+			}
 		},
 		"title": {
 			"bsonType": "string",
@@ -37,15 +58,9 @@
 				}
 			},
 			"componentForShow": {
-				"name": "uni-data-select",
+				"name": "text",
 				"props": {
-					":localdata": "options.filterData.type_localdata",
-					"align": "center",
-					"mode": "none",
-					":clear": false,
-					":wrap": true,
-					":hideRight": true,
-					":disabled": true
+					"v-text": "options.filterData.type_localdata?.find(o=>o.value===item?.type)?.text || '-'"
 				}
 			}
 		},
@@ -60,6 +75,39 @@
 			},
 			"componentForShow": {
 				"name": "billkes-table-question-options"
+			}
+		},
+		"difficulty": {
+			"bsonType": "int",
+			"title": "难度",
+			"description": "题目难度：1-简单，2-中等，3-困难",
+			"label": "难度",
+			"minimum": 1,
+			"maximum": 3,
+			"enum": [{
+					"value": 1,
+					"text": "简单"
+				},
+				{
+					"value": 2,
+					"text": "中等"
+				},
+				{
+					"value": 3,
+					"text": "困难"
+				}
+			],
+			"componentForEdit": {
+				"name": "uni-data-select",
+				"props": {
+					"placeholder": "请选择题目难度"
+				}
+			},
+			"componentForShow": {
+				"name": "text",
+				"props": {
+					"v-text": "options.filterData.difficulty_localdata?.find(o=>o.value===item?.difficulty)?.text || '-'"
+				}
 			}
 		},
 		"answer": {
@@ -104,16 +152,9 @@
 				}
 			},
 			"componentForShow": {
-				"name": "uni-data-select",
+				"name": "text",
 				"props": {
-					":localdata": "options.filterData.answer_localdata",
-					"align": "center",
-					"mode": "none",
-					":clear": false,
-					":wrap": true,
-					":hideRight": true,
-					":disabled": true,
-					":multiple": true
+					"v-text": "Array.isArray(item?.answer) ? item.answer.map(a=>options.filterData.answer_localdata?.find(o=>o.value===a)?.text || '-').join(',')  : '-'"
 				}
 			}
 		},
@@ -126,46 +167,6 @@
 				"name": "uni-easyinput",
 				"props": {
 					"type": "textarea"
-				}
-			}
-		},
-		"difficulty": {
-			"bsonType": "int",
-			"title": "难度",
-			"description": "题目难度：1-简单，2-中等，3-困难",
-			"label": "难度",
-			"defaultValue": 1,
-			"minimum": 1,
-			"maximum": 3,
-			"enum": [{
-					"value": 1,
-					"text": "简单"
-				},
-				{
-					"value": 2,
-					"text": "中等"
-				},
-				{
-					"value": 3,
-					"text": "困难"
-				}
-			],
-			"componentForEdit": {
-				"name": "uni-data-select",
-				"props": {
-					"placeholder": "请选择题目难度"
-				}
-			},
-			"componentForShow": {
-				"name": "uni-data-select",
-				"props": {
-					":localdata": "options.filterData.difficulty_localdata",
-					"align": "center",
-					"mode": "none",
-					":clear": false,
-					":wrap": true,
-					":hideRight": true,
-					":disabled": true
 				}
 			}
 		},

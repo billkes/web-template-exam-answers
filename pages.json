@@ -213,41 +213,23 @@
 			"style": {
 				"navigationBarTitleText": "列表"
 			}
-		}, {
-			"path": "pages/exam-users/add",
+		},
+		{
+			"path": "pages/test-register-login/test-register-login",
 			"style": {
-				"navigationBarTitleText": "新增"
-			}
-		}, {
-			"path": "pages/exam-users/edit",
-			"style": {
-				"navigationBarTitleText": "编辑"
-			}
-		}, {
-			"path": "pages/exam-users/list",
-			"style": {
-				"navigationBarTitleText": "列表"
+				"navigationBarTitleText": "移动端测试注册登录"
 			}
 		},
 		{
-			"path" : "pages/test-register-login/test-register-login",
-			"style" : 
-			{
-				"navigationBarTitleText" : "移动端测试注册登录"
+			"path": "pages/test-exam-list/test-exam-list",
+			"style": {
+				"navigationBarTitleText": "移动端测试考试列表"
 			}
 		},
 		{
-			"path" : "pages/test-exam-list/test-exam-list",
-			"style" : 
-			{
-				"navigationBarTitleText" : "移动端测试考试列表"
-			}
-		},
-		{
-			"path" : "pages/test-answer/test-answer",
-			"style" : 
-			{
-				"navigationBarTitleText" : "移动端测试答题"
+			"path": "pages/test-answer/test-answer",
+			"style": {
+				"navigationBarTitleText": "移动端测试答题"
 			}
 		}
 	],

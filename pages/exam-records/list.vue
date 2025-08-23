@@ -34,10 +34,10 @@
           </uni-tr>
           <uni-tr v-for="(item,index) in data" :key="index">
             <uni-td align="center">
-              <uni-data-select collection="exam-schedules" field="title as text, _id as value" :getone="true" :where="`_id == '${item.exam_id}'`" align="center" mode="none" :clear="false" :wrap="true" :hideRight="true" :disabled="true" :value="item.exam_schedules_id"></uni-data-select>
+              <text v-text="item.exam_schedules_id?.title || '-'" :value="item.exam_schedules_id"></text>
             </uni-td>
             <uni-td align="center">
-              <uni-data-select collection="exam-users" field="nickname as text, _id as value" :getone="true" :where="`_id == '${item.user_id}'`" align="center" mode="none" :clear="false" :wrap="true" :hideRight="true" :disabled="true" :value="item.user_id"></uni-data-select>
+              <text v-text="item.user_id?.nickname || '-'" :value="item.user_id"></text>
             </uni-td>
             <uni-td align="center">
               <billkes-table-exam-records-answers :value="item.answers"></billkes-table-exam-records-answers>
@@ -48,7 +48,7 @@
               <billkes-table-duration unit="s" :value="item.time_spent"></billkes-table-duration>
             </uni-td>
             <uni-td align="center">
-              <uni-data-select :localdata="options.filterData.status_localdata" align="center" mode="none" :clear="false" :wrap="true" :hideRight="true" :disabled="true" :value="item.status"></uni-data-select>
+              <text v-text="options.filterData.status_localdata?.find(o=>o.value===item.status)?.text || '-'" :value="item.status"></text>
             </uni-td>
             <uni-td align="center">
               <uni-dateformat format="yyyy-MM-dd hh:mm:ss" :date="item.started_date" :value="item.started_date"></uni-dateformat>

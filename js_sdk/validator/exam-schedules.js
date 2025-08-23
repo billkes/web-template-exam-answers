@@ -17,6 +17,9 @@ const validator = {
   "title": {
     "rules": [
       {
+        "required": true
+      },
+      {
         "format": "string"
       }
     ],
@@ -56,20 +59,11 @@ const validator = {
     "label": "结束时间",
     "title": "结束时间"
   },
-  "allowed_users": {
-    "rules": [
-      {
-        "format": "array"
-      },
-      {
-        "arrayType": "string"
-      }
-    ],
-    "label": "允许用户",
-    "title": "允许用户"
-  },
   "duration": {
     "rules": [
+      {
+        "required": true
+      },
       {
         "format": "int"
       },
@@ -84,6 +78,9 @@ const validator = {
   "simple_score": {
     "rules": [
       {
+        "required": true
+      },
+      {
         "format": "number"
       },
       {
@@ -93,8 +90,26 @@ const validator = {
     "label": "简单题分数",
     "title": "简单题分数"
   },
+  "simple_count": {
+    "rules": [
+      {
+        "required": true
+      },
+      {
+        "format": "number"
+      },
+      {
+        "minimum": 1
+      }
+    ],
+    "label": "简单题数量",
+    "title": "简单题数量"
+  },
   "medium_score": {
     "rules": [
+      {
+        "required": true
+      },
       {
         "format": "number"
       },
@@ -105,8 +120,26 @@ const validator = {
     "label": "中等题分数",
     "title": "中等题分数"
   },
+  "medium_count": {
+    "rules": [
+      {
+        "required": true
+      },
+      {
+        "format": "number"
+      },
+      {
+        "minimum": 1
+      }
+    ],
+    "label": "中等题数量",
+    "title": "中等题数量"
+  },
   "difficult_score": {
     "rules": [
+      {
+        "required": true
+      },
       {
         "format": "number"
       },
@@ -116,6 +149,21 @@ const validator = {
     ],
     "label": "困难题分数",
     "title": "困难题分数"
+  },
+  "difficult_count": {
+    "rules": [
+      {
+        "required": true
+      },
+      {
+        "format": "number"
+      },
+      {
+        "minimum": 1
+      }
+    ],
+    "label": "困难题数量",
+    "title": "困难题数量"
   },
   "total_score": {
     "rules": [
@@ -128,6 +176,18 @@ const validator = {
     ],
     "label": "总分",
     "title": "总分"
+  },
+  "total_count": {
+    "rules": [
+      {
+        "format": "number"
+      },
+      {
+        "minimum": 0
+      }
+    ],
+    "label": "总题数",
+    "title": "总题数"
   },
   "status": {
     "rules": [
@@ -156,8 +216,7 @@ const validator = {
       }
     ],
     "label": "状态",
-    "title": "状态",
-    "defaultValue": 0
+    "title": "状态"
   }
 }
 

@@ -1,0 +1,28 @@
+// 文档教程: https://uniapp.dcloud.net.cn/uniCloud/schema
+{
+	"bsonType": "object",
+	"required": ["user_id", "user_id"],
+	"permission": {
+		"read": true,
+		"create": true,
+		"update": true,
+		"delete": true
+	},
+	"properties": {
+		"_id": {
+			"description": "ID，系统自动生成"
+		},
+		"user_id": {
+			"bsonType": "string",
+			"title": "用户",
+			"label": "用户",
+			"parentKey": "uni-id-users._id"
+		},
+		"exams_id": {
+			"bsonType": "string",
+			"title": "试卷",
+			"label": "试卷",
+			"foreignKey": "exam-schedules._id"
+		}
+	}
+}

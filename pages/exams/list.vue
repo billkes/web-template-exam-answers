@@ -16,25 +16,25 @@
       </view>
     </view>
     <view class="uni-container">
-      <unicloud-db ref="udb" :collection="collectionList" field="title,description,questions,status" :where="where" page-data="replace"
+      <unicloud-db ref="udb" :collection="collectionList" field="title,description,tag_id,status" :where="where" page-data="replace"
         :orderby="orderby" :getcount="true" :page-size="options.pageSize" :page-current="options.pageCurrent"
         v-slot:default="{data,pagination,loading,error,options}" :options="options" loadtime="manual" @load="onqueryload">
         <uni-table ref="table" :loading="loading" :emptyText="error.message || '没有更多数据'" border stripe type="selection" @selection-change="selectionChange">
           <uni-tr>
             <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'title')" sortable @sort-change="sortChange($event, 'title')">试卷标题</uni-th>
             <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'description')" sortable @sort-change="sortChange($event, 'description')">试卷描述</uni-th>
-            <uni-th align="center" sortable @sort-change="sortChange($event, 'questions')">题目列表</uni-th>
-            <uni-th align="center" filter-type="select" :filter-data="options.filterData.status_localdata" @filter-change="filterChange($event, 'status')">状态</uni-th>
+            <uni-th align="center" sortable @sort-change="sortChange($event, 'tag_id')">科目</uni-th>
+            <uni-th align="center" filter-type="select" :filter-data="options.filterData.status_localdata" @filter-change="filterChange($event, 'status')">试卷状态</uni-th>
             <uni-th align="center">操作</uni-th>
           </uni-tr>
           <uni-tr v-for="(item,index) in data" :key="index">
             <uni-td align="center">{{item.title}}</uni-td>
             <uni-td align="center">{{item.description}}</uni-td>
             <uni-td align="center">
-              <billkes-table-exams-questions :value="item.questions"></billkes-table-exams-questions>
+              <text v-text="item.tag_id?.name || '-'" :value="item.tag_id"></text>
             </uni-td>
             <uni-td align="center">
-              <uni-data-select :localdata="options.filterData.status_localdata" align="center" mode="none" :clear="false" :wrap="true" :hideRight="true" :disabled="true" :value="item.status"></uni-data-select>
+              <text v-text="options.filterData.status_localdata?.find(o=>o.value===item.status)?.text || '-'" :value="item.status"></text>
             </uni-td>
             <uni-td align="center">
               <view class="uni-group">
@@ -104,8 +104,8 @@
           "fields": {
             "试卷标题": "title",
             "试卷描述": "description",
-            "题目列表": "questions",
-            "状态": "status"
+            "科目": "tag_id",
+            "试卷状态": "status"
           }
         },
         exportExcelData: []

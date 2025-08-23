@@ -1,6 +1,18 @@
 {
 	"bsonType": "object",
-	"required": ["exam_id", "start_time", "end_time"],
+	"required": [
+		"exam_id",
+		"title",
+		"duration",
+		"start_time",
+		"end_time",
+		"simple_score",
+		"simple_count",
+		"medium_score",
+		"medium_count",
+		"difficult_score",
+		"difficult_count"
+	],
 	"permission": {
 		"read": true,
 		"create": true,
@@ -15,27 +27,20 @@
 			"bsonType": "string",
 			"title": "试卷",
 			"label": "试卷",
+			"foreignKey": "exams._id",
 			"componentForEdit": {
 				"name": "uni-data-select",
 				"props": {
 					"placeholder": "请选择试卷",
 					"collection": "exams",
+					":where": "`status == 1`",
 					"field": "title as text, _id as value"
 				}
 			},
 			"componentForShow": {
-				"name": "uni-data-select",
+				"name": "text",
 				"props": {
-					"collection": "exams",
-					"field": "title as text, _id as value",
-					":getone": true,
-					":where": "`_id == '${item.exam_id}'`",
-					"align": "center",
-					"mode": "none",
-					":clear": false,
-					":wrap": true,
-					":hideRight": true,
-					":disabled": true
+					"v-text": "item.exam_id?.title || '-'"
 				}
 			}
 		},
@@ -93,36 +98,6 @@
 				}
 			}
 		},
-		"allowed_users": {
-			"bsonType": "array",
-			"title": "允许用户",
-			"label": "允许用户",
-			"arrayType": "string",
-			"componentForEdit": {
-				"name": "uni-data-select",
-				"props": {
-					"placeholder": "请选择允许参加考试的用户",
-					"collection": "exam-users",
-					"field": "username as text, _id as value"
-				}
-			},
-			"componentForShow": {
-				"name": "uni-data-select",
-				"props": {
-					"collection": "exam-users",
-					"field": "username as text, _id as value",
-					":page-size": "item.allowed_users?.length || 10",
-					":where": "`_id in ${JSON.stringify(item.allowed_users)}`",
-					"align": "center",
-					"mode": "none",
-					":multiple": true,
-					":clear": false,
-					":wrap": true,
-					":hideRight": true,
-					":disabled": true
-				}
-			}
-		},
 		"duration": {
 			"bsonType": "int",
 			"title": "考试时长",
@@ -151,6 +126,20 @@
 				}
 			}
 		},
+		"simple_count": {
+			"bsonType": "number",
+			"title": "简单题数量",
+			"description": "试卷简单题数量",
+			"label": "简单题数量",
+			"minimum": 1,
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"type": "number",
+					"placeholder": "请输入试卷简单题数量"
+				}
+			}
+		},
 		"medium_score": {
 			"bsonType": "number",
 			"title": "中等题分数",
@@ -165,6 +154,20 @@
 				}
 			}
 		},
+		"medium_count": {
+			"bsonType": "number",
+			"title": "中等题数量",
+			"description": "试卷中等题数量",
+			"label": "中等题数量",
+			"minimum": 1,
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"type": "number",
+					"placeholder": "请输入试卷中等题数量"
+				}
+			}
+		},
 		"difficult_score": {
 			"bsonType": "number",
 			"title": "困难题分数",
@@ -176,6 +179,20 @@
 				"props": {
 					"type": "number",
 					"placeholder": "请输入试卷困难题分数"
+				}
+			}
+		},
+		"difficult_count": {
+			"bsonType": "number",
+			"title": "困难题数量",
+			"description": "试卷困难题数量",
+			"label": "困难题数量",
+			"minimum": 1,
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"type": "number",
+					"placeholder": "请输入试卷困难题数量"
 				}
 			}
 		},
@@ -194,11 +211,25 @@
 				}
 			}
 		},
+		"total_count": {
+			"bsonType": "number",
+			"title": "总题数",
+			"description": "试卷总题数",
+			"label": "总题数",
+			"minimum": 0,
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"type": "number",
+					":disabled": true,
+					"placeholder": "自动计算"
+				}
+			}
+		},
 		"status": {
 			"bsonType": "int",
 			"title": "状态",
 			"label": "状态",
-			"defaultValue": 0,
 			"minimum": 0,
 			"maximum": 2,
 			"enum": [{
@@ -217,19 +248,14 @@
 			"componentForEdit": {
 				"name": "uni-data-select",
 				"props": {
-					"placeholder": "请选择考试安排状态"
+					":disabled": true,
+					"placeholder": "自动计算"
 				}
 			},
 			"componentForShow": {
-				"name": "uni-data-select",
+				"name": "text",
 				"props": {
-					":localdata": "options.filterData.status_localdata",
-					"align": "center",
-					"mode": "none",
-					":clear": false,
-					":wrap": true,
-					":hideRight": true,
-					":disabled": true
+					"v-text": "options.filterData.status_localdata?.find(o=>o.value===item?.status)?.text || '-'"
 				}
 			}
 		},

@@ -1,6 +1,6 @@
 {
 	"bsonType": "object",
-	"required": ["title", "questions", "duration", "status"],
+	"required": ["title", "tag_id", "duration", "status"],
 	"permission": {
 		"read": true,
 		"create": true,
@@ -29,30 +29,33 @@
 				}
 			}
 		},
-		"questions": {
-			"bsonType": "array",
-			"title": "题目列表",
-			"description": "试卷包含的题目列表",
-			"label": "题目列表",
-			"arrayType": "string",
+		"tag_id": {
+			"bsonType": "string",
+			"title": "科目",
+			"description": "请选择科目",
+			"label": "科目",
+			"foreignKey": "uni-id-tag._id",
 			"componentForEdit": {
 				"name": "uni-data-select",
 				"props": {
-					"placeholder": "请选择题目",
-					"collection": "exam-questions",
-					"field": "title as text, _id as value"
+					":where": "`tagid == 'exam'`",
+					"placeholder": "请选择科目",
+					"collection": "uni-id-tag",
+					"field": "name as text, _id as value"
 				}
 			},
 			"componentForShow": {
-				"name": "billkes-table-exams-questions"
+				"name": "text",
+				"props": {
+					"v-text": "item.tag_id?.name || '-'"
+				}
 			}
 		},
 		"status": {
 			"bsonType": "int",
-			"title": "状态",
+			"title": "试卷状态",
 			"description": "试卷状态：0-草稿，1-发布",
-			"label": "状态",
-			"defaultValue": 0,
+			"label": "试卷状态",
 			"minimum": 0,
 			"maximum": 1,
 			"enum": [{
@@ -71,15 +74,9 @@
 				}
 			},
 			"componentForShow": {
-				"name": "uni-data-select",
+				"name": "text",
 				"props": {
-					":localdata": "options.filterData.status_localdata",
-					"align": "center",
-					"mode": "none",
-					":clear": false,
-					":wrap": true,
-					":hideRight": true,
-					":disabled": true
+					"v-text": "options.filterData.status_localdata?.find(o=>o.value===item.status)?.text || '-'"
 				}
 			}
 		},

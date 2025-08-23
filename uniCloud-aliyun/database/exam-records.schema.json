@@ -1,235 +1,221 @@
 {
-  "bsonType": "object",
-  "required": [
-    "exam_id",
-    "user_id",
-    "answers"
-  ],
-  "permission": {
-    "read": true,
-    "create": true,
-    "update": true,
-    "delete": true
-  },
-  "properties": {
-    "_id": {
-      "description": "存储文档 ID，系统自动生成"
-    },
-    "exam_schedules_id": {
-      "bsonType": "string",
-      "title": "试卷",
-      "label": "试卷",
-      "componentForEdit": {
-        "name": "uni-data-select",
-        "props": {
-          "placeholder": "请选择试卷",
-          "collection": "exam-schedules",
-          "field": "title as text, _id as value"
-        }
-      },
-      "componentForShow": {
-        "name": "uni-data-select",
-        "props": {
-          "collection": "exam-schedules",
-          "field": "title as text, _id as value",
-          ":getone": true,
-          ":where": "`_id == '${item.exam_id}'`",
-          "align": "center",
-          "mode": "none",
-          ":clear": false,
-          ":wrap": true,
-          ":hideRight": true,
-          ":disabled": true
-        }
-      }
-    },
-    "user_id": {
-      "bsonType": "string",
-      "title": "用户",
-      "label": "用户",
-      "componentForEdit": {
-        "name": "uni-data-select",
-        "props": {
-          "placeholder": "请选择用户",
-          "collection": "exam-users",
-          "field": "nickname as text, _id as value"
-        }
-      },
-      "componentForShow": {
-        "name": "uni-data-select",
-        "props": {
-          "collection": "exam-users",
-          "field": "nickname as text, _id as value",
-          ":getone": true,
-          ":where": "`_id == '${item.user_id}'`",
-          "align": "center",
-          "mode": "none",
-          ":clear": false,
-          ":wrap": true,
-          ":hideRight": true,
-          ":disabled": true
-        }
-      }
-    },
-    "answers": {
-      "bsonType": "array",
-      "title": "答题记录",
-      "label": "答题记录",
-      "arrayType": "object",
-      "componentForEdit": {
-        "name": "billkes-form-exam-records-answers"
-      },
-      "componentForShow": {
-        "name": "billkes-table-exam-records-answers"
-      }
-    },
-    "total_full_mark": {
-      "bsonType": "number",
-      "title": "总满分",
-      "label": "总满分",
-      "minimum": 0,
-      "componentForEdit": {
-        "name": "uni-easyinput",
-        "props": {
-          "placeholder": "自动计算",
-          "type": "number",
-          ":disabled": true
-        }
-      }
-    },
-    "total_score": {
-      "bsonType": "number",
-      "title": "总得分",
-      "label": "总得分",
-      "minimum": 0,
-      "componentForEdit": {
-        "name": "uni-easyinput",
-        "props": {
-          "placeholder": "自动计算",
-          "type": "number",
-          ":disabled": true
-        }
-      }
-    },
-    "time_spent": {
-      "bsonType": "int",
-      "title": "用时",
-      "description": "请输入用时（秒）",
-      "label": "用时",
-      "minimum": 60,
-      "maximum": 12000,
-      "componentForShow": {
-        "name": "billkes-table-duration",
-        "props": {
-          "unit": "s"
-        }
-      }
-    },
-    "status": {
-      "bsonType": "int",
-      "title": "状态",
-      "label": "状态",
-      "defaultValue": 0,
-      "minimum": 0,
-      "maximum": 1,
-      "enum": [
-        {
-          "value": -1,
-          "text": "未开始"
-        },
-        {
-          "value": 0,
-          "text": "未完成"
-        },
-        {
-          "value": 1,
-          "text": "已完成"
-        }
-      ],
-      "componentForEdit": {
-        "name": "uni-data-select",
-        "props": {
-          "placeholder": "请选择考试状态"
-        }
-      },
-      "componentForShow": {
-        "name": "uni-data-select",
-        "props": {
-          ":localdata": "options.filterData.status_localdata",
-          "align": "center",
-          "mode": "none",
-          ":clear": false,
-          ":wrap": true,
-          ":hideRight": true,
-          ":disabled": true
-        }
-      }
-    },
-    "started_date": {
-      "bsonType": "timestamp",
-      "title": "开始时间",
-      "label": "开始时间",
-      "componentForEdit": {
-        "name": "uni-datetime-picker",
-        "props": {
-          "placeholder": "请选择开始考试时间"
-        }
-      },
-      "componentForShow": {
-        "name": "uni-dateformat",
-        "props": {
-          "format": "yyyy-MM-dd hh:mm:ss",
-          ":date": "item.started_date"
-        }
-      }
-    },
-    "finished_date": {
-      "bsonType": "timestamp",
-      "title": "完成时间",
-      "label": "完成时间",
-      "componentForEdit": {
-        "name": "uni-datetime-picker",
-        "props": {
-          "placeholder": "请选择完成考试时间"
-        }
-      },
-      "componentForShow": {
-        "name": "uni-dateformat",
-        "props": {
-          "format": "yyyy-MM-dd hh:mm:ss",
-          ":date": "finished_date"
-        }
-      }
-    },
-    "created_date": {
-      "bsonType": "timestamp",
-      "title": "创建时间",
-      "description": "创建时间",
-      "label": "创建时间",
-      "forceDefaultValue": {
-        "$env": "now"
-      },
-      "componentForShow": {
-        "name": "uni-dateformat",
-        "props": {
-          "format": "yyyy-MM-dd hh:mm:ss"
-        }
-      }
-    },
-    "updated_date": {
-      "bsonType": "timestamp",
-      "title": "更新时间",
-      "description": "更新时间",
-      "label": "更新时间",
-      "forceDefaultValue": {
-        "$env": "now"
-      },
-      "componentForShow": {
-        "name": "uni-dateformat",
-        "props": {
-          "format": "yyyy-MM-dd hh:mm:ss"
-        }
-      }
-    }
-  }
+	"bsonType": "object",
+	"required": [
+		"exam_schedules_id",
+		"user_id"
+	],
+	"permission": {
+		"read": true,
+		"create": true,
+		"update": true,
+		"delete": true
+	},
+	"properties": {
+		"_id": {
+			"description": "存储文档 ID，系统自动生成"
+		},
+		"exam_schedules_id": {
+			"bsonType": "string",
+			"title": "试卷",
+			"label": "试卷",
+			"parentKey": "exam-schedules._id",
+			"componentForEdit": {
+				"name": "uni-data-select",
+				"props": {
+					"placeholder": "请选择试卷",
+					"collection": "exam-schedules",
+					"field": "title as text, _id as value"
+				}
+			},
+			"componentForShow": {
+				"name": "text",
+				"props": {
+					"v-text": "item.exam_schedules_id?.title || '-'"
+				}
+			}
+		},
+		"user_id": {
+			"bsonType": "string",
+			"title": "用户",
+			"label": "用户",
+			"parentKey": "uni-id-users._id",
+			"componentForEdit": {
+				"name": "uni-data-select",
+				"props": {
+					"placeholder": "请选择用户",
+					"collection": "uni-id-users",
+					"field": "nickname as text, _id as value"
+				}
+			},
+			"componentForShow": {
+				"name": "text",
+				"props": {
+					"v-text": "item.user_id?.nickname || '-'"
+				}
+			}
+		},
+		"answers": {
+			"bsonType": "array",
+			"title": "答题记录",
+			"label": "答题记录",
+			"arrayType": "object",
+			"componentForEdit": {
+				"name": "billkes-form-exam-records-answers"
+			},
+			"componentForShow": {
+				"name": "billkes-table-exam-records-answers"
+			}
+		},
+		"total_full_mark": {
+			"bsonType": "number",
+			"title": "总满分",
+			"label": "总满分",
+			"minimum": 0,
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"placeholder": "自动计算",
+					"type": "number",
+					":disabled": true
+				}
+			}
+		},
+		"total_score": {
+			"bsonType": "number",
+			"title": "总得分",
+			"label": "总得分",
+			"minimum": 0,
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"placeholder": "自动计算",
+					"type": "number",
+					":disabled": true
+				}
+			}
+		},
+		"time_spent": {
+			"bsonType": "int",
+			"title": "用时",
+			"description": "请输入用时（秒）",
+			"label": "用时",
+			"minimum": 60,
+			"maximum": 12000,
+			"componentForEdit": {
+				"name": "uni-easyinput",
+				"props": {
+					"placeholder": "自动计算",
+					"type": "number",
+					":disabled": true
+				}
+			},
+			"componentForShow": {
+				"name": "billkes-table-duration",
+				"props": {
+					"unit": "s"
+				}
+			}
+		},
+		"status": {
+			"bsonType": "int",
+			"title": "状态",
+			"label": "状态",
+			"minimum": 0,
+			"maximum": 1,
+			"enum": [{
+					"value": -1,
+					"text": "未开始"
+				},
+				{
+					"value": 0,
+					"text": "未完成"
+				},
+				{
+					"value": 1,
+					"text": "已完成"
+				}
+			],
+			"componentForEdit": {
+				"name": "uni-data-select",
+				"props": {
+					"placeholder": "自动计算",
+					":disabled": true
+				}
+			},
+			"componentForShow": {
+				"name": "text",
+				"props": {
+					"v-text": "options.filterData.status_localdata?.find(o=>o.value===item.status)?.text || '-'"
+				}
+			}
+		},
+		"started_date": {
+			"bsonType": "timestamp",
+			"title": "开始时间",
+			"label": "开始时间",
+			"componentForEdit": {
+				"name": "uni-datetime-picker",
+				"props": {
+					"placeholder": "自动计算",
+					":disabled": true
+				}
+			},
+			"componentForShow": {
+				"name": "uni-dateformat",
+				"props": {
+					"format": "yyyy-MM-dd hh:mm:ss",
+					":date": "item.started_date"
+				}
+			}
+		},
+		"finished_date": {
+			"bsonType": "timestamp",
+			"title": "完成时间",
+			"label": "完成时间",
+			"componentForEdit": {
+				"name": "uni-datetime-picker",
+				"props": {
+					"placeholder": "自动计算",
+					":disabled": true
+				}
+			},
+			"componentForShow": {
+				"name": "uni-dateformat",
+				"props": {
+					"format": "yyyy-MM-dd hh:mm:ss",
+					":date": "finished_date"
+				}
+			}
+		},
+		"created_date": {
+			"bsonType": "timestamp",
+			"title": "创建时间",
+			"description": "创建时间",
+			"label": "创建时间",
+			"forceDefaultValue": {
+				"$env": "now"
+			},
+			"componentForShow": {
+				"name": "uni-dateformat",
+				"props": {
+					"format": "yyyy-MM-dd hh:mm:ss"
+				}
+			}
+		},
+		"updated_date": {
+			"bsonType": "timestamp",
+			"title": "更新时间",
+			"description": "更新时间",
+			"label": "更新时间",
+			"forceDefaultValue": {
+				"$env": "now"
+			},
+			"componentForShow": {
+				"name": "uni-dateformat",
+				"props": {
+					"format": "yyyy-MM-dd hh:mm:ss"
+				}
+			}
+		}
+	}
 }

@@ -103,11 +103,6 @@ export default {
 				icon: 'admin-icons-table',
 				value: '/pages/exam-schedules/list',
 			}, {
-				menu_id: "billkes-exam-users",
-				text: '用户管理',
-				icon: 'admin-icons-table',
-				value: '/pages/exam-users/list',
-			}, {
 				menu_id: "test-register-login",
 				text: '移动端测试注册登录',
 				icon: 'admin-icons-pulgin',

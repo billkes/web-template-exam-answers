@@ -7,10 +7,10 @@
       <uni-forms-item name="description" label="试卷描述">
         <uni-easyinput type="textarea" placeholder="请输入试卷描述" v-model="formData.description"></uni-easyinput>
       </uni-forms-item>
-      <uni-forms-item name="questions" label="题目列表" required>
-        <uni-data-select placeholder="请选择题目" collection="exam-questions" field="title as text, _id as value" :multiple="true" v-model="formData.questions"></uni-data-select>
+      <uni-forms-item name="tag_id" label="科目" required>
+        <uni-data-select :where="`tagid == 'exam'`" placeholder="请选择科目" collection="uni-id-tag" field="name as text, _id as value" v-model="formData.tag_id"></uni-data-select>
       </uni-forms-item>
-      <uni-forms-item name="status" label="状态" required>
+      <uni-forms-item name="status" label="试卷状态" required>
         <uni-data-select placeholder="请选择试卷状态" v-model="formData.status" :localdata="formOptions.status_localdata"></uni-data-select>
       </uni-forms-item>
       <view class="uni-button-group">
@@ -47,7 +47,7 @@
       let formData = {
         "title": "",
         "description": "",
-        "questions": [],
+        "tag_id": "",
         "status": 0
       }
       return {
