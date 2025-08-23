@@ -9,17 +9,15 @@
 	"tokenExpiresThreshold": 3600,
 	"passwordErrorLimit": 6,
 	"passwordErrorRetryTime": 300,
-	"userRegisterDefaultRole": [],
+	"userRegisterDefaultRole": ["student"],
 	"app": {
 		"tokenExpiresIn": 2592000,
 		"tokenExpiresThreshold": 864000,
 		"oauth": {
-
 			"weixin": {
 				"appid": "",
 				"appsecret": ""
 			},
-
 			"qq": {
 				"appid": "",
 				"appsecret": ""
@@ -51,7 +49,6 @@
 		"tokenExpiresIn": 259200,
 		"tokenExpiresThreshold": 86400,
 		"oauth": {
-
 			"weixin": {
 				"appid": "",
 				"appsecret": ""
@@ -62,7 +59,6 @@
 		"tokenExpiresIn": 259200,
 		"tokenExpiresThreshold": 86400,
 		"oauth": {
-
 			"qq": {
 				"appid": "",
 				"appsecret": ""
@@ -73,7 +69,6 @@
 		"tokenExpiresIn": 259200,
 		"tokenExpiresThreshold": 86400,
 		"oauth": {
-
 			"alipay": {
 				"appid": "",
 				"privateKey": "",
@@ -105,7 +100,7 @@
 		}
 	}
 }, {
-	"dcloudAppid": "{",
+	"dcloudAppid": "__UNI__DD32BF0",
 	"passwordStrength": "weak",
 	"passwordSecret": "billkes-exam-template-web",
 	"tokenSecret": "billkes-exam-template-web",
@@ -119,12 +114,10 @@
 		"tokenExpiresIn": 2592000,
 		"tokenExpiresThreshold": 864000,
 		"oauth": {
-
 			"weixin": {
 				"appid": "",
 				"appsecret": ""
 			},
-
 			"qq": {
 				"appid": "",
 				"appsecret": ""
@@ -156,7 +149,6 @@
 		"tokenExpiresIn": 259200,
 		"tokenExpiresThreshold": 86400,
 		"oauth": {
-
 			"weixin": {
 				"appid": "",
 				"appsecret": ""
@@ -167,7 +159,6 @@
 		"tokenExpiresIn": 259200,
 		"tokenExpiresThreshold": 86400,
 		"oauth": {
-
 			"qq": {
 				"appid": "",
 				"appsecret": ""
@@ -178,7 +169,6 @@
 		"tokenExpiresIn": 259200,
 		"tokenExpiresThreshold": 86400,
 		"oauth": {
-
 			"alipay": {
 				"appid": "",
 				"privateKey": "",
