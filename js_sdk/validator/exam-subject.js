@@ -2,17 +2,21 @@
 
 
 const validator = {
-  "title": {
+  "name": {
     "rules": [
-      {
-        "required": true
-      },
       {
         "format": "string"
       }
     ],
-    "label": "试卷标题",
-    "title": "试卷标题"
+    "label": "科目名称"
+  },
+  "icon": {
+    "rules": [
+      {
+        "format": "string"
+      }
+    ],
+    "label": "图标key"
   },
   "description": {
     "rules": [
@@ -20,54 +24,11 @@ const validator = {
         "format": "string"
       }
     ],
-    "label": "试卷描述",
-    "title": "试卷描述"
-  },
-  "exam_subject_id": {
-    "rules": [
-      {
-        "format": "string"
-      }
-    ],
-    "label": "科目",
-    "title": "科目"
-  },
-  "status": {
-    "rules": [
-      {
-        "required": true
-      },
-      {
-        "format": "int"
-      },
-      {
-        "minimum": 0,
-        "maximum": 1
-      },
-      {
-        "range": [
-          {
-            "value": 0,
-            "text": "草稿"
-          },
-          {
-            "value": 1,
-            "text": "发布"
-          }
-        ]
-      }
-    ],
-    "label": "试卷状态",
-    "title": "试卷状态"
+    "label": "科目描述"
   }
 }
 
-const enumConverter = {
-  "status_valuetotext": {
-    "0": "草稿",
-    "1": "发布"
-  }
-}
+const enumConverter = {}
 
 function filterToWhere(filter, command) {
   let where = {}

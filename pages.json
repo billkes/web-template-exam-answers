@@ -231,6 +231,21 @@
 			"style": {
 				"navigationBarTitleText": "移动端测试答题"
 			}
+		}, {
+			"path": "pages/exam-subject/add",
+			"style": {
+				"navigationBarTitleText": "新增"
+			}
+		}, {
+			"path": "pages/exam-subject/edit",
+			"style": {
+				"navigationBarTitleText": "编辑"
+			}
+		}, {
+			"path": "pages/exam-subject/list",
+			"style": {
+				"navigationBarTitleText": "列表"
+			}
 		}
 	],
 	"subPackages": [{

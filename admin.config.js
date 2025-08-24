@@ -102,11 +102,11 @@ export default {
 				text: '考试安排',
 				icon: 'admin-icons-table',
 				value: '/pages/exam-schedules/list',
-			}, {
-				menu_id: "test-register-login",
-				text: '移动端测试注册登录',
-				icon: 'admin-icons-pulgin',
-				value: '/pages/test-register-login/test-register-login',
+			},{
+				menu_id: "billkes-exam-subject",
+				text: '考试科目',
+				icon: 'admin-icons-table',
+				value: '/pages/exam-subject/list',
 			}, {
 				menu_id: "test-exam-list",
 				text: '移动端测试考试列表',

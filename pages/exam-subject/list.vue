@@ -16,25 +16,21 @@
       </view>
     </view>
     <view class="uni-container">
-      <unicloud-db ref="udb" :collection="collectionList" field="title,description,exam_subject_id,status" :where="where" page-data="replace"
+      <unicloud-db ref="udb" :collection="collectionList" field="name,icon,description" :where="where" page-data="replace"
         :orderby="orderby" :getcount="true" :page-size="options.pageSize" :page-current="options.pageCurrent"
         v-slot:default="{data,pagination,loading,error,options}" :options="options" loadtime="manual" @load="onqueryload">
         <uni-table ref="table" :loading="loading" :emptyText="error.message || '没有更多数据'" border stripe type="selection" @selection-change="selectionChange">
           <uni-tr>
-            <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'title')" sortable @sort-change="sortChange($event, 'title')">试卷标题</uni-th>
-            <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'description')" sortable @sort-change="sortChange($event, 'description')">试卷描述</uni-th>
-            <uni-th align="center" sortable @sort-change="sortChange($event, 'exam_subject_id')">科目</uni-th>
-            <uni-th align="center" filter-type="select" :filter-data="options.filterData.status_localdata" @filter-change="filterChange($event, 'status')">试卷状态</uni-th>
+            <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'name')" sortable @sort-change="sortChange($event, 'name')">科目名称</uni-th>
+            <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'icon')" sortable @sort-change="sortChange($event, 'icon')">图标key</uni-th>
+            <uni-th align="center" filter-type="search" @filter-change="filterChange($event, 'description')" sortable @sort-change="sortChange($event, 'description')">科目描述</uni-th>
             <uni-th align="center">操作</uni-th>
           </uni-tr>
           <uni-tr v-for="(item,index) in data" :key="index">
-            <uni-td align="center">{{item.title}}</uni-td>
-            <uni-td align="center">{{item.description}}</uni-td>
+            <uni-td align="center">{{item.name}}</uni-td>
+            <uni-td align="center">{{item.icon}}</uni-td>
             <uni-td align="center">
-              <text v-text="item.exam_subject_id?.name || '-'" :value="item.exam_subject_id"></text>
-            </uni-td>
-            <uni-td align="center">
-              <text v-text="options.filterData.status_localdata?.find(o=>o.value===item.status)?.text || '-'" :value="item.status"></text>
+              <textarea :value="item.description"></textarea>
             </uni-td>
             <uni-td align="center">
               <view class="uni-group">
@@ -53,7 +49,7 @@
 </template>
 
 <script>
-  import { enumConverter, filterToWhere } from '../../js_sdk/validator/exams.js';
+  import { enumConverter, filterToWhere } from '../../js_sdk/validator/exam-subject.js';
 
   const db = uniCloud.database()
   // 表查询配置
@@ -71,7 +67,7 @@
   export default {
     data() {
       return {
-        collectionList: "exams",
+        collectionList: "exam-subject",
         query: '',
         where: '',
         orderby: dbOrderBy,
@@ -80,18 +76,7 @@
         options: {
           pageSize,
           pageCurrent,
-          filterData: {
-            "status_localdata": [
-              {
-                "value": 0,
-                "text": "草稿"
-              },
-              {
-                "value": 1,
-                "text": "发布"
-              }
-            ]
-          },
+          filterData: {},
           ...enumConverter
         },
         imageStyles: {
@@ -99,13 +84,12 @@
           height: 64
         },
         exportExcel: {
-          "filename": "exams.xls",
+          "filename": "exam-subject.xls",
           "type": "xls",
           "fields": {
-            "试卷标题": "title",
-            "试卷描述": "description",
-            "科目": "exam_subject_id",
-            "试卷状态": "status"
+            "科目名称": "name",
+            "图标key": "icon",
+            "科目描述": "description"
           }
         },
         exportExcelData: []

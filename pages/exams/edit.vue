@@ -7,8 +7,8 @@
       <uni-forms-item name="description" label="试卷描述">
         <uni-easyinput type="textarea" placeholder="请输入试卷描述" v-model="formData.description"></uni-easyinput>
       </uni-forms-item>
-      <uni-forms-item name="tag_id" label="科目" required>
-        <uni-data-select :where="`tagid == 'exam'`" placeholder="请选择科目" collection="uni-id-tag" field="name as text, _id as value" v-model="formData.tag_id"></uni-data-select>
+      <uni-forms-item name="exam_subject_id" label="科目">
+        <uni-data-select placeholder="请选择科目" collection="exam-subject" field="name as text, _id as value" v-model="formData.exam_subject_id"></uni-data-select>
       </uni-forms-item>
       <uni-forms-item name="status" label="试卷状态" required>
         <uni-data-select placeholder="请选择试卷状态" v-model="formData.status" :localdata="formOptions.status_localdata"></uni-data-select>
@@ -47,7 +47,7 @@
       let formData = {
         "title": "",
         "description": "",
-        "tag_id": "",
+        "exam_subject_id": "",
         "status": 0
       }
       return {
@@ -123,7 +123,7 @@
         uni.showLoading({
           mask: true
         })
-        db.collection(dbCollectionName).doc(id).field("title,description,tag_id,status").get().then((res) => {
+        db.collection(dbCollectionName).doc(id).field("title,description,exam_subject_id,status").get().then((res) => {
           const data = res.result.data[0]
           if (data) {
             this.formData = data

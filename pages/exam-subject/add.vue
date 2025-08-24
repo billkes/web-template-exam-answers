@@ -1,17 +1,14 @@
 <template>
   <view class="uni-container">
     <uni-forms ref="form" :model="formData" validateTrigger="bind">
-      <uni-forms-item name="title" label="试卷标题" required>
-        <uni-easyinput placeholder="请输入试卷标题" v-model="formData.title"></uni-easyinput>
+      <uni-forms-item name="name" label="科目名称">
+        <uni-easyinput placeholder="科目名称" v-model="formData.name"></uni-easyinput>
       </uni-forms-item>
-      <uni-forms-item name="description" label="试卷描述">
-        <uni-easyinput type="textarea" placeholder="请输入试卷描述" v-model="formData.description"></uni-easyinput>
+      <uni-forms-item name="icon" label="图标key">
+        <uni-easyinput placeholder="图标key" v-model="formData.icon"></uni-easyinput>
       </uni-forms-item>
-      <uni-forms-item name="exam_subject_id" label="科目">
-        <uni-data-select placeholder="请选择科目" collection="exam-subject" field="name as text, _id as value" v-model="formData.exam_subject_id"></uni-data-select>
-      </uni-forms-item>
-      <uni-forms-item name="status" label="试卷状态" required>
-        <uni-data-select placeholder="请选择试卷状态" v-model="formData.status" :localdata="formOptions.status_localdata"></uni-data-select>
+      <uni-forms-item name="description" label="科目描述">
+        <textarea placeholder="科目描述" @input="binddata('description', $event.detail.value)" class="uni-textarea-border" v-model="formData.description"></textarea>
       </uni-forms-item>
       <view class="uni-button-group">
         <button type="primary" class="uni-button" style="width: 100px;" @click="submit">提交</button>
@@ -24,11 +21,11 @@
 </template>
 
 <script>
-  import { validator } from '../../js_sdk/validator/exams.js';
+  import { validator } from '../../js_sdk/validator/exam-subject.js';
 
   const db = uniCloud.database();
   const dbCmd = db.command;
-  const dbCollectionName = 'exams';
+  const dbCollectionName = 'exam-subject';
 
   function getValidator(fields) {
     let result = {}
@@ -45,25 +42,13 @@
   export default {
     data() {
       let formData = {
-        "title": "",
-        "description": "",
-        "exam_subject_id": "",
-        "status": 0
+        "name": "",
+        "icon": "",
+        "description": ""
       }
       return {
         formData,
-        formOptions: {
-          "status_localdata": [
-            {
-              "value": 0,
-              "text": "草稿"
-            },
-            {
-              "value": 1,
-              "text": "发布"
-            }
-          ]
-        },
+        formOptions: {},
         rules: {
           ...getValidator(Object.keys(formData))
         }

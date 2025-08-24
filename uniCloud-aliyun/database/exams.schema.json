@@ -29,25 +29,24 @@
 				}
 			}
 		},
-		"tag_id": {
+		"exam_subject_id": {
 			"bsonType": "string",
 			"title": "科目",
 			"description": "请选择科目",
 			"label": "科目",
-			"foreignKey": "uni-id-tag._id",
+			"foreignKey": "exam-subject._id",
 			"componentForEdit": {
 				"name": "uni-data-select",
 				"props": {
-					":where": "`tagid == 'exam'`",
 					"placeholder": "请选择科目",
-					"collection": "uni-id-tag",
+					"collection": "exam-subject",
 					"field": "name as text, _id as value"
 				}
 			},
 			"componentForShow": {
 				"name": "text",
 				"props": {
-					"v-text": "item.tag_id?.name || '-'"
+					"v-text": "item.exam_subject_id?.name || '-'"
 				}
 			}
 		},
